@@ -10,12 +10,12 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
-import re.vianneyfaiv.persephone.ui.fragment.ApplicationDetailFragment;
+import re.vianneyfaiv.persephone.ui.fragment.ApplicationDetailsPanel;
 
 public class ApplicationsPage extends HorizontalLayout implements View {
 
 	private Grid<Application> grid = new Grid<>(Application.class);
-	private ApplicationDetailFragment details;
+	private ApplicationDetailsPanel details;
 
 	public ApplicationsPage(List<Application> applications) {
 		this.addComponent(this.grid);
@@ -35,7 +35,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	public void updateView(Environment env) {
 		this.resetDetailsFragment();
 
-		this.details = new ApplicationDetailFragment(env);
+		this.details = new ApplicationDetailsPanel(env);
 		this.addComponent(this.details);
 	}
 
