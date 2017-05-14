@@ -8,7 +8,9 @@ import com.vaadin.annotations.Title;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -45,6 +47,7 @@ public class PersephoneUI extends UI {
 
 		// Build UI
 		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Label("<h1>Persephone</h1>", ContentMode.HTML));
 		layout.addComponent(appsPage);
 		this.setContent(layout);
 

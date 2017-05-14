@@ -19,6 +19,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	public ApplicationsPage(List<Application> applications) {
 		this.addComponent(this.grid);
+		this.grid.setCaption("Applications");
 		this.grid.setItems(applications);
 	}
 
