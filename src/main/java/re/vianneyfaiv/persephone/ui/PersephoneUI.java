@@ -32,17 +32,23 @@ public class PersephoneUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 
+		// Get all applications
 		List<Application> apps = this.appService.findAll();
 
+		// UI : list applications
 		ApplicationsPage appsPage = new ApplicationsPage(apps);
+
+		// Application.onClick => display details
 		appsPage.setApplicationClickListener(e -> {
 			appsPage.updateView(this.envService.getEnvironment(e.getItem()));
 		});
 
+		// Build UI
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(appsPage);
 		this.setContent(layout);
 
+		// TODO : create a class
 		UI.getCurrent().setErrorHandler(new DefaultErrorHandler() {
 			@Override
 		    public void error(com.vaadin.server.ErrorEvent event) {
