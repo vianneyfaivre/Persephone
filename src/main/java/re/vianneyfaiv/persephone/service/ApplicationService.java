@@ -1,10 +1,8 @@
 package re.vianneyfaiv.persephone.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -12,20 +10,13 @@ import re.vianneyfaiv.persephone.domain.Application;
 @Service
 public class ApplicationService {
 
-	@Autowired
-	private HealthService healthService;
-
-	@Value("#{'${persephone.applications}'.split(',')}")
-	private List<String> applications;
+	private List<Application> applications = new ArrayList<>();
 
 	public List<Application> findAll() {
-		List<Application> apps = this.applications
-				.stream()
-				.map(Application::new)
-				.collect(Collectors.toList());
+		return this.applications;
+	}
 
-		apps.stream().forEach(app -> app.setUp(this.healthService.isUp(app)));
-
-		return apps;
+	public void addApplication(Application app) {
+		this.applications.add(app);
 	}
 }
