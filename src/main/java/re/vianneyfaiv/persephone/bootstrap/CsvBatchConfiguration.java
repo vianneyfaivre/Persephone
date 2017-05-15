@@ -1,6 +1,6 @@
 package re.vianneyfaiv.persephone.bootstrap;
 
-import java.net.MalformedURLException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.batch.core.Job;
@@ -46,7 +46,7 @@ public class CsvBatchConfiguration {
 	private HealthService healthService;
 
 	@Bean
-	public FlatFileItemReader<Application> reader() throws MalformedURLException {
+	public FlatFileItemReader<Application> reader() {
 		FlatFileItemReader<Application> reader = new FlatFileItemReader<Application>();
 		reader.setResource(new PathResource(this.csvPath));
 		reader.setLinesToSkip(1);
@@ -71,15 +71,11 @@ public class CsvBatchConfiguration {
 
 	@Bean
 	public ItemWriter<Application> writer() {
-		return items -> {
-			for(Application item : items) {
-				this.applicationService.addApplication(item);
-			}
-		};
+		return items -> this.applicationService.setApplications((List<Application>) items);
 	}
 
 	@Bean
-	public Job importAppsJob() throws MalformedURLException {
+	public Job importAppsJob() {
 		return this.jobBuilderFactory
 					.get("importAppsJob")
 					.incrementer(new RunIdIncrementer())
@@ -102,7 +98,7 @@ public class CsvBatchConfiguration {
 	}
 
 	@Bean
-	public Step step1() throws MalformedURLException {
+	public Step step1() {
 		return this.stepBuilderFactory
 				.get("step1")
 				.<Application, Application>chunk(10)
