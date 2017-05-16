@@ -2,8 +2,7 @@ package re.vianneyfaiv.persephone.ui.fragment;
 
 import java.util.Map;
 
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
@@ -12,25 +11,33 @@ public class PropertiesPanel extends VerticalLayout {
 
 	public PropertiesPanel(String title, Map<String, String> properties) {
 
-		VerticalLayout propertiesLayout = new VerticalLayout();
+		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
 
-		properties
-			.entrySet()
-			.stream()
-			.map(entry -> {
-				Label key = new Label(entry.getKey());
-				Label value = new Label(entry.getValue());
+		grid.setColumns("key", "value");
+		grid.setItems(properties.entrySet().stream().map(e -> new PropertyItem(e.getKey(), e.getValue())));
 
-				return new HorizontalLayout(key, value);
-			})
-			.forEach(c -> propertiesLayout.addComponent(c));
-
-		Panel popupContent = new Panel(propertiesLayout);
-		popupContent.setHeight(400, Unit.PIXELS);
-		popupContent.setWidth(800, Unit.PIXELS);
+		Panel popupContent = new Panel(grid);
 
 		PopupView popup = new PopupView(title, popupContent);
 
 		this.addComponent(popup);
+	}
+
+	public static class PropertyItem {
+		private String key;
+		private String value;
+
+		public PropertyItem(String key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public String getKey() {
+			return this.key;
+		}
+
+		public String getValue() {
+			return this.value;
+		}
 	}
 }
