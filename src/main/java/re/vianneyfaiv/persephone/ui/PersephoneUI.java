@@ -16,6 +16,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.PersephoneServiceException;
@@ -42,7 +43,8 @@ public class PersephoneUI extends UI {
 
 		// Application.onClick => display details
 		appsPage.setApplicationClickListener(e -> {
-			appsPage.updateView(this.envService.getEnvironment(e.getItem()));
+			Environment env = this.envService.getEnvironment(e.getItem());
+			appsPage.updateView(env);
 		});
 
 		// Build UI

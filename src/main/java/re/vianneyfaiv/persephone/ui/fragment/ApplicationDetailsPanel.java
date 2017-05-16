@@ -11,8 +11,7 @@ public class ApplicationDetailsPanel extends VerticalLayout implements View {
 
 	public ApplicationDetailsPanel(Environment env) {
 		this.addComponent(new Label("Profiles:" + env.getProfiles().toString()));
-		this.addComponent(new PropertiesPanel("System Environment", env.getSystemEnvironment()));
-		this.addComponent(new PropertiesPanel("System Properties", env.getSystemProperties()));
+		this.addComponent(new PropertiesPanel("Properties", env.getProperties()));
 	}
 
 	@Override
