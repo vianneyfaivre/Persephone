@@ -7,9 +7,9 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
-public class PropertiesPanel extends VerticalLayout {
+public class PropertiesPopup extends VerticalLayout {
 
-	public PropertiesPanel(String title, Map<String, String> properties) {
+	public PropertiesPopup(String title, Map<String, String> properties) {
 
 		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
 
