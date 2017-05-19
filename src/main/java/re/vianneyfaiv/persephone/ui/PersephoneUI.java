@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
@@ -23,6 +24,7 @@ import re.vianneyfaiv.persephone.service.PersephoneServiceException;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
 @Title("Persephone")
+@Theme("persephone")
 @SpringUI
 public class PersephoneUI extends UI {
 

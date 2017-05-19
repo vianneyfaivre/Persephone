@@ -1,0 +1,10 @@
+@import "../valo/valo";
+
+@mixin persephone {
+	@include valo;
+
+	.app-down {
+    	color: red;
+ 	}
+}
+  
