@@ -10,6 +10,7 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
+import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationDetailsPanel;
 
 public class ApplicationsPage extends HorizontalLayout implements View {
@@ -35,10 +36,10 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		}
 	}
 
-	public void updateView(Environment env) {
+	public void updateView(Application app, Environment env, Metrics metrics) {
 		this.resetDetailsFragment();
 
-		this.details = new ApplicationDetailsPanel(env);
+		this.details = new ApplicationDetailsPanel(app, env, metrics);
 		this.addComponent(this.details);
 	}
 

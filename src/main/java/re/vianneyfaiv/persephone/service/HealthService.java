@@ -12,7 +12,7 @@ public class HealthService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	public boolean isUp(Application app) throws PersephoneServiceException {
+	public boolean isUp(Application app) {
 		boolean up;
 
 		String url = String.format("%s/%s", app.getUrl(), "health");

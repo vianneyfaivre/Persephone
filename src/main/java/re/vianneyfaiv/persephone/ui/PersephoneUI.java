@@ -18,8 +18,10 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
+import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
+import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.service.PersephoneServiceException;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
@@ -34,6 +36,9 @@ public class PersephoneUI extends UI {
 	@Autowired
 	private EnvironmentService envService;
 
+	@Autowired
+	private MetricsService metricsService;
+
 	@Override
 	protected void init(VaadinRequest request) {
 
@@ -46,7 +51,8 @@ public class PersephoneUI extends UI {
 		// Application.onClick => display details
 		appsPage.setApplicationClickListener(e -> {
 			Environment env = this.envService.getEnvironment(e.getItem());
-			appsPage.updateView(env);
+			Metrics metrics = this.metricsService.getMetrics(e.getItem());
+			appsPage.updateView(e.getItem(), env, metrics);
 		});
 
 		// Build UI
@@ -72,6 +78,9 @@ public class PersephoneUI extends UI {
 							    Notification.Type.ERROR_MESSAGE,
 							    true)
 							.show(Page.getCurrent());
+					}
+					else {
+						System.out.println(t.getMessage());
 					}
 				}
 			}
