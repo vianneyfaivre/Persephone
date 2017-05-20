@@ -1,6 +1,6 @@
 package re.vianneyfaiv.persephone.ui.fragment;
 
-import java.util.Map;
+import java.util.List;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -9,9 +9,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
+import re.vianneyfaiv.persephone.domain.PropertyItem;
+
 public class PropertiesPopup extends VerticalLayout {
 
-	public PropertiesPopup(String title, Map<String, String> properties) {
+	public PropertiesPopup(String title, List<PropertyItem> properties) {
 
 		// Popup title and close button
 		Label popupTitle = new Label(title);
@@ -20,8 +22,8 @@ public class PropertiesPopup extends VerticalLayout {
 
 		// Popup grid
 		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
-		grid.setColumns("key", "value");
-		grid.setItems(properties.entrySet().stream().map(e -> new PropertyItem(e.getKey(), e.getValue())));
+		grid.setColumns("key", "value", "origin");
+		grid.setItems(properties);
 
 		// Create Popup
 		VerticalLayout popupContent = new VerticalLayout(titleBar, grid);
@@ -33,23 +35,5 @@ public class PropertiesPopup extends VerticalLayout {
 		closeButton.addListener(e -> popup.setPopupVisible(false));
 
 		this.addComponent(popup);
-	}
-
-	public static class PropertyItem {
-		private String key;
-		private String value;
-
-		public PropertyItem(String key, String value) {
-			this.key = key;
-			this.value = value;
-		}
-
-		public String getKey() {
-			return this.key;
-		}
-
-		public String getValue() {
-			return this.value;
-		}
 	}
 }

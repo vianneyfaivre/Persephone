@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -17,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
+import re.vianneyfaiv.persephone.domain.PropertyItem;
 
 @Service
 public class EnvironmentService {
@@ -34,18 +34,25 @@ public class EnvironmentService {
             mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
             JsonNode rootNode = mapper.readTree(json);
 
-            Map<String, String> properties = new TreeMap<>();
+            List<PropertyItem> properties = new ArrayList<>();
             List<String> profiles = new ArrayList<String>();
 
+            Iterator<Entry<String, JsonNode>> iterator = rootNode.fields();
 
-            Iterator<JsonNode> iterator = rootNode.iterator();
-
-            for(JsonNode profile : iterator.next()) {
+            // Get Spring Profiles
+            for(JsonNode profile : iterator.next().getValue()) {
             	profiles.add(profile.asText());
             }
 
+            // Get properties
             while(iterator.hasNext()) {
-        		iterator.next().fields().forEachRemaining(p -> properties.put(p.getKey(), p.getValue().asText()));
+            	Entry<String, JsonNode> current = iterator.next();
+
+            	current.getValue()
+        			.fields()
+        			.forEachRemaining(
+        				p -> properties.add(new PropertyItem(p.getKey(), p.getValue().asText(), current.getKey()))
+					);
             }
 
 			return new Environment(profiles, properties);

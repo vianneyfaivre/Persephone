@@ -1,14 +1,13 @@
 package re.vianneyfaiv.persephone.domain;
 
 import java.util.List;
-import java.util.Map;
 
 public class Environment {
 
 	private List<String> profiles;
-	private Map<String, String> properties;
+	private List<PropertyItem> properties;
 
-	public Environment(List<String> profiles, Map<String, String> properties) {
+	public Environment(List<String> profiles, List<PropertyItem> properties) {
 		this.profiles = profiles;
 		this.properties = properties;
 	}
@@ -17,7 +16,7 @@ public class Environment {
 		return this.profiles;
 	}
 
-	public Map<String, String> getProperties() {
+	public List<PropertyItem> getProperties() {
 		return this.properties;
 	}
 }
