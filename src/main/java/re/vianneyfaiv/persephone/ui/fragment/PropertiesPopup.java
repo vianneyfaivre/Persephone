@@ -24,6 +24,7 @@ public class PropertiesPopup extends VerticalLayout {
 		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
 		grid.setColumns("key", "value", "origin");
 		grid.setItems(properties);
+		grid.sort("key");
 
 		// Create Popup
 		VerticalLayout popupContent = new VerticalLayout(titleBar, grid);
