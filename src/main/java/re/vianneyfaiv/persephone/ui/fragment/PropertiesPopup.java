@@ -11,6 +11,9 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.PropertyItem;
 
+/**
+ * Popup that lists an application properties
+ */
 public class PropertiesPopup extends VerticalLayout {
 
 	public PropertiesPopup(String title, List<PropertyItem> properties) {

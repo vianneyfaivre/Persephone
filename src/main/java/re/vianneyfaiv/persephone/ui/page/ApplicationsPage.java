@@ -13,6 +13,13 @@ import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationDetailsPanel;
 
+/**
+ * Page that lists applications.
+ *
+ * When selecting an application, a details panel will be displayed.
+ *
+ * {@link ApplicationDetailsPanel}
+ */
 public class ApplicationsPage extends HorizontalLayout implements View {
 
 	private Grid<Application> grid = new Grid<>(Application.class);
@@ -26,16 +33,25 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
 	}
 
+	/**
+	 * Sets application.onClick
+	 */
 	public void setApplicationClickListener(ItemClickListener<Application> clickListener) {
 		this.grid.addItemClickListener(clickListener);
 	}
 
+	/**
+	 * Removes the details panel
+	 */
 	public void resetDetailsFragment() {
 		if(this.details != null) {
 			this.removeComponent(this.details);
 		}
 	}
 
+	/**
+	 * Updates the whole component
+	 */
 	public void updateView(Application app, Environment env, Metrics metrics) {
 		this.resetDetailsFragment();
 

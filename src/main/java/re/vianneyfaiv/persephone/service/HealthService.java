@@ -7,6 +7,9 @@ import org.springframework.web.client.RestTemplate;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Health;
 
+/**
+ * Calls /health
+ */
 @Service
 public class HealthService {
 

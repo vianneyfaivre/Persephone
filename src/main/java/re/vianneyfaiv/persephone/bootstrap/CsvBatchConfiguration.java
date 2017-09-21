@@ -28,6 +28,9 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.HealthService;
 
+/**
+ * Batch ran at startup. Reads {@link Application}s from a CSV file and load them in memory
+ */
 @Configuration
 @EnableBatchProcessing
 public class CsvBatchConfiguration {
@@ -58,14 +61,19 @@ public class CsvBatchConfiguration {
 		reader.setResource(new PathResource(this.csvPath));
 		reader.setLinesToSkip(1);
 
+		// counter for Application#id
 		final AtomicInteger counter = new AtomicInteger(1);
+
 		reader.setLineMapper(new DefaultLineMapper<Application>() {
 			{
+				// define the name of each line token
 				this.setLineTokenizer(new DelimitedLineTokenizer() {
 					{
 						this.setNames(new String[] { "name", "environment", "url" });
 					}
 				});
+
+				// For each line
 				this.setFieldSetMapper(line -> {
 					Application app = new Application(counter.get(), line.readString("name"), line.readString("environment"), line.readString("url"));
 
@@ -96,6 +104,9 @@ public class CsvBatchConfiguration {
 						public void beforeJob(JobExecution jobExecution) {
 						}
 
+						/**
+						 * Once the job is over, call /health on each application
+						 */
 						@Override
 						public void afterJob(JobExecution jobExecution) {
 							CsvBatchConfiguration.this.applicationService

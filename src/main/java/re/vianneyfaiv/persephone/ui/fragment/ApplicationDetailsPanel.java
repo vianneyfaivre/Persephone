@@ -10,6 +10,9 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 
+/**
+ * Panel that displays an application details
+ */
 public class ApplicationDetailsPanel extends VerticalLayout implements View {
 
 	public ApplicationDetailsPanel(Application app, Environment env, Metrics metrics) {

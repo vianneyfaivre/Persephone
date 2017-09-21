@@ -18,6 +18,9 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.PropertyItem;
 
+/**
+ * Calls /env
+ */
 @Service
 public class EnvironmentService {
 

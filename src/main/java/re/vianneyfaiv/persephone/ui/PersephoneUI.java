@@ -27,6 +27,9 @@ import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.service.PersephoneServiceException;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
+/**
+ * Vaadin UI initializer
+ */
 @Title("Persephone")
 @Theme("persephone")
 @SpringUI
