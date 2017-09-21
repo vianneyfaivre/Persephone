@@ -3,6 +3,8 @@ package re.vianneyfaiv.persephone.bootstrap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -30,6 +32,8 @@ import re.vianneyfaiv.persephone.service.HealthService;
 @EnableBatchProcessing
 public class CsvBatchConfiguration {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CsvBatchConfiguration.class);
+
 	@Value("${persephone.applications.csv}")
 	private String csvPath;
 
@@ -48,6 +52,9 @@ public class CsvBatchConfiguration {
 	@Bean
 	public FlatFileItemReader<Application> reader() {
 		FlatFileItemReader<Application> reader = new FlatFileItemReader<Application>();
+
+		LOGGER.info("Reading applications from file {}", this.csvPath);
+
 		reader.setResource(new PathResource(this.csvPath));
 		reader.setLinesToSkip(1);
 
@@ -61,6 +68,9 @@ public class CsvBatchConfiguration {
 				});
 				this.setFieldSetMapper(line -> {
 					Application app = new Application(counter.get(), line.readString("name"), line.readString("environment"), line.readString("url"));
+
+					LOGGER.info("Loaded {}", app);
+
 					counter.incrementAndGet();
 					return app;
 				});

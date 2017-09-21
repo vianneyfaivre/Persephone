@@ -2,6 +2,8 @@ package re.vianneyfaiv.persephone.ui;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
@@ -30,6 +32,8 @@ import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 @SpringUI
 public class PersephoneUI extends UI {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PersephoneUI.class);
+
 	@Autowired
 	private ApplicationService appService;
 
@@ -50,6 +54,7 @@ public class PersephoneUI extends UI {
 
 		// Application.onClick => display details
 		appsPage.setApplicationClickListener(e -> {
+			LOGGER.debug("Clicked on application {}", e.getItem().getName());
 			Environment env = this.envService.getEnvironment(e.getItem());
 			Metrics metrics = this.metricsService.getMetrics(e.getItem());
 			appsPage.updateView(e.getItem(), env, metrics);
