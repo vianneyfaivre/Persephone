@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.service;
+package re.vianneyfaiv.persephone.exception;
 
 import re.vianneyfaiv.persephone.domain.Application;
 

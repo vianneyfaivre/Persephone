@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.PropertyItem;
+import re.vianneyfaiv.persephone.exception.PersephoneServiceException;
 
 /**
  * Calls /env

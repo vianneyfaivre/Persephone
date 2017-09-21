@@ -8,21 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.server.DefaultErrorHandler;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
+import re.vianneyfaiv.persephone.exception.UIErrorHandler;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.MetricsService;
-import re.vianneyfaiv.persephone.service.PersephoneServiceException;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
 /**
@@ -66,29 +63,7 @@ public class PersephoneUI extends UI {
 		layout.addComponent(appsPage);
 		this.setContent(layout);
 
-		// TODO : create a class
-		UI.getCurrent().setErrorHandler(new DefaultErrorHandler() {
-			@Override
-		    public void error(com.vaadin.server.ErrorEvent event) {
-				for (Throwable t = event.getThrowable(); t != null; t = t.getCause()) {
-					if(t instanceof PersephoneServiceException) {
-
-						appsPage.resetDetailsFragment();
-
-						PersephoneServiceException e = (PersephoneServiceException) t;
-
-						new Notification(
-								"Unable to reach " + e.getApplication().getUrl(),
-							    e.getMessage(),
-							    Notification.Type.ERROR_MESSAGE,
-							    true)
-							.show(Page.getCurrent());
-					}
-					else {
-						System.out.println(t.getMessage());
-					}
-				}
-			}
-		});
+		// Error handler
+		UI.getCurrent().setErrorHandler(new UIErrorHandler(appsPage));
 	}
 }
