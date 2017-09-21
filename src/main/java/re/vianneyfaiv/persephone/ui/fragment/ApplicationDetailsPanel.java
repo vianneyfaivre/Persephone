@@ -20,7 +20,7 @@ public class ApplicationDetailsPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Label("Profiles:" + env.getProfiles().toString()));
 
-		this.addComponent(new Label(String.format("Free mem : %s (%s %%)", metrics.getMemFree(), metrics.getMemFreePercentage())));
+		this.addComponent(new Label(String.format("Free mem : %s KB (%s %%)", metrics.getMemFree(), metrics.getMemFreePercentage())));
 
 		this.addComponent(new Label(String.format("HTTP Sessions Active : %s", metrics.getHttpSessionsActive())));
 
