@@ -27,7 +27,8 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	public ApplicationsPage(List<Application> applications) {
 		this.addComponent(this.grid);
-		this.grid.setCaption("Applications");
+		this.grid.setCaption("<h2>Applications</h2>");
+		this.grid.setCaptionAsHtml(true);
 		this.grid.setItems(applications);
 		this.grid.setColumns("name", "environment", "url");
 		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");

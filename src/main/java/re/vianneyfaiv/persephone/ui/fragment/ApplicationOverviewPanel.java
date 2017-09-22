@@ -19,7 +19,7 @@ import re.vianneyfaiv.persephone.domain.Metrics;
 public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
-		this.addComponent(new Label(String.format("<h2>%s (%s)</h2>", app.getName(), app.getEnvironment()), ContentMode.HTML));
+		this.addComponent(new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML));
 
 		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
 
