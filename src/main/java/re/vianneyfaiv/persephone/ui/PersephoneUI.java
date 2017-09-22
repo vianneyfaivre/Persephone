@@ -1,7 +1,5 @@
 package re.vianneyfaiv.persephone.ui;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +8,10 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.SpringViewDisplay;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Environment;
-import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.exception.UIErrorHandler;
-import re.vianneyfaiv.persephone.service.ApplicationService;
-import re.vianneyfaiv.persephone.service.EnvironmentService;
-import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
 /**
@@ -28,42 +20,21 @@ import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 @Title("Persephone")
 @Theme("persephone")
 @SpringUI
+@SpringViewDisplay
 public class PersephoneUI extends UI {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PersephoneUI.class);
 
 	@Autowired
-	private ApplicationService appService;
-
-	@Autowired
-	private EnvironmentService envService;
-
-	@Autowired
-	private MetricsService metricsService;
+	private ApplicationsPage appsPage;
 
 	@Override
 	protected void init(VaadinRequest request) {
 
-		// Get all applications
-		List<Application> apps = this.appService.findAll();
-
-		// UI : list applications
-		ApplicationsPage appsPage = new ApplicationsPage(apps);
-
-		// Application.onClick => display details
-		appsPage.setApplicationClickListener(e -> {
-			LOGGER.debug("Clicked on application {}", e.getItem().getName());
-			Environment env = this.envService.getEnvironment(e.getItem());
-			Metrics metrics = this.metricsService.getMetrics(e.getItem());
-			appsPage.updateView(e.getItem(), env, metrics);
-		});
-
 		// Build UI
-		VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(appsPage);
-		this.setContent(layout);
+		this.setContent(this.appsPage);
 
 		// Error handler
-		UI.getCurrent().setErrorHandler(new UIErrorHandler(appsPage));
+		UI.getCurrent().setErrorHandler(new UIErrorHandler());
 	}
 }

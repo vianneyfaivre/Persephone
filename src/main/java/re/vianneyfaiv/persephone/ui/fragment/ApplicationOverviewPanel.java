@@ -5,6 +5,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.BorderStyle;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
@@ -31,7 +32,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Label(String.format("Uptime : %s", metrics.getHumanReadableUptime())));
 
-		this.addComponent(new PropertiesPopup("Properties", env.getProperties()));
+		this.addComponent(new Button("Properties", e -> getUI().getNavigator().navigateTo("properties/"+app.getId())));
 	}
 
 	@Override

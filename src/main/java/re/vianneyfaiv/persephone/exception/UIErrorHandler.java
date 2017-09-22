@@ -7,20 +7,12 @@ import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 
-import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
-
 /**
  * Overrides default Vaadin error handler.
  */
 public class UIErrorHandler extends DefaultErrorHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UIErrorHandler.class);
-
-	private ApplicationsPage appsPage;
-
-	public UIErrorHandler(ApplicationsPage appsPage) {
-		this.appsPage = appsPage;
-	}
 
 	@Override
     public void error(com.vaadin.server.ErrorEvent event) {
@@ -29,9 +21,6 @@ public class UIErrorHandler extends DefaultErrorHandler {
 		for (Throwable t = event.getThrowable(); t != null; t = t.getCause()) {
 
 			if(t instanceof PersephoneServiceException) {
-
-				// Removes application details panel
-				this.appsPage.resetDetailsFragment();
 
 				PersephoneServiceException e = (PersephoneServiceException) t;
 

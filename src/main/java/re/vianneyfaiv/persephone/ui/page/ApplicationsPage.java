@@ -1,16 +1,23 @@
 package re.vianneyfaiv.persephone.ui.page;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
+import re.vianneyfaiv.persephone.service.ApplicationService;
+import re.vianneyfaiv.persephone.service.EnvironmentService;
+import re.vianneyfaiv.persephone.service.MetricsService;
+import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
 
 /**
@@ -20,44 +27,51 @@ import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
  *
  * {@link ApplicationOverviewPanel}
  */
+@UIScope
+@SpringView(name=PersephoneViews.APPLICATIONS)
 public class ApplicationsPage extends HorizontalLayout implements View {
 
-	private Grid<Application> grid = new Grid<>(Application.class);
+	@Autowired
+	private ApplicationService appService;
+
+	@Autowired
+	private EnvironmentService envService;
+
+	@Autowired
+	private MetricsService metricsService;
+
+	private Grid<Application> grid;
 	private ApplicationOverviewPanel details;
 
-	public ApplicationsPage(List<Application> applications) {
+	@PostConstruct
+	public void init() {
+
+		this.grid = new Grid<>(Application.class);
 		this.addComponent(this.grid);
+
 		this.grid.setCaption("<h2>Applications</h2>");
 		this.grid.setCaptionAsHtml(true);
-		this.grid.setItems(applications);
+		this.grid.setItems(this.appService.findAll());
 		this.grid.setColumns("name", "environment", "url");
 		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
-	}
 
-	/**
-	 * Sets application.onClick
-	 */
-	public void setApplicationClickListener(ItemClickListener<Application> clickListener) {
-		this.grid.addItemClickListener(clickListener);
-	}
+		// Application.onClick => display details
+		this.grid.addItemClickListener(e -> {
 
-	/**
-	 * Removes the details panel
-	 */
-	public void resetDetailsFragment() {
-		if(this.details != null) {
-			this.removeComponent(this.details);
-		}
-	}
+			// Remove previous panel
+			if(details!=null) {
+				this.removeComponent(this.details);
+			}
 
-	/**
-	 * Updates the whole component
-	 */
-	public void updateView(Application app, Environment env, Metrics metrics) {
-		this.resetDetailsFragment();
+			// Get application overview info
+			Application app = e.getItem();
+			Environment env = this.envService.getEnvironment(app);
+			Metrics metrics = this.metricsService.getMetrics(app);
 
-		this.details = new ApplicationOverviewPanel(app, env, metrics);
-		this.addComponent(this.details);
+			// Add overview panel to page
+			this.details = new ApplicationOverviewPanel(app, env, metrics);
+			this.addComponent(this.details);
+		});
 	}
 
 	@Override
