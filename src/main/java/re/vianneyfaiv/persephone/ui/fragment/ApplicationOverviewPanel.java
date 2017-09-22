@@ -2,8 +2,11 @@ package re.vianneyfaiv.persephone.ui.fragment;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.shared.ui.BorderStyle;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -17,6 +20,8 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
 		this.addComponent(new Label(String.format("<h2>%s (%s)</h2>", app.getName(), app.getEnvironment()), ContentMode.HTML));
+
+		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
 
 		this.addComponent(new Label("Profiles:" + env.getProfiles().toString()));
 
