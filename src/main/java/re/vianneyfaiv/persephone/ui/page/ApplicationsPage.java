@@ -11,19 +11,19 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
-import re.vianneyfaiv.persephone.ui.fragment.ApplicationDetailsPanel;
+import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
 
 /**
  * Page that lists applications.
  *
  * When selecting an application, a details panel will be displayed.
  *
- * {@link ApplicationDetailsPanel}
+ * {@link ApplicationOverviewPanel}
  */
 public class ApplicationsPage extends HorizontalLayout implements View {
 
 	private Grid<Application> grid = new Grid<>(Application.class);
-	private ApplicationDetailsPanel details;
+	private ApplicationOverviewPanel details;
 
 	public ApplicationsPage(List<Application> applications) {
 		this.addComponent(this.grid);
@@ -55,7 +55,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	public void updateView(Application app, Environment env, Metrics metrics) {
 		this.resetDetailsFragment();
 
-		this.details = new ApplicationDetailsPanel(app, env, metrics);
+		this.details = new ApplicationOverviewPanel(app, env, metrics);
 		this.addComponent(this.details);
 	}
 

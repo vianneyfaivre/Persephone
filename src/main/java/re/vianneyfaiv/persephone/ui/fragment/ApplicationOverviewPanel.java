@@ -11,11 +11,11 @@ import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 
 /**
- * Panel that displays an application details
+ * Panel that displays overview of an application
  */
-public class ApplicationDetailsPanel extends VerticalLayout implements View {
+public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
-	public ApplicationDetailsPanel(Application app, Environment env, Metrics metrics) {
+	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
 		this.addComponent(new Label(String.format("<h2>%s (%s)</h2>", app.getName(), app.getEnvironment()), ContentMode.HTML));
 
 		this.addComponent(new Label("Profiles:" + env.getProfiles().toString()));
