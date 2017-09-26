@@ -12,15 +12,16 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
+import re.vianneyfaiv.persephone.domain.PropertyItem;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.fragment.PropertiesPopup;
 
 @UIScope
 @SpringView(name=PersephoneViews.PROPERTIES)
@@ -52,9 +53,13 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 		String title = String.format("<h2>%s (%s): Properties</h2>", app.get().getName(), app.get().getEnvironment());
 		this.addComponent(new Label(title, ContentMode.HTML));
 
-		// Properties popup
+		// Properties grid
 		Environment env = envService.getEnvironment(app.get());
-		this.addComponent(new PropertiesPopup("Show All properties", env.getProperties()));
+		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
+		grid.setColumns("key", "value", "origin");
+		grid.setItems(env.getProperties());
+		grid.sort("key");
+		this.addComponent(grid);
 
 		// Back button
 		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
