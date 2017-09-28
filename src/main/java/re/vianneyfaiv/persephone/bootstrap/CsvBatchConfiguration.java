@@ -93,7 +93,7 @@ public class CsvBatchConfiguration {
 
 	@Bean
 	public ItemWriter<Application> writer() {
-		return items -> this.applicationService.setApplications((List<Application>) items);
+		return items -> this.applicationService.addApplications((List<Application>) items);
 	}
 
 	@Bean

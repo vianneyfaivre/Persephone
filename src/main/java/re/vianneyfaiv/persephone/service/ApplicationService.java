@@ -20,7 +20,7 @@ public class ApplicationService {
 		return this.applications.stream().filter(app -> app.getId() == appId).findFirst();
 	}
 
-	public void setApplications(List<Application> apps) {
-		this.applications = apps;
-	}
+	public void addApplications(List<Application> apps) {
+        this.applications.addAll(apps);
+    }
 }
