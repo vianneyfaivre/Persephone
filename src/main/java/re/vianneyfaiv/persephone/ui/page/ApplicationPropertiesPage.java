@@ -53,6 +53,9 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 		String title = String.format("<h2>%s (%s): Properties</h2>", app.get().getName(), app.get().getEnvironment());
 		this.addComponent(new Label(title, ContentMode.HTML));
 
+		// Back button
+		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
+
 		// Properties grid
 		Environment env = envService.getEnvironment(app.get());
 		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
@@ -60,9 +63,6 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 		grid.setItems(env.getProperties());
 		grid.sort("key");
 		this.addComponent(grid);
-
-		// Back button
-		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
 	}
 
 }
