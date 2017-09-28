@@ -13,6 +13,7 @@ import com.vaadin.ui.VerticalLayout;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
+import re.vianneyfaiv.persephone.ui.PersephoneViews;
 
 /**
  * Panel that displays overview of an application
@@ -32,7 +33,9 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Label(String.format("Uptime : %s", metrics.getHumanReadableUptime())));
 
-		this.addComponent(new Button("Properties", e -> getUI().getNavigator().navigateTo("properties/"+app.getId())));
+		this.addComponent(new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId())));
+
+		this.addComponent(new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId())));
 	}
 
 	@Override
