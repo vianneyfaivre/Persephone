@@ -6,7 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Metrics;
-import re.vianneyfaiv.persephone.exception.PersephoneServiceException;
+import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 
 /**
  * Calls /metrics
@@ -16,7 +16,7 @@ public class MetricsService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	public Metrics getMetrics(Application app) throws PersephoneServiceException {
+	public Metrics getMetrics(Application app) throws PersephoneTechnicalException {
 
 		String url = String.format("%s/%s", app.getUrl(), "metrics");
 
@@ -25,7 +25,7 @@ public class MetricsService {
 
 			return metrics;
 		} catch(RestClientException e) {
-			throw new PersephoneServiceException(app, e.getMessage());
+			throw new PersephoneTechnicalException(app, e.getMessage());
 		}
 	}
 }

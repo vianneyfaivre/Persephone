@@ -22,7 +22,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.exception.PersephoneServiceException;
+import re.vianneyfaiv.persephone.exception.PersephoneException;
+import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -72,7 +73,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 				try (InputStream logsStream = logsService.downloadLogs(app.get()).getInputStream()) {
 					return logsStream;
 				} catch (IOException ex) {
-					throw new PersephoneServiceException(app.get(), String.format("Unable to get logs file: %s", ex.getMessage()));
+					throw new PersephoneTechnicalException(app.get(), String.format("Unable to get logs file: %s", ex.getMessage()));
 				}
 			}, "logs.txt");
 
@@ -85,8 +86,12 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
 
 		// Get logs
-		String logs = logsService.getLogs(app.get());
-		System.out.println("logs : "+logs.length());
+		String logs;
+		try {
+			logs = logsService.getLogs(app.get());
+		} catch (PersephoneException e1) {
+			logs = String.format("Endpoint %s/logfile is not available", app.get().getUrl());
+		}
 		this.addComponent(new Label(logs, ContentMode.PREFORMATTED));
 	}
 

@@ -20,9 +20,12 @@ public class UIErrorHandler extends DefaultErrorHandler {
 		// Loop through the exception stack
 		for (Throwable t = event.getThrowable(); t != null; t = t.getCause()) {
 
-			if(t instanceof PersephoneServiceException) {
+			/*
+			 * Technical runtime exceptions
+			 */
+			if(t instanceof PersephoneTechnicalException) {
 
-				PersephoneServiceException e = (PersephoneServiceException) t;
+				PersephoneTechnicalException e = (PersephoneTechnicalException) t;
 
 				// Display error notification
 				new Notification(
@@ -32,8 +35,23 @@ public class UIErrorHandler extends DefaultErrorHandler {
 					    true)
 					.show(Page.getCurrent());
 			}
+			/*
+			 * Expected exceptions (not handled)
+			 */
+			else if(t instanceof PersephoneException) {
+
+				PersephoneException e = (PersephoneException) t;
+
+				// Display error notification
+				new Notification(
+						"Unhandled error. Application " + e.getApplication().getName(),
+					    e.getMessage(),
+					    Notification.Type.ERROR_MESSAGE,
+					    true)
+					.show(Page.getCurrent());
+			}
 			else {
-				LOGGER.error("Exception class: {} ; Message: {}", t.getClass(), t.getMessage());
+				LOGGER.error("Persephone Error Handler: {} ; Message: {}", t.getClass(), t.getMessage());
 			}
 		}
 	}

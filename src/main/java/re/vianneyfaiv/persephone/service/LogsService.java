@@ -6,7 +6,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.exception.PersephoneServiceException;
+import re.vianneyfaiv.persephone.exception.PersephoneException;
+import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 
 /**
  * Calls /logfile
@@ -16,14 +17,12 @@ public class LogsService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	public String getLogs(Application app) {
-
+	public String getLogs(Application app) throws PersephoneException {
 		String url = String.format("%s/%s", app.getUrl(), "logfile");
-
 		try {
 			return this.restTemplate.getForObject(url, String.class);
 		} catch(RestClientException e) {
-			throw new PersephoneServiceException(app, e.getMessage());
+			throw new PersephoneException(app, e.getMessage());
 		}
 	}
 
@@ -33,7 +32,7 @@ public class LogsService {
 		try {
 			return this.restTemplate.getForObject(url, ByteArrayResource.class);
 		} catch(RestClientException e) {
-			throw new PersephoneServiceException(app, e.getMessage());
+			throw new PersephoneTechnicalException(app, e.getMessage());
 		}
 	}
 }
