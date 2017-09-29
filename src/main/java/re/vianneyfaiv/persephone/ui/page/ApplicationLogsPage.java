@@ -86,14 +86,28 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
 
 		// Get logs
+		String logs = getLogs(app.get());
+
+		Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
+
+		// Refresh logs button
+		Button refreshButton = new Button("Refresh logs", e -> {
+			logsLabel.setValue(getLogs(app.get()));
+		});
+
+		this.addComponent(refreshButton);
+		this.addComponent(logsLabel);
+	}
+
+	private String getLogs(Application app) {
 		String logs;
 		try {
-			logs = logsService.getLogs(app.get(), 5000);
+			logs = logsService.getLogs(app, 5000);
 		} catch (PersephoneException e1) {
-			LOGGER.warn(String.format("Unable to get logs for application id=%s : %s", app.get().getId(), e1.getMessage()));
-			logs = String.format("Endpoint %s/logfile is not available", app.get().getUrl());
+			LOGGER.warn(String.format("Unable to get logs for application id=%s : %s", app.getId(), e1.getMessage()));
+			logs = String.format("Endpoint %s/logfile is not available", app.getUrl());
 		}
-		this.addComponent(new Label(logs, ContentMode.PREFORMATTED));
+		return logs;
 	}
 
 }
