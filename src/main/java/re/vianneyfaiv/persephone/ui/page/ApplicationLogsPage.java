@@ -2,6 +2,7 @@ package re.vianneyfaiv.persephone.ui.page;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -71,23 +72,20 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		String title = String.format("<h2>%s (%s): Logs</h2>", app.get().getName(), app.get().getEnvironment());
 		this.addComponent(new Label(title, ContentMode.HTML));
 
+		// Download logs button : download file
+		StreamResource resource = getLogsStream(app);
+
 		// Download logs button
 		Button downloadButton = new Button("Download full logfile");
 		this.addComponent(downloadButton);
 
+		FileDownloader fileDownloader = new FileDownloader(resource);
+		fileDownloader.setOverrideContentType(false);
+		fileDownloader.extend(downloadButton);
+
 		// Download logs button : on click
 		downloadButton.addClickListener(e -> {
-			StreamResource resource = new StreamResource(() -> {
-				try (InputStream logsStream = logsService.downloadLogs(app.get()).getInputStream()) {
-					return logsStream;
-				} catch (IOException ex) {
-					throw new PersephoneTechnicalException(app.get(), String.format("Unable to get logs file: %s", ex.getMessage()));
-				}
-			}, "logs.txt");
-
-			FileDownloader fileDownloader = new FileDownloader(resource);
-			fileDownloader.setOverrideContentType(false);
-			fileDownloader.extend(downloadButton);
+			fileDownloader.setFileDownloadResource(getLogsStream(app));
 		});
 
 		// Back button
@@ -105,6 +103,17 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		JavaScript.getCurrent().execute(String.format("setInterval(function(){refreshLogs();},%s);", refreshTimeout * 1000));
 
 		this.addComponent(logsLabel);
+	}
+
+	private StreamResource getLogsStream(Optional<Application> app) {
+		StreamResource resource = new StreamResource(() -> {
+			try (InputStream logsStream = logsService.downloadLogs(app.get()).getInputStream()) {
+				return logsStream;
+			} catch (IOException ex) {
+				throw new PersephoneTechnicalException(app.get(), String.format("Unable to get logs file: %s", ex.getMessage()));
+			}
+		}, String.format("logs-%s.txt", (new Date()).getTime()));
+		return resource;
 	}
 
 	private String getLogs(Application app) {
