@@ -37,9 +37,9 @@ import re.vianneyfaiv.persephone.service.HealthService;
  */
 @Configuration
 @EnableBatchProcessing
-public class CsvBatchConfiguration {
+public class BatchReadApplicationsFromCsv {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CsvBatchConfiguration.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BatchReadApplicationsFromCsv.class);
 
 	@Value("${persephone.applications.csv}")
 	private String csvPath;
@@ -113,10 +113,10 @@ public class CsvBatchConfiguration {
 						 */
 						@Override
 						public void afterJob(JobExecution jobExecution) {
-							CsvBatchConfiguration.this.applicationService
+							BatchReadApplicationsFromCsv.this.applicationService
 									.findAll()
 									.stream()
-									.forEach(app -> app.setUp(CsvBatchConfiguration.this.healthService.isUp(app)));
+									.forEach(app -> app.setUp(BatchReadApplicationsFromCsv.this.healthService.isUp(app)));
 						}
 					})
 					.build();
