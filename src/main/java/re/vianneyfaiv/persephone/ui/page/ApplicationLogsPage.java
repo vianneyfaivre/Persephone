@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -18,6 +19,7 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -39,6 +41,12 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 
 	@Autowired
 	private LogsService logsService;
+
+	@Value("${persephone.logs.refresh-every-x-seconds}")
+	private int refreshTimeout;
+
+	@Value("${persephone.logs.bytes-to-retrieve}")
+	private long bytesToRetrieve;
 
 	@PostConstruct
 	public void init() {
@@ -88,21 +96,21 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		// Get logs
 		String logs = getLogs(app.get());
 
+		// Display logs as plain text
 		Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
 
-		// Refresh logs button
-		Button refreshButton = new Button("Refresh logs", e -> {
-			logsLabel.setValue(getLogs(app.get()));
-		});
+		// Refresh logs every "refreshTimeout" seconds
+		this.addComponent(new Label(String.format("Auto-refresh every %s seconds", refreshTimeout)));
+		JavaScript.getCurrent().addFunction("refreshLogs", (args) -> logsLabel.setValue(getLogs(app.get())));
+		JavaScript.getCurrent().execute(String.format("setInterval(function(){refreshLogs();},%s);", refreshTimeout * 1000));
 
-		this.addComponent(refreshButton);
 		this.addComponent(logsLabel);
 	}
 
 	private String getLogs(Application app) {
 		String logs;
 		try {
-			logs = logsService.getLogs(app, 5000);
+			logs = logsService.getLogs(app, bytesToRetrieve);
 		} catch (PersephoneException e1) {
 			LOGGER.warn(String.format("Unable to get logs for application id=%s : %s", app.getId(), e1.getMessage()));
 			logs = String.format("Endpoint %s/logfile is not available", app.getUrl());
