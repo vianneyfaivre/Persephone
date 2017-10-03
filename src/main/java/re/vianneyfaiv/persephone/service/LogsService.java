@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
@@ -24,7 +25,8 @@ public class LogsService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LogsService.class);
 
-	private RestTemplate restTemplate = new RestTemplate();
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public String getLogs(Application app, long bytesToRetrieve) throws PersephoneException {
 		try {

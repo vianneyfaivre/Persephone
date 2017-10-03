@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +15,8 @@ import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 @Service
 public class MetricsService {
 
-	private RestTemplate restTemplate = new RestTemplate();
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public Metrics getMetrics(Application app) throws PersephoneTechnicalException {
 

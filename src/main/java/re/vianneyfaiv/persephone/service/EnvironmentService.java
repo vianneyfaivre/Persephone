@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -25,7 +26,8 @@ import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 @Service
 public class EnvironmentService {
 
-	private RestTemplate restTemplate = new RestTemplate();
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public Environment getEnvironment(Application app) throws PersephoneTechnicalException {
 
