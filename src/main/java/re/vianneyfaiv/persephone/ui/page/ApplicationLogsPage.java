@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
@@ -21,6 +22,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -101,17 +103,32 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 			// Get logs
 			String logs = getLogs(app.get());
 
-			// Display logs as plain text
 			Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
 			logsLabel.setStyleName("app-logs");
 
-			// Refresh logs every "refreshTimeout" seconds
-			this.addComponent(new Label(String.format("Auto-refresh every %s seconds (last %s chars).", refreshTimeout, bytesToRetrieve)));
-			JavaScript.getCurrent().addFunction("refreshLogs", (args) -> logsLabel.setValue(getLogs(app.get())));
-			JavaScript.getCurrent().execute(String.format("setInterval(function(){refreshLogs();},%s);", refreshTimeout * 1000));
+			ajaxRefreshInit((args) -> logsLabel.setValue(getLogs(app.get())));
 
+			this.addComponent(new Label(String.format("Auto-refresh every %s seconds (last %s chars).", refreshTimeout, bytesToRetrieve)));
 			this.addComponent(logsLabel);
 		}
+	}
+
+	@Override
+	public void beforeLeave(ViewBeforeLeaveEvent event) {
+		ajaxRefreshDestroy();
+		View.super.beforeLeave(event);
+	}
+
+	private void ajaxRefreshInit(JavaScriptFunction intervalFn) {
+		JavaScript.getCurrent().addFunction("Persephone.logs.refreshLogs", intervalFn);
+
+		String js = String.format("Persephone.logs.refreshLogsInterval = setInterval(Persephone.logs.refreshLogs, %s);", refreshTimeout * 1000);
+		JavaScript.getCurrent().execute(js);
+	}
+
+	private void ajaxRefreshDestroy() {
+		JavaScript.getCurrent().execute("clearInterval(Persephone.logs.refreshLogsInterval)");
+		JavaScript.getCurrent().removeFunction("Persephone.logs.refreshLogs");
 	}
 
 	private Button getDownloadButton(Application app) {
@@ -120,7 +137,6 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 
 		// Download logs button
 		Button downloadButton = new Button("Download full logfile");
-		this.addComponent(downloadButton);
 
 		FileDownloader fileDownloader = new FileDownloader(resource);
 		fileDownloader.setOverrideContentType(false);
