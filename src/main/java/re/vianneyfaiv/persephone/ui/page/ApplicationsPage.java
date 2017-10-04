@@ -10,12 +10,14 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
+import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
@@ -35,6 +37,9 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	private ApplicationService appService;
 
 	@Autowired
+	private HealthService healthService;
+
+	@Autowired
 	private EnvironmentService envService;
 
 	@Autowired
@@ -45,17 +50,33 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@PostConstruct
 	public void init() {
+
 		this.grid = new Grid<>(Application.class);
+
+		this.grid.setColumns("name", "environment", "url");
+		this.grid.setItems(this.appService.findAll());
+
+		this.grid.setStyleGenerator(app -> {
+			app.setUp(this.healthService.isUp(app));
+			return app.isUp() ? null : "app-down";
+		});
+
+		this.grid.addItemClickListener(applicationOnClick());
 
 		this.grid.setCaption("<h2>Applications</h2>");
 		this.grid.setCaptionAsHtml(true);
-		this.grid.setItems(this.appService.findAll());
-		this.grid.setColumns("name", "environment", "url");
-		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
 		this.grid.setSizeFull();
 
-		// Application.onClick => display details
-		this.grid.addItemClickListener(e -> {
+		this.addComponent(this.grid);
+		this.setSizeFull();
+	}
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+	}
+
+	private ItemClickListener<Application> applicationOnClick() {
+		return e -> {
 
 			// Remove previous panel
 			if(details!=null) {
@@ -70,13 +91,6 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 			// Add overview panel to page
 			this.details = new ApplicationOverviewPanel(app, env, metrics);
 			this.addComponent(this.details);
-		});
-
-		this.addComponent(this.grid);
-		this.setSizeFull();
-	}
-
-	@Override
-	public void enter(ViewChangeEvent event) {
+		};
 	}
 }
