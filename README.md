@@ -32,6 +32,12 @@ Persephone,dev,http://devmachine:9191
 
 Set the property 'persephone.applications.csv' with the path to the CSV file. 
 
-## Run
+## Getting started
+
+On Windows:
+
+`mvn.cmd spring-boot:run -Dpersephone.applications.csv=C:/path/to/applications.csv`
+
+On Unix/Linux:
 
 `mvn spring-boot:run -Dpersephone.applications.csv=/path/to/applications.csv`
