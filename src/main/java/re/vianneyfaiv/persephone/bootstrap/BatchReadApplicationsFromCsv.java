@@ -58,7 +58,7 @@ public class BatchReadApplicationsFromCsv {
 
 	@Bean
 	public FlatFileItemReader<Application> reader() {
-		FlatFileItemReader<Application> reader = new FlatFileItemReader<Application>();
+		FlatFileItemReader<Application> reader = new FlatFileItemReader<>();
 
 		LOGGER.info("Reading applications from file {}", this.csvPath);
 
@@ -113,6 +113,9 @@ public class BatchReadApplicationsFromCsv {
 						 */
 						@Override
 						public void afterJob(JobExecution jobExecution) {
+
+							LOGGER.debug("Applications have been loaded. Now checking if they are up");
+
 							BatchReadApplicationsFromCsv.this.applicationService
 									.findAll()
 									.stream()
