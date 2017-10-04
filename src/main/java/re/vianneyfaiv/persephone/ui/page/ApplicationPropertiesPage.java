@@ -48,18 +48,16 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 			// TODO throw exception
 		}
 
-		// Title
-		this.addComponent(new PageTitle(app.get(), "Properties"));
-
-		// Add button bar
-		this.addComponent(new ButtonBar());
-
 		// Properties grid
 		Environment env = envService.getEnvironment(app.get());
 		Grid<PropertyItem> grid = new Grid<>(PropertyItem.class);
 		grid.setColumns("key", "value", "origin");
 		grid.setItems(env.getProperties());
 		grid.sort("key");
+		grid.setSizeFull();
+
+		this.addComponent(new PageTitle(app.get(), "Properties"));
+		this.addComponent(new ButtonBar());
 		this.addComponent(grid);
 	}
 
