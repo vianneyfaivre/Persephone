@@ -28,9 +28,22 @@ public class LogsService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	public boolean endpointAvailable(Application app) {
+
+		String url = getEndpointUrl(app);
+
+		try {
+			this.restTemplate.headForHeaders(new URI(url));
+			return true;
+		} catch (RestClientException | URISyntaxException e) {
+			LOGGER.warn("Application {} endpoint {} not reachable: {}", app.getId(), url, e.getMessage());
+			return false;
+		}
+	}
+
 	public String getLogs(Application app, long bytesToRetrieve) throws PersephoneException {
 		try {
-			String url = String.format("%s/%s", app.getUrl(), "logfile");
+			String url = getEndpointUrl(app);
 			RequestEntity.HeadersBuilder request = RequestEntity.get(new URI(url));
 
 			// get Range header value
@@ -51,8 +64,13 @@ public class LogsService {
 		}
 	}
 
-	public ByteArrayResource downloadLogs(Application app) {
+	private String getEndpointUrl(Application app) {
 		String url = String.format("%s/%s", app.getUrl(), "logfile");
+		return url;
+	}
+
+	public ByteArrayResource downloadLogs(Application app) {
+		String url = getEndpointUrl(app);
 		try {
 			return this.restTemplate.getForObject(url, ByteArrayResource.class);
 		} catch(RestClientException e) {

@@ -73,6 +73,47 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		// Title
 		this.addComponent(new PageTitle(app.get(), "Logs"));
 
+		// Add button bar
+		Button downloadButton = getDownloadButton(app.get());
+		this.addComponent(new ButtonBar(downloadButton));
+
+		boolean endpointAvailable = this.logsService.endpointAvailable(app.get());
+
+		/*
+		 * Logs not available
+		 */
+		if(!endpointAvailable) {
+			String noLogsText = new StringBuilder()
+									.append(String.format("Endpoint %s/logfile is not available", app.get().getUrl()))
+									.append("\n")
+									.append("Verify that the values of properties 'logging.path' and/or 'logging.file' are correctly set")
+									// TODO : display the values of properties logging.path and logging.file
+									.toString();
+
+
+			Label noLogsLabel = new Label(noLogsText, ContentMode.PREFORMATTED);
+			this.addComponent(noLogsLabel);
+		}
+		/*
+		 * Logs available
+		 */
+		else {
+			// Get logs
+			String logs = getLogs(app.get());
+
+			// Display logs as plain text
+			Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
+
+			// Refresh logs every "refreshTimeout" seconds
+			this.addComponent(new Label(String.format("Auto-refresh every %s seconds", refreshTimeout)));
+			JavaScript.getCurrent().addFunction("refreshLogs", (args) -> logsLabel.setValue(getLogs(app.get())));
+			JavaScript.getCurrent().execute(String.format("setInterval(function(){refreshLogs();},%s);", refreshTimeout * 1000));
+
+			this.addComponent(logsLabel);
+		}
+	}
+
+	private Button getDownloadButton(Application app) {
 		// Download logs button : download file
 		StreamResource resource = getLogsStream(app);
 
@@ -88,42 +129,26 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		downloadButton.addClickListener(e -> {
 			fileDownloader.setFileDownloadResource(getLogsStream(app));
 		});
-
-		// Add button bar
-		this.addComponent(new ButtonBar(downloadButton));
-
-		// Get logs
-		String logs = getLogs(app.get());
-
-		// Display logs as plain text
-		Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
-
-		// Refresh logs every "refreshTimeout" seconds
-		this.addComponent(new Label(String.format("Auto-refresh every %s seconds", refreshTimeout)));
-		JavaScript.getCurrent().addFunction("refreshLogs", (args) -> logsLabel.setValue(getLogs(app.get())));
-		JavaScript.getCurrent().execute(String.format("setInterval(function(){refreshLogs();},%s);", refreshTimeout * 1000));
-
-		this.addComponent(logsLabel);
+		return downloadButton;
 	}
 
-	private StreamResource getLogsStream(Optional<Application> app) {
+	private StreamResource getLogsStream(Application app) {
 		StreamResource resource = new StreamResource(() -> {
-			try (InputStream logsStream = logsService.downloadLogs(app.get()).getInputStream()) {
+			try (InputStream logsStream = logsService.downloadLogs(app).getInputStream()) {
 				return logsStream;
 			} catch (IOException ex) {
-				throw new PersephoneTechnicalException(app.get(), String.format("Unable to get logs file: %s", ex.getMessage()));
+				throw new PersephoneTechnicalException(app, String.format("Unable to get logs file: %s", ex.getMessage()));
 			}
 		}, String.format("logs-%s.txt", (new Date()).getTime()));
 		return resource;
 	}
 
 	private String getLogs(Application app) {
-		String logs;
+		String logs = "";
 		try {
 			logs = logsService.getLogs(app, bytesToRetrieve);
 		} catch (PersephoneException e1) {
 			LOGGER.warn(String.format("Unable to get logs for application id=%s : %s", app.getId(), e1.getMessage()));
-			logs = String.format("Endpoint %s/logfile is not available", app.getUrl());
 		}
 		return logs;
 	}
