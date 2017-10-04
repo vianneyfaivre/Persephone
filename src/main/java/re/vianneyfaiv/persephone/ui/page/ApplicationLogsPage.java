@@ -106,7 +106,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 			logsLabel.setStyleName("app-logs");
 
 			// Refresh logs every "refreshTimeout" seconds
-			this.addComponent(new Label(String.format("Auto-refresh every %s seconds", refreshTimeout)));
+			this.addComponent(new Label(String.format("Auto-refresh every %s seconds (last %s chars).", refreshTimeout, bytesToRetrieve)));
 			JavaScript.getCurrent().addFunction("refreshLogs", (args) -> logsLabel.setValue(getLogs(app.get())));
 			JavaScript.getCurrent().execute(String.format("setInterval(function(){refreshLogs();},%s);", refreshTimeout * 1000));
 
