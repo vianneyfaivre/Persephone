@@ -31,6 +31,7 @@ import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ButtonBar;
+import re.vianneyfaiv.persephone.ui.fragment.PageTitle;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)
@@ -70,8 +71,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		}
 
 		// Title
-		String title = String.format("<h2>%s (%s): Logs</h2>", app.get().getName(), app.get().getEnvironment());
-		this.addComponent(new Label(title, ContentMode.HTML));
+		this.addComponent(new PageTitle(app.get(), "Logs"));
 
 		// Download logs button : download file
 		StreamResource resource = getLogsStream(app);
