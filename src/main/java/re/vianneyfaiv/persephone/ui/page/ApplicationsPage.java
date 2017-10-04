@@ -45,15 +45,14 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@PostConstruct
 	public void init() {
-
 		this.grid = new Grid<>(Application.class);
-		this.addComponent(this.grid);
 
 		this.grid.setCaption("<h2>Applications</h2>");
 		this.grid.setCaptionAsHtml(true);
 		this.grid.setItems(this.appService.findAll());
 		this.grid.setColumns("name", "environment", "url");
 		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
+		this.grid.setSizeFull();
 
 		// Application.onClick => display details
 		this.grid.addItemClickListener(e -> {
@@ -72,6 +71,9 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 			this.details = new ApplicationOverviewPanel(app, env, metrics);
 			this.addComponent(this.details);
 		});
+
+		this.addComponent(this.grid);
+		this.setSizeFull();
 	}
 
 	@Override
