@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.ui.fragment;
+package re.vianneyfaiv.persephone.ui.component;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;

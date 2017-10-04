@@ -30,8 +30,8 @@ import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.fragment.ButtonBar;
-import re.vianneyfaiv.persephone.ui.fragment.PageTitle;
+import re.vianneyfaiv.persephone.ui.component.ButtonBar;
+import re.vianneyfaiv.persephone.ui.component.PageTitle;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)

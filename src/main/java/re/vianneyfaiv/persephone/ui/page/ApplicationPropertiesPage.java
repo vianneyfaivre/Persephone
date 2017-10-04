@@ -19,8 +19,8 @@ import re.vianneyfaiv.persephone.domain.PropertyItem;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.fragment.ButtonBar;
-import re.vianneyfaiv.persephone.ui.fragment.PageTitle;
+import re.vianneyfaiv.persephone.ui.component.ButtonBar;
+import re.vianneyfaiv.persephone.ui.component.PageTitle;
 
 @UIScope
 @SpringView(name=PersephoneViews.PROPERTIES)
