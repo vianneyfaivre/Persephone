@@ -103,6 +103,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 
 			// Display logs as plain text
 			Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
+			logsLabel.setStyleName("app-logs");
 
 			// Refresh logs every "refreshTimeout" seconds
 			this.addComponent(new Label(String.format("Auto-refresh every %s seconds", refreshTimeout)));
