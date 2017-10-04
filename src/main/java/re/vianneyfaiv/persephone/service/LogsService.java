@@ -49,7 +49,9 @@ public class LogsService {
 			// get Range header value
 			HttpHeaders responseHeaders = this.restTemplate.headForHeaders(new URI(url));
 			long endRange = responseHeaders.getContentLength();
+
 			long startRange = endRange - bytesToRetrieve;
+			startRange = startRange <= 0 ? 0 : startRange;
 
 			if(endRange > startRange) {
 				String range = responseHeaders.get(HttpHeaders.ACCEPT_RANGES).get(0)+"="+startRange+"-"+endRange;
