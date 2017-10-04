@@ -50,8 +50,8 @@ Set the property `persephone.applications.csv` with the path to the CSV file.
 
 On Windows:
 
-`mvn.cmd spring-boot:run -Dpersephone.applications.csv=C:/path/to/applications.csv`
+`mvnw.cmd spring-boot:run -Dpersephone.applications.csv=C:/path/to/applications.csv`
 
 On Unix/Linux:
 
-`mvn spring-boot:run -Dpersephone.applications.csv=/path/to/applications.csv`
+`mvnw spring-boot:run -Dpersephone.applications.csv=/path/to/applications.csv`
