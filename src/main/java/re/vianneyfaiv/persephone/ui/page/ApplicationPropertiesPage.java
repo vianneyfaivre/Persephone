@@ -11,7 +11,6 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -22,6 +21,7 @@ import re.vianneyfaiv.persephone.domain.PropertyItem;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
+import re.vianneyfaiv.persephone.ui.fragment.ButtonBar;
 
 @UIScope
 @SpringView(name=PersephoneViews.PROPERTIES)
@@ -53,8 +53,8 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 		String title = String.format("<h2>%s (%s): Properties</h2>", app.get().getName(), app.get().getEnvironment());
 		this.addComponent(new Label(title, ContentMode.HTML));
 
-		// Back button
-		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
+		// Add button bar
+		this.addComponent(new ButtonBar());
 
 		// Properties grid
 		Environment env = envService.getEnvironment(app.get());

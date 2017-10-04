@@ -30,6 +30,7 @@ import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
+import re.vianneyfaiv.persephone.ui.fragment.ButtonBar;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)
@@ -88,8 +89,8 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 			fileDownloader.setFileDownloadResource(getLogsStream(app));
 		});
 
-		// Back button
-		this.addComponent(new Button("Back to applications list", e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS)));
+		// Add button bar
+		this.addComponent(new ButtonBar(downloadButton));
 
 		// Get logs
 		String logs = getLogs(app.get());
