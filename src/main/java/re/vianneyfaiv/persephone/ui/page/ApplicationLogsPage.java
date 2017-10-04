@@ -140,7 +140,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 			} catch (IOException ex) {
 				throw new PersephoneTechnicalException(app, String.format("Unable to get logs file: %s", ex.getMessage()));
 			}
-		}, String.format("logs-%s.txt", (new Date()).getTime()));
+		}, String.format("logs-%s-%s-%s.txt", app.getName(), app.getEnvironment(), (new Date()).getTime()));
 		return resource;
 	}
 
