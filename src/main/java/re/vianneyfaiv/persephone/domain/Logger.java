@@ -5,6 +5,14 @@ public class Logger {
 	private String configuredLevel;
 	private String effectiveLevel;
 
+	public Logger() {
+	}
+
+	public Logger(String configuredLevel, String effectiveLevel) {
+		this.configuredLevel = configuredLevel;
+		this.effectiveLevel = effectiveLevel;
+	}
+
 	public String getConfiguredLevel() {
 		return configuredLevel;
 	}

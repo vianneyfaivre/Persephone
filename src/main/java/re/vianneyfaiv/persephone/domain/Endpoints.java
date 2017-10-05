@@ -39,4 +39,8 @@ public class Endpoints {
 	public String loggers() {
 		return this.baseUrl + "/loggers";
 	}
+
+	public String loggers(String logger) {
+		return this.baseUrl + "/loggers/" + logger;
+	}
 }

@@ -28,4 +28,14 @@ public class LoggersService {
 
 		return this.restTemplate.getForObject(url, Loggers.class);
 	}
+
+	public void changeLevel(Application app, String loggerName, String newLevel) {
+
+		String url = app.endpoints().loggers(loggerName);
+		re.vianneyfaiv.persephone.domain.Logger body = new re.vianneyfaiv.persephone.domain.Logger(newLevel, null);
+
+		LOGGER.debug("POST {} with {}", url, newLevel);
+
+		this.restTemplate.postForEntity(url, body, String.class);
+	}
 }

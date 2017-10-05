@@ -15,6 +15,8 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -67,11 +69,24 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		loggersGrid = new Grid<>(LoggerGridRow.class);
 
 		loggersGrid.removeAllColumns();
-		loggersGrid.addColumn(LoggerGridRow::getName).setCaption("Name");
-		loggersGrid.addColumn(LoggerGridRow::getLevel).setCaption("Level");
 
-		loggersGrid.setSizeFull();
+		loggersGrid.addColumn(LoggerGridRow::getName).setCaption("Name");
+		loggersGrid.addComponentColumn(logger -> {
+			NativeSelect<String> levels = new NativeSelect<>(null, loggers.getLevels());
+
+			levels.setSelectedItem(logger.getLevel());
+
+			levels.addValueChangeListener(value -> {
+				loggersService.changeLevel(app.get(), logger.getName(), value.getValue());
+			});
+
+			return levels;
+		}).setCaption("Level");
+
 		loggersGrid.setItems(loggersRows);
+
+		loggersGrid.setRowHeight(40);
+		loggersGrid.setSizeFull();
 
 		// Filter grid by logger name
 		TextField filterInput = new TextField();
@@ -80,6 +95,7 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
 		this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
+		this.addComponent(new Label("Changing a level will update one/many logger(s) level(s)"));
 		this.addComponent(loggersGrid);
 	}
 
