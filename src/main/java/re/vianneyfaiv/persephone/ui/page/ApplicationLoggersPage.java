@@ -67,12 +67,13 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 
 		loggersGrid.addColumn(LoggerGridRow::getName).setCaption("Name");
 		loggersGrid.addComponentColumn(logger -> {
-			NativeSelect<String> levels = new NativeSelect<>(null, loggers.getLevels());
+			NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.getLevels());
 
-			levels.setSelectedItem(logger.getLevel());
+			levelsDropdown.setEmptySelectionAllowed(false);
+			levelsDropdown.setSelectedItem(logger.getLevel());
 
 			// on selected level
-			levels.addValueChangeListener(value -> {
+			levelsDropdown.addValueChangeListener(value -> {
 
 				// change logger level
 				loggersService.changeLevel(app.get(), logger.getName(), value.getValue());
@@ -81,7 +82,7 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 				updateLoggers(app.get());
 			});
 
-			return levels;
+			return levelsDropdown;
 		}).setCaption("Level");
 		loggersGrid.setRowHeight(40);
 
