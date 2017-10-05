@@ -84,7 +84,7 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 			this.propertiesGrid.setItems(
 				this.currentEnv.getProperties()
 					.stream()
-					.filter(p -> p.getKey().contains(filterByPropKey))
+					.filter(p -> p.getKey().toLowerCase().contains(filterByPropKey.toLowerCase()))
 			);
 		}
 	}
