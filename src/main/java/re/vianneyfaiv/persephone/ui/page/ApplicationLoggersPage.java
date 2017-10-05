@@ -1,6 +1,8 @@
 package re.vianneyfaiv.persephone.ui.page;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -10,7 +12,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -19,6 +21,7 @@ import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.ButtonBar;
+import re.vianneyfaiv.persephone.ui.component.LoggerGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageTitle;
 
 @UIScope
@@ -46,13 +49,26 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 			// TODO throw exception
 		}
 
-		this.addComponent(new PageTitle(app.get(), "Loggers"));
-		this.addComponent(new ButtonBar());
-
+		// Get loggers config
 		Loggers loggers = loggersService.getLoggers(app.get());
 
-		loggers.getLoggers().entrySet().stream()
-				.forEach(l -> this.addComponent(new Label(l.toString())));
-	}
+		// Convert loggers to grid rows
+		List<LoggerGridRow> gridRows =
+				loggers.getLoggers()
+				.entrySet().stream()
+				.map(LoggerGridRow::new)
+				.collect(Collectors.toList());
 
+		// Display loggers in a grid
+		Grid<LoggerGridRow> loggersGrid = new Grid<>(LoggerGridRow.class);
+		loggersGrid.setColumns("name", "level");
+		loggersGrid.sort("name");
+		loggersGrid.setSizeFull();
+		loggersGrid.setItems(gridRows);
+
+		this.addComponent(new PageTitle(app.get(), "Loggers"));
+		this.addComponent(new ButtonBar());
+		this.addComponent(loggersGrid);
+	}
 }
+
