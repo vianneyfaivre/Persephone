@@ -50,11 +50,6 @@ public class EnvironmentService {
 
             Iterator<Entry<String, JsonNode>> iterator = rootNode.fields();
 
-            // Get Spring Profiles
-            for(JsonNode profile : iterator.next().getValue()) {
-            	profiles.add(profile.asText());
-            }
-
             // Get properties
             while(iterator.hasNext()) {
             	Entry<String, JsonNode> current = iterator.next();
@@ -67,7 +62,7 @@ public class EnvironmentService {
 					);
             }
 
-			return new Environment(profiles, properties);
+			return new Environment(properties);
 		} catch(RestClientException | IOException e) {
 			throw new PersephoneTechnicalException(app, e.getMessage());
 		}

@@ -25,7 +25,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
 
-		this.addComponent(new Label("Spring Profiles:" + env.getProfiles().toString()));
+		this.addComponent(new Label("Spring Profiles:" + env.getPropertiesMap().get("spring.profiles.active")));
 
 		this.addComponent(new Label(String.format("Free mem : %s KB (%s %%)", metrics.getMemFree(), metrics.getMemFreePercentage())));
 

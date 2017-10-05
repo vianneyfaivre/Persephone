@@ -6,16 +6,10 @@ import java.util.stream.Collectors;
 
 public class Environment {
 
-	private List<String> profiles;
 	private List<PropertyItem> properties;
 
-	public Environment(List<String> profiles, List<PropertyItem> properties) {
-		this.profiles = profiles;
+	public Environment(List<PropertyItem> properties) {
 		this.properties = properties;
-	}
-
-	public List<String> getProfiles() {
-		return this.profiles;
 	}
 
 	public List<PropertyItem> getProperties() {
