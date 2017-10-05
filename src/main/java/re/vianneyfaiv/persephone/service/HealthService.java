@@ -20,7 +20,7 @@ public class HealthService {
 	public boolean isUp(Application app) {
 		boolean up;
 
-		String url = String.format("%s/%s", app.getUrl(), "health");
+		String url = app.endpoints().health();
 
 		try {
 			Health health = this.restTemplate.getForObject(url, Health.class);

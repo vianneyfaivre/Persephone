@@ -20,7 +20,7 @@ public class MetricsService {
 
 	public Metrics getMetrics(Application app) throws PersephoneTechnicalException {
 
-		String url = String.format("%s/%s", app.getUrl(), "metrics");
+		String url = app.endpoints().metrics();
 
 		try {
 			Metrics metrics = this.restTemplate.getForObject(url, Metrics.class);

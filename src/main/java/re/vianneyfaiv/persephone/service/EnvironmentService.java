@@ -31,7 +31,7 @@ public class EnvironmentService {
 
 	public Environment getEnvironment(Application app) throws PersephoneTechnicalException {
 
-		String url = String.format("%s/%s", app.getUrl(), "env");
+		String url = app.endpoints().env();
 
 		try {
 			String json = this.restTemplate.getForEntity(url, String.class).getBody();

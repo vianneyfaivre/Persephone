@@ -7,12 +7,14 @@ public class Application {
 	private String environment;
 	private String url;
 	private boolean up;
+	private Endpoints endpoints;
 
 	public Application(int id, String name, String environment, String url) {
 		this.id = id;
 		this.name = name;
 		this.environment = environment;
 		this.url = url;
+		this.endpoints = new Endpoints(url);
 	}
 
 	public int getId() {
@@ -39,9 +41,13 @@ public class Application {
 		return this.up;
 	}
 
+	public Endpoints endpoints() {
+		return this.endpoints;
+	}
+
 	@Override
 	public String toString() {
-		return "Application [id=" + this.id + ", name=" + this.name + ", environment=" + this.environment + ", url=" + this.url + ", up="
-				+ this.up + "]";
+		return "Application [id=" + id + ", name=" + name + ", environment=" + environment + ", url=" + url + ", up="
+				+ up + ", endpoints=" + endpoints + "]";
 	}
 }
