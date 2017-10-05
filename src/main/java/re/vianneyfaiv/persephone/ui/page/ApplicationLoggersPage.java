@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -34,6 +37,9 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 	@Autowired
 	private LoggersService loggersService;
 
+	private Grid<LoggerGridRow> loggersGrid;
+	private List<LoggerGridRow> loggersRows;
+
 	@PostConstruct
 	public void init() {
 	}
@@ -53,22 +59,41 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		Loggers loggers = loggersService.getLoggers(app.get());
 
 		// Convert loggers to grid rows
-		List<LoggerGridRow> gridRows =
-				loggers.getLoggers()
-				.entrySet().stream()
-				.map(LoggerGridRow::new)
-				.collect(Collectors.toList());
+		this.loggersRows = loggers.getLoggers()
+								.entrySet().stream()
+								.map(LoggerGridRow::new)
+								.collect(Collectors.toList());
 
 		// Display loggers in a grid
-		Grid<LoggerGridRow> loggersGrid = new Grid<>(LoggerGridRow.class);
+		loggersGrid = new Grid<>(LoggerGridRow.class);
 		loggersGrid.setColumns("name", "level");
 		loggersGrid.sort("name");
 		loggersGrid.setSizeFull();
-		loggersGrid.setItems(gridRows);
+		loggersGrid.setItems(loggersRows);
+
+		// Filter grid by logger name
+		TextField filterInput = new TextField();
+		filterInput.setPlaceholder("filter by logger name...");
+		filterInput.addValueChangeListener(e -> updateLoggers(e.getValue()));
+		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
 		this.addComponent(new PageTitle(app.get(), "Loggers"));
-		this.addComponent(new ButtonBar());
+		this.addComponent(new ButtonBar(filterInput));
 		this.addComponent(loggersGrid);
+	}
+
+	private void updateLoggers(String filterByLoggerName) {
+
+		if(StringUtils.isEmpty(filterByLoggerName)) {
+			this.loggersGrid.setItems(this.loggersRows);
+		}
+		else {
+			this.loggersGrid.setItems(
+				this.loggersRows
+					.stream()
+					.filter(logger -> logger.getName().toLowerCase().contains(filterByLoggerName.toLowerCase()))
+			);
+		}
 	}
 }
 
