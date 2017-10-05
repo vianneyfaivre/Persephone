@@ -34,7 +34,7 @@ public class LoggersService {
 		String url = app.endpoints().loggers(loggerName);
 		re.vianneyfaiv.persephone.domain.Logger body = new re.vianneyfaiv.persephone.domain.Logger(newLevel, null);
 
-		LOGGER.debug("POST {} with {}", url, newLevel);
+		LOGGER.debug("POST {} with configuredLevel={}", url, newLevel);
 
 		this.restTemplate.postForEntity(url, body, String.class);
 	}

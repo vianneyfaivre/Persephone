@@ -40,6 +40,7 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 
 	private Grid<LoggerGridRow> loggersGrid;
 	private List<LoggerGridRow> loggersRows;
+	private TextField filterInput;
 
 	@PostConstruct
 	public void init() {
@@ -57,13 +58,7 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		}
 
 		// Get loggers config
-		Loggers loggers = loggersService.getLoggers(app.get());
-
-		// Convert loggers to grid rows
-		this.loggersRows = loggers.getLoggers()
-								.entrySet().stream()
-								.map(LoggerGridRow::new)
-								.collect(Collectors.toList());
+		Loggers loggers = getLoggers(app.get());
 
 		// Display loggers in a grid
 		loggersGrid = new Grid<>(LoggerGridRow.class);
@@ -76,22 +71,28 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 
 			levels.setSelectedItem(logger.getLevel());
 
+			// on selected level
 			levels.addValueChangeListener(value -> {
+
+				// change logger level
 				loggersService.changeLevel(app.get(), logger.getName(), value.getValue());
+
+				// refresh data in grid (several loggers might have been impacted)
+				updateLoggers(app.get());
 			});
 
 			return levels;
 		}).setCaption("Level");
+		loggersGrid.setRowHeight(40);
 
 		loggersGrid.setItems(loggersRows);
 
-		loggersGrid.setRowHeight(40);
 		loggersGrid.setSizeFull();
 
 		// Filter grid by logger name
-		TextField filterInput = new TextField();
+		filterInput = new TextField();
 		filterInput.setPlaceholder("filter by logger name...");
-		filterInput.addValueChangeListener(e -> updateLoggers(e.getValue()));
+		filterInput.addValueChangeListener(e -> filterLoggers(e.getValue()));
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
 		this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
@@ -99,18 +100,34 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		this.addComponent(loggersGrid);
 	}
 
-	private void updateLoggers(String filterByLoggerName) {
+	private Loggers getLoggers(Application app) {
+		Loggers loggers = loggersService.getLoggers(app);
 
-		if(StringUtils.isEmpty(filterByLoggerName)) {
+		// Convert loggers to grid rows
+		this.loggersRows = loggers.getLoggers()
+								.entrySet().stream()
+								.map(LoggerGridRow::new)
+								.collect(Collectors.toList());
+		return loggers;
+	}
+
+	private void filterLoggers(String filterValue) {
+
+		if(StringUtils.isEmpty(filterValue)) {
 			this.loggersGrid.setItems(this.loggersRows);
 		}
 		else {
 			this.loggersGrid.setItems(
 				this.loggersRows
 					.stream()
-					.filter(logger -> logger.getName().toLowerCase().contains(filterByLoggerName.toLowerCase()))
+					.filter(logger -> logger.getName().toLowerCase().contains(filterValue.toLowerCase()))
 			);
 		}
+	}
+
+	private void updateLoggers(Application app) {
+		this.getLoggers(app);
+		this.filterLoggers(this.filterInput.getValue());
 	}
 }
 
