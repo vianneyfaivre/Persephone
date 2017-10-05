@@ -24,6 +24,8 @@ public class UIErrorHandler extends DefaultErrorHandler {
 			 * Technical runtime exceptions
 			 */
 			if(t instanceof PersephoneTechnicalException) {
+				
+				LOGGER.error("Error handler: PersephoneTechnicalException", t);
 
 				PersephoneTechnicalException e = (PersephoneTechnicalException) t;
 
@@ -34,11 +36,14 @@ public class UIErrorHandler extends DefaultErrorHandler {
 					    Notification.Type.ERROR_MESSAGE,
 					    true)
 					.show(Page.getCurrent());
+				return;
 			}
 			/*
 			 * Expected exceptions (not handled)
 			 */
 			else if(t instanceof PersephoneException) {
+				
+				LOGGER.error("Error handler: PersephoneException", t);
 
 				PersephoneException e = (PersephoneException) t;
 
@@ -49,8 +54,26 @@ public class UIErrorHandler extends DefaultErrorHandler {
 					    Notification.Type.ERROR_MESSAGE,
 					    true)
 					.show(Page.getCurrent());
+
+				return;
 			}
-			else {
+			else if(t instanceof RuntimeException) {
+				
+				LOGGER.error("Error handler: RuntimeException", t);
+				
+				RuntimeException e = (RuntimeException) t;
+
+				// Display error notification
+				new Notification(
+						"Unhandled runtime exception.",
+					    e.getMessage(),
+					    Notification.Type.ERROR_MESSAGE,
+					    true)
+					.show(Page.getCurrent());
+				
+				return;
+			
+			} else {
 				LOGGER.error("Persephone Error Handler: {} ; Message: {}", t.getClass(), t.getMessage());
 			}
 		}
