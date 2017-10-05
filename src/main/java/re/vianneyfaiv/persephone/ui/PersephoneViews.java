@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.ui;
 
+import re.vianneyfaiv.persephone.ui.page.ApplicationEndpointsPage;
 import re.vianneyfaiv.persephone.ui.page.ApplicationLogsPage;
 import re.vianneyfaiv.persephone.ui.page.ApplicationPropertiesPage;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
@@ -19,4 +20,9 @@ public class PersephoneViews {
 	 * {@link ApplicationLogsPage}
 	 */
 	public static final String LOGS = "logs";
+
+	/**
+	 * {@link ApplicationEndpointsPage}
+	 */
+	public static final String ENDPOINTS = "endpoints";
 }
