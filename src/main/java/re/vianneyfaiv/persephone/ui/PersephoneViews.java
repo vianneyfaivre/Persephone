@@ -10,7 +10,7 @@ public class PersephoneViews {
 	/**
 	 * {@link ApplicationsPage}
 	 */
-	public static final String APPLICATIONS = "applications";
+	public static final String APPLICATIONS = "";
 
 	/**
 	 * {@link ApplicationPropertiesPage}
