@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -26,6 +28,8 @@ import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 @Service
 public class EnvironmentService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EnvironmentService.class);
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -34,6 +38,7 @@ public class EnvironmentService {
 		String url = app.endpoints().env();
 
 		try {
+			LOGGER.debug("GET {}", url);
 			String json = this.restTemplate.getForEntity(url, String.class).getBody();
 
 		    ObjectMapper mapper = new ObjectMapper();

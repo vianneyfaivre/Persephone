@@ -34,4 +34,5 @@ public class Endpoints {
 	public String metrics() {
 		return this.baseUrl + "/metrics";
 	}
+
 }

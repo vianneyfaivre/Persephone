@@ -48,6 +48,6 @@ public class Application {
 	@Override
 	public String toString() {
 		return "Application [id=" + id + ", name=" + name + ", environment=" + environment + ", url=" + url + ", up="
-				+ up + ", endpoints=" + endpoints + "]";
+				+ up + "]";
 	}
 }
