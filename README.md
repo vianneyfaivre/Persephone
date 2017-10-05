@@ -8,6 +8,7 @@ For each monitored application:
 * Display some metrics
 * List all application properties
 * Show / download real time logs
+* View / update loggers configuration
 
 ## Pre-requisites : Applications to monitor
 
