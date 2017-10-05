@@ -33,6 +33,7 @@ public class LogsService {
 		String url = app.endpoints().logfile();
 
 		try {
+			LOGGER.debug("HEAD {}", url);
 			this.restTemplate.headForHeaders(new URI(url));
 			return true;
 		} catch (RestClientException | URISyntaxException e) {
@@ -69,6 +70,7 @@ public class LogsService {
 	public ByteArrayResource downloadLogs(Application app) {
 		String url = app.endpoints().logfile();
 		try {
+			LOGGER.debug("GET {}", url);
 			return this.restTemplate.getForObject(url, ByteArrayResource.class);
 		} catch(RestClientException e) {
 			throw new PersephoneTechnicalException(app, e.getMessage());

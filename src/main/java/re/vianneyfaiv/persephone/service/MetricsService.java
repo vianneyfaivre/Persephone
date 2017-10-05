@@ -1,5 +1,7 @@
 package re.vianneyfaiv.persephone.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -15,6 +17,8 @@ import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 @Service
 public class MetricsService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(MetricsService.class);
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -23,6 +27,7 @@ public class MetricsService {
 		String url = app.endpoints().metrics();
 
 		try {
+			LOGGER.debug("GET {}", url);
 			Metrics metrics = this.restTemplate.getForObject(url, Metrics.class);
 
 			return metrics;
