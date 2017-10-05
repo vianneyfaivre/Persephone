@@ -57,7 +57,6 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		this.grid.setItems(this.appService.findAll());
 
 		this.grid.setStyleGenerator(app -> {
-			app.setUp(this.healthService.isUp(app));
 			return app.isUp() ? null : "app-down";
 		});
 
@@ -87,6 +86,9 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 			Application app = e.getItem();
 			Environment env = this.envService.getEnvironment(app);
 			Metrics metrics = this.metricsService.getMetrics(app);
+
+			// No exception has been thrown : app is up and running !
+			app.setUp(true);
 
 			// Add overview panel to page
 			this.details = new ApplicationOverviewPanel(app, env, metrics);

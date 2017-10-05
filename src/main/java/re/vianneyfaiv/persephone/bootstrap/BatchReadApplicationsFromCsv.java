@@ -30,6 +30,7 @@ import org.springframework.core.io.PathResource;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.service.ApplicationService;
+import re.vianneyfaiv.persephone.service.HealthService;
 
 /**
  * Batch ran at startup. Reads {@link Application}s from a CSV file and load them in memory
@@ -51,6 +52,9 @@ public class BatchReadApplicationsFromCsv {
 
 	@Autowired
 	private ApplicationService applicationService;
+
+	@Autowired
+	private HealthService healthService;
 
 	@Bean
 	public FlatFileItemReader<Application> reader() {
@@ -103,8 +107,19 @@ public class BatchReadApplicationsFromCsv {
 						@Override
 						public void beforeJob(JobExecution jobExecution) {
 						}
+
+						/**
+						 * Once the job is over, call /health on each application
+						 */
 						@Override
 						public void afterJob(JobExecution jobExecution) {
+
+							LOGGER.debug("Applications have been loaded. Now checking if they are up");
+
+							BatchReadApplicationsFromCsv.this.applicationService
+									.findAll()
+									.stream()
+									.forEach(app -> app.setUp(BatchReadApplicationsFromCsv.this.healthService.isUp(app)));
 						}
 					})
 					.build();
