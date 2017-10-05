@@ -3,6 +3,7 @@ package re.vianneyfaiv.persephone.ui.page;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -30,6 +31,7 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.exception.PersephoneException;
 import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
+import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.ButtonBar;
@@ -46,6 +48,9 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 
 	@Autowired
 	private LogsService logsService;
+
+	@Autowired
+	private EnvironmentService envService;
 
 	@Value("${persephone.logs.refresh-every-x-seconds}")
 	private int refreshTimeout;
@@ -85,11 +90,21 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		 * Logs not available
 		 */
 		if(!endpointAvailable) {
+
+			Map<String, String> props = this.envService.getEnvironment(app.get()).getPropertiesMap();
+			String loggingPath = props.get("logging.path") == null ? "<PROPERTY NOT SET>" : props.get("logging.path");
+			String loggingFile = props.get("logging.file") == null ? "<PROPERTY NOT SET>" : props.get("logging.file");;
+
 			String noLogsText = new StringBuilder()
-									.append(String.format("Endpoint %s/logfile is not available", app.get().getUrl()))
+									.append(String.format("Endpoint %s is not available", app.get().endpoints().logfile()))
+									.append("\n\n")
+									.append("Spring uses those properties for getting the logs:")
 									.append("\n")
-									.append("Verify that the values of properties 'logging.path' and/or 'logging.file' are correctly set")
-									// TODO : display the values of properties logging.path and logging.file
+									.append(String.format("- logging.path=%s", loggingPath))
+									.append("\n")
+									.append(String.format("- logging.file=%s", loggingFile))
+									.append("\n\n")
+									.append("(at least one of those properties have to be properly set)")
 									.toString();
 
 
@@ -165,7 +180,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		try {
 			logs = logsService.getLogs(app, bytesToRetrieve);
 		} catch (PersephoneException e1) {
-			LOGGER.warn(String.format("Unable to get logs for application id=%s : %s", app.getId(), e1.getMessage()));
+			LOGGER.warn(String.format("Unable to get logs for application with id %s : %s", app.getId(), e1.getMessage()));
 		}
 		return logs;
 	}
