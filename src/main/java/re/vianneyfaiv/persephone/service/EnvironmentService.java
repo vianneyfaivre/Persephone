@@ -62,6 +62,7 @@ public class EnvironmentService {
             	current.getValue()
         			.fields()
         			.forEachRemaining(
+        				// current.getKey ==> origin of the property : system, application.properties, etc
         				p -> properties.add(new PropertyItem(p.getKey(), p.getValue().asText(), current.getKey()))
 					);
             }
