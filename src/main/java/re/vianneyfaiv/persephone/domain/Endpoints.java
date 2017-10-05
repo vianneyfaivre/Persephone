@@ -16,7 +16,8 @@ public class Endpoints {
 				this.env(),
 				this.health(),
 				this.logfile(),
-				this.metrics());
+				this.metrics(),
+				this.loggers());
 	}
 
 	public String env() {
@@ -35,4 +36,7 @@ public class Endpoints {
 		return this.baseUrl + "/metrics";
 	}
 
+	public String loggers() {
+		return this.baseUrl + "/loggers";
+	}
 }
