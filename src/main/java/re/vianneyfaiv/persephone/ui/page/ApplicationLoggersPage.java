@@ -65,8 +65,11 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 
 		// Display loggers in a grid
 		loggersGrid = new Grid<>(LoggerGridRow.class);
-		loggersGrid.setColumns("name", "level");
-		loggersGrid.sort("name");
+
+		loggersGrid.removeAllColumns();
+		loggersGrid.addColumn(LoggerGridRow::getName).setCaption("Name");
+		loggersGrid.addColumn(LoggerGridRow::getLevel).setCaption("Level");
+
 		loggersGrid.setSizeFull();
 		loggersGrid.setItems(loggersRows);
 

@@ -17,7 +17,6 @@ import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
-import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
@@ -37,9 +36,6 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	private ApplicationService appService;
 
 	@Autowired
-	private HealthService healthService;
-
-	@Autowired
 	private EnvironmentService envService;
 
 	@Autowired
@@ -53,7 +49,11 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 		this.grid = new Grid<>(Application.class);
 
-		this.grid.setColumns("name", "environment", "url");
+		this.grid.removeAllColumns();
+		this.grid.addColumn(Application::getName).setCaption("Application");
+		this.grid.addColumn(Application::getEnvironment).setCaption("Environment");
+		this.grid.addColumn(Application::getUrl).setCaption("URL");
+
 		this.grid.setItems(this.appService.findAll());
 
 		this.grid.setStyleGenerator(app -> {

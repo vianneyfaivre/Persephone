@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -58,8 +59,13 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 
 		// Properties grid
 		this.propertiesGrid = new Grid<>(PropertyItem.class);
-		this.propertiesGrid.setColumns("key", "value", "origin");
-		this.propertiesGrid.sort("key");
+
+		this.propertiesGrid.removeAllColumns();
+		this.propertiesGrid.addColumn(PropertyItem::getKey).setCaption("Property")
+							.getSortOrder(SortDirection.ASCENDING);
+		this.propertiesGrid.addColumn(PropertyItem::getValue).setCaption("Value");
+		this.propertiesGrid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
+
 		this.propertiesGrid.setSizeFull();
 
 		// Filter by Property
