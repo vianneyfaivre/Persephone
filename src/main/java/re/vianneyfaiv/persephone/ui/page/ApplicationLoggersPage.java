@@ -23,9 +23,8 @@ import re.vianneyfaiv.persephone.domain.Loggers;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.ButtonBar;
 import re.vianneyfaiv.persephone.ui.component.LoggerGridRow;
-import re.vianneyfaiv.persephone.ui.component.PageTitle;
+import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGGERS)
@@ -77,8 +76,7 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		filterInput.addValueChangeListener(e -> updateLoggers(e.getValue()));
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
-		this.addComponent(new PageTitle(app.get(), "Loggers"));
-		this.addComponent(new ButtonBar(filterInput));
+		this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
 		this.addComponent(loggersGrid);
 	}
 

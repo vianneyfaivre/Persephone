@@ -22,8 +22,7 @@ import re.vianneyfaiv.persephone.domain.PropertyItem;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.ButtonBar;
-import re.vianneyfaiv.persephone.ui.component.PageTitle;
+import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
 @UIScope
 @SpringView(name=PersephoneViews.PROPERTIES)
@@ -69,8 +68,7 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 		filterInput.addValueChangeListener(e -> updateProperties(e.getValue()));
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
-		this.addComponent(new PageTitle(app.get(), "Properties"));
-		this.addComponent(new ButtonBar(filterInput));
+		this.addComponent(new PageHeader(app.get(), "Properties", filterInput));
 		this.addComponent(this.propertiesGrid);
 		this.updateProperties("");
 	}

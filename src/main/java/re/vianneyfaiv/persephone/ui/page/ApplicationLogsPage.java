@@ -34,8 +34,7 @@ import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.ButtonBar;
-import re.vianneyfaiv.persephone.ui.component.PageTitle;
+import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)
@@ -77,12 +76,11 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 			// TODO: throw exception
 		}
 
-		// Title
-		this.addComponent(new PageTitle(app.get(), "Logs"));
-
-		// Add button bar
+		// Download button
 		Button downloadButton = getDownloadButton(app.get());
-		this.addComponent(new ButtonBar(downloadButton));
+
+		// header
+		this.addComponent(new PageHeader(app.get(), "Logs", downloadButton));
 
 		boolean endpointAvailable = this.logsService.endpointAvailable(app.get());
 

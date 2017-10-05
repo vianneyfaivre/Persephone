@@ -20,8 +20,7 @@ import com.vaadin.ui.VerticalLayout;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.ButtonBar;
-import re.vianneyfaiv.persephone.ui.component.PageTitle;
+import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
 @UIScope
 @SpringView(name=PersephoneViews.ENDPOINTS)
@@ -49,11 +48,8 @@ public class ApplicationEndpointsPage extends VerticalLayout implements View {
 			// TODO: throw exception
 		}
 
-		// Title
-		this.addComponent(new PageTitle(app.get(), "Endpoints"));
-
-		// Add button bar
-		this.addComponent(new ButtonBar());
+		// Header
+		this.addComponent(new PageHeader(app.get(), "Endpoints"));
 
 		// Add endpoints links
 		app.get()
