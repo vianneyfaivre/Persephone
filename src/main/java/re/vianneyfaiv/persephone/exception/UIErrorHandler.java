@@ -3,15 +3,17 @@ package re.vianneyfaiv.persephone.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.server.DefaultErrorHandler;
+import com.vaadin.server.ErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 
 /**
- * Overrides default Vaadin error handler.
+ * Handle Persephone exceptions, like when an application endpoint is not available
  */
-public class UIErrorHandler extends DefaultErrorHandler {
+public class UIErrorHandler implements ErrorHandler {
 
+	private static final long serialVersionUID = 7441835079387513134L;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UIErrorHandler.class);
 
 	@Override
@@ -25,7 +27,7 @@ public class UIErrorHandler extends DefaultErrorHandler {
 			 */
 			if(t instanceof ApplicationRuntimeException) {
 				
-				LOGGER.error("Error handler: PersephoneTechnicalException", t);
+				LOGGER.error("Error handler: ApplicationRuntimeException", t);
 
 				ApplicationRuntimeException e = (ApplicationRuntimeException) t;
 
@@ -43,7 +45,7 @@ public class UIErrorHandler extends DefaultErrorHandler {
 			 */
 			else if(t instanceof ApplicationException) {
 				
-				LOGGER.error("Error handler: PersephoneException", t);
+				LOGGER.error("Error handler: ApplicationException", t);
 
 				ApplicationException e = (ApplicationException) t;
 
