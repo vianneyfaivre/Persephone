@@ -2,11 +2,11 @@ package re.vianneyfaiv.persephone.exception;
 
 import re.vianneyfaiv.persephone.domain.Application;
 
-public class PersephoneTechnicalException extends RuntimeException {
+public class ApplicationRuntimeException extends RuntimeException {
 
 	private Application application;
 
-	public PersephoneTechnicalException(Application app, String message) {
+	public ApplicationRuntimeException(Application app, String message) {
 		super(message);
 		this.application = app;
 	}

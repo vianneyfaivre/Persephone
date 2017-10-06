@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.PropertyItem;
-import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 
 /**
  * Calls /env
@@ -33,7 +33,7 @@ public class EnvironmentService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public Environment getEnvironment(Application app) throws PersephoneTechnicalException {
+	public Environment getEnvironment(Application app) throws ApplicationRuntimeException {
 
 		String url = app.endpoints().env();
 
@@ -64,7 +64,7 @@ public class EnvironmentService {
 
 			return new Environment(properties);
 		} catch(RestClientException | IOException e) {
-			throw new PersephoneTechnicalException(app, e.getMessage());
+			throw new ApplicationRuntimeException(app, e.getMessage());
 		}
 	}
 }

@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Loggers;
-import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 
 /**
  * Calls /loggers
@@ -31,7 +31,7 @@ public class LoggersService {
 		try {
 			return this.restTemplate.getForObject(url, Loggers.class);
 		} catch(RestClientException e) {
-			throw new PersephoneTechnicalException(app, String.format("Endpoint %s is not available. This endpoint is available since Spring Boot 1.5", url));
+			throw new ApplicationRuntimeException(app, String.format("Endpoint %s is not available. This endpoint is available since Spring Boot 1.5", url));
 		}
 	}
 

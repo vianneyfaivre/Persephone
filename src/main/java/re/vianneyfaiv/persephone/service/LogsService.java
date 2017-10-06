@@ -14,8 +14,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.exception.PersephoneException;
-import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
+import re.vianneyfaiv.persephone.exception.ApplicationException;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 
 /**
  * Calls /logfile
@@ -42,7 +42,7 @@ public class LogsService {
 		}
 	}
 
-	public String getLogs(Application app, long bytesToRetrieve) throws PersephoneException {
+	public String getLogs(Application app, long bytesToRetrieve) throws ApplicationException {
 		try {
 			String url = app.endpoints().logfile();
 			RequestEntity.HeadersBuilder request = RequestEntity.get(new URI(url));
@@ -63,7 +63,7 @@ public class LogsService {
 			// get logs
 			return this.restTemplate.exchange(request.build(), String.class).getBody();
 		} catch(RestClientException | URISyntaxException e) {
-			throw new PersephoneException(app, e.getMessage());
+			throw new ApplicationException(app, e.getMessage());
 		}
 	}
 
@@ -73,7 +73,7 @@ public class LogsService {
 			LOGGER.debug("GET {}", url);
 			return this.restTemplate.getForObject(url, ByteArrayResource.class);
 		} catch(RestClientException e) {
-			throw new PersephoneTechnicalException(app, e.getMessage());
+			throw new ApplicationRuntimeException(app, e.getMessage());
 		}
 	}
 }
