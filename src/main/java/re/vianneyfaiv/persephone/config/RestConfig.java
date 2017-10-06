@@ -22,7 +22,6 @@ public class RestConfig {
 		SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
 
 		if(!StringUtils.isEmpty(readTimeout)) {
-			System.out.println("allo");
 			rf.setReadTimeout(Integer.valueOf(readTimeout) * 1000);
 		}
 

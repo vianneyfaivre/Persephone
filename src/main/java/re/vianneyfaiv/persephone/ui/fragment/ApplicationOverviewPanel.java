@@ -37,10 +37,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId())));
 
-		this.addComponent(new Button("Loggers config", e -> {
-			System.out.println("lambda "+getUI().getUIId());
-			getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId());
-		}));
+		this.addComponent(new Button("Loggers config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId())));
 
 		this.addComponent(new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId())));
 

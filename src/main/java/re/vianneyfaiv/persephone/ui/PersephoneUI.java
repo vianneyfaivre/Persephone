@@ -34,8 +34,6 @@ public class PersephoneUI extends UI {
 		// Build UI
 		this.setContent(this.appsPage);
 
-		System.out.println("PersephoneUI "+getUI().getUIId());
-		
 		// Error handler
 		UI.getCurrent().setErrorHandler(new UIErrorHandler());
 	}
