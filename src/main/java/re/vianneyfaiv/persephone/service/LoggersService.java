@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Loggers;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 
 /**
  * Calls /loggers
@@ -26,7 +28,11 @@ public class LoggersService {
 
 		LOGGER.debug("GET {}", url);
 
-		return this.restTemplate.getForObject(url, Loggers.class);
+		try {
+			return this.restTemplate.getForObject(url, Loggers.class);
+		} catch(RestClientException e) {
+			throw new ApplicationRuntimeException(app, String.format("Endpoint %s is not available. This endpoint is available since Spring Boot 1.5", url));
+		}
 	}
 
 	public void changeLevel(Application app, String loggerName, String newLevel) {

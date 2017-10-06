@@ -28,8 +28,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.exception.PersephoneException;
-import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
+import re.vianneyfaiv.persephone.exception.ApplicationException;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.LogsService;
@@ -167,7 +167,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 			try (InputStream logsStream = logsService.downloadLogs(app).getInputStream()) {
 				return logsStream;
 			} catch (IOException ex) {
-				throw new PersephoneTechnicalException(app, String.format("Unable to get logs file: %s", ex.getMessage()));
+				throw new ApplicationRuntimeException(app, String.format("Unable to get logs file: %s", ex.getMessage()));
 			}
 		}, String.format("logs-%s-%s-%s.txt", app.getName(), app.getEnvironment(), (new Date()).getTime()));
 		return resource;
@@ -177,7 +177,7 @@ public class ApplicationLogsPage extends VerticalLayout implements View {
 		String logs = "";
 		try {
 			logs = logsService.getLogs(app, bytesToRetrieve);
-		} catch (PersephoneException e1) {
+		} catch (ApplicationException e1) {
 			LOGGER.warn(String.format("Unable to get logs for application with id %s : %s", app.getId(), e1.getMessage()));
 		}
 		return logs;

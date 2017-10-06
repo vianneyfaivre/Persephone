@@ -23,11 +23,11 @@ public class UIErrorHandler extends DefaultErrorHandler {
 			/*
 			 * Technical runtime exceptions
 			 */
-			if(t instanceof PersephoneTechnicalException) {
+			if(t instanceof ApplicationRuntimeException) {
 				
 				LOGGER.error("Error handler: PersephoneTechnicalException", t);
 
-				PersephoneTechnicalException e = (PersephoneTechnicalException) t;
+				ApplicationRuntimeException e = (ApplicationRuntimeException) t;
 
 				// Display error notification
 				new Notification(
@@ -41,11 +41,11 @@ public class UIErrorHandler extends DefaultErrorHandler {
 			/*
 			 * Expected exceptions (not handled)
 			 */
-			else if(t instanceof PersephoneException) {
+			else if(t instanceof ApplicationException) {
 				
 				LOGGER.error("Error handler: PersephoneException", t);
 
-				PersephoneException e = (PersephoneException) t;
+				ApplicationException e = (ApplicationException) t;
 
 				// Display error notification
 				new Notification(

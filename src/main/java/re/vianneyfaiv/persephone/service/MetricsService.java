@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Metrics;
-import re.vianneyfaiv.persephone.exception.PersephoneTechnicalException;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 
 /**
  * Calls /metrics
@@ -22,7 +22,7 @@ public class MetricsService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public Metrics getMetrics(Application app) throws PersephoneTechnicalException {
+	public Metrics getMetrics(Application app) throws ApplicationRuntimeException {
 
 		String url = app.endpoints().metrics();
 
@@ -32,7 +32,7 @@ public class MetricsService {
 
 			return metrics;
 		} catch(RestClientException e) {
-			throw new PersephoneTechnicalException(app, e.getMessage());
+			throw new ApplicationRuntimeException(app, e.getMessage());
 		}
 	}
 }
