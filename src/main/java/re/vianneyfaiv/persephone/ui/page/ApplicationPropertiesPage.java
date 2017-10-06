@@ -44,7 +44,10 @@ public class ApplicationPropertiesPage extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-
+		// Set component error handler with the one from UI. 
+		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
+		setErrorHandler(getUI().getErrorHandler());
+		
 		this.removeAllComponents();
 
 		// Get application

@@ -22,6 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Loggers;
+import re.vianneyfaiv.persephone.exception.UIErrorHandler;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -48,6 +49,10 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+		// Set component error handler with the one from UI. 
+		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
+		setErrorHandler(getUI().getErrorHandler());
+		
 		this.removeAllComponents();
 
 		// Get application
@@ -56,6 +61,10 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 		if(!app.isPresent()) {
 			// TODO throw exception
 		}
+		
+		System.out.println("ApplicationLoggersPage "+getUI().getErrorHandler());
+		setErrorHandler(new UIErrorHandler());
+		System.out.println("ApplicationLoggersPage2 "+getErrorHandler());
 
 		// Get loggers config
 		Loggers loggers = getLoggers(app.get());
