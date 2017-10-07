@@ -28,17 +28,19 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML));
 
+		this.addComponent(new Label(String.format("PID: %s", props.get("PID"))));
+
 		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
 
 		this.addComponent(new Label(String.format("Spring Profiles: %s", props.get("spring.profiles.active"))));
 
 		this.addComponent(new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name"))));
 
-		this.addComponent(new Label(String.format("Free mem : %s KB (%s %%)", metrics.getMemFree(), metrics.getMemFreePercentage())));
+		this.addComponent(new Label(String.format("Memory: %s KB / %s KB (%s%% free)", metrics.getMemFree(), metrics.getMem(), metrics.getMemFreePercentage())));
 
-		this.addComponent(new Label(String.format("HTTP Sessions Active : %s", metrics.getHttpSessionsActive())));
+		this.addComponent(new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive())));
 
-		this.addComponent(new Label(String.format("Uptime : %s", metrics.getHumanReadableUptime())));
+		this.addComponent(new Label(String.format("Uptime: %s", metrics.getHumanReadableUptime())));
 
 		this.addComponent(new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId())));
 
