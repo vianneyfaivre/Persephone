@@ -32,7 +32,8 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
 
-		this.addComponent(new Label(String.format("Spring Profiles: %s", props.get("spring.profiles.active"))));
+		String springProfiles = props.get("spring.profiles.active") == null ? "" : props.get("spring.profiles.active");
+		this.addComponent(new Label(String.format("Spring Profiles: %s", springProfiles)));
 
 		this.addComponent(new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name"))));
 
