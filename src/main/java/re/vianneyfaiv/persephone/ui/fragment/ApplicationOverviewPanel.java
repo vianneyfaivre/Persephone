@@ -1,5 +1,7 @@
 package re.vianneyfaiv.persephone.ui.fragment;
 
+import java.util.Map;
+
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
@@ -21,11 +23,16 @@ import re.vianneyfaiv.persephone.ui.PersephoneViews;
 public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
+
+		Map<String, String> props = env.getPropertiesMap();
+
 		this.addComponent(new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML));
 
 		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
 
-		this.addComponent(new Label("Spring Profiles:" + env.getPropertiesMap().get("spring.profiles.active")));
+		this.addComponent(new Label(String.format("Spring Profiles: %s", props.get("spring.profiles.active"))));
+
+		this.addComponent(new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name"))));
 
 		this.addComponent(new Label(String.format("Free mem : %s KB (%s %%)", metrics.getMemFree(), metrics.getMemFreePercentage())));
 
