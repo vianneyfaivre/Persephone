@@ -43,6 +43,8 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(new Label(String.format("Uptime: %s", metrics.getHumanReadableUptime())));
 
+		this.addComponent(new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId())));
+
 		this.addComponent(new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId())));
 
 		this.addComponent(new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId())));

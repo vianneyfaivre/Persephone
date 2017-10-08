@@ -1,5 +1,7 @@
 package re.vianneyfaiv.persephone.service;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,29 @@ public class MetricsService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public Metrics getMetrics(Application app) throws ApplicationRuntimeException {
+	public Map<String, Number> getAllMetrics(Application app) {
 
 		String url = app.endpoints().metrics();
 
 		try {
 			LOGGER.debug("GET {}", url);
-			Metrics metrics = this.restTemplate.getForObject(url, Metrics.class);
+			Map<String, Number> metrics = this.restTemplate.getForObject(url, Map.class);
 
 			return metrics;
 		} catch(RestClientException e) {
 			throw new ApplicationRuntimeException(app, e.getMessage());
 		}
+	}
+
+	public Metrics getMetrics(Application app) {
+
+		Map<String, Number> allMetrics = this.getAllMetrics(app);
+
+		int mem = allMetrics.get("mem").intValue();
+		int memFree = allMetrics.get("mem.free").intValue();
+		long uptime = allMetrics.get("uptime").longValue();
+		int httpSessionsActive = allMetrics.get("httpsessions.active").intValue();
+
+		return new Metrics(mem, memFree, uptime, httpSessionsActive);
 	}
 }

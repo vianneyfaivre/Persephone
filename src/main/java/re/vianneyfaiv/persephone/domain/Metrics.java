@@ -3,16 +3,19 @@ package re.vianneyfaiv.persephone.domain;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Metrics {
 
 	private int mem;
-	@JsonProperty("mem.free")
 	private int memFree;
 	private long uptime;
-	@JsonProperty("httpsessions.active")
 	private int httpSessionsActive;
+
+	public Metrics(int mem, int memFree, long uptime, int httpSessionsActive) {
+		this.mem = mem;
+		this.memFree = memFree;
+		this.uptime = uptime;
+		this.httpSessionsActive = httpSessionsActive;
+	}
 
 	public int getMemFreePercentage() {
 		return (100 * this.memFree) / this.mem;
