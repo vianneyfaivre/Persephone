@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
@@ -35,6 +36,9 @@ public class ApplicationMetricsPage extends VerticalLayout implements View {
 
 	@PostConstruct
 	public void init() {
+		// Center align layout
+		this.setWidth("100%");
+		this.setMargin(new MarginInfo(false, true));
 	}
 
 	@Override

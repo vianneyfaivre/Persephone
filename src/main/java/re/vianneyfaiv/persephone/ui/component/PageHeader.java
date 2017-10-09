@@ -24,6 +24,8 @@ public class PageHeader extends VerticalLayout {
 
 		this.addComponent(getTitle(app, subtitle));
 		this.addComponent(getButtons(components));
+
+		this.setMargin(false);
 	}
 
 	private HorizontalLayout getTitle(Application app, String subtitle) {

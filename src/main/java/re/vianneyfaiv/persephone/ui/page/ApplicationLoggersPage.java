@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -22,7 +23,6 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Loggers;
-import re.vianneyfaiv.persephone.exception.UIErrorHandler;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -45,6 +45,9 @@ public class ApplicationLoggersPage extends VerticalLayout implements View {
 
 	@PostConstruct
 	public void init() {
+		// Center align layout
+		this.setWidth("100%");
+		this.setMargin(new MarginInfo(false, true));
 	}
 
 	@Override

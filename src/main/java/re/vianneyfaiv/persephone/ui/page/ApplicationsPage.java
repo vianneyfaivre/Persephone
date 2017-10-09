@@ -52,7 +52,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	public void init() {
 
 		// Title
-		Label title = new Label("<h2>Persephone: Applications</h2>", ContentMode.HTML);
+		Label title = new Label("<h2>Applications</h2>", ContentMode.HTML);
 
 		// Applications Grid
 		this.grid = new Grid<>(Application.class);
