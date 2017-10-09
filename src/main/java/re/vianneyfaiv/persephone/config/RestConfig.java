@@ -31,10 +31,12 @@ public class RestConfig {
 
 		HttpComponentsClientHttpRequestFactory rf = new HttpComponentsClientHttpRequestFactory(httpClient);
 
+		// read timeout
 		if(!StringUtils.isEmpty(readTimeout)) {
 			rf.setReadTimeout(Integer.valueOf(readTimeout) * 1000);
 		}
 
+		// connect timeout
 		if(!StringUtils.isEmpty(connectTimeout)) {
 			rf.setConnectTimeout(Integer.valueOf(connectTimeout) * 1000);
 		}
@@ -46,6 +48,7 @@ public class RestConfig {
 	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
 		RestTemplate rt = new RestTemplate(requestFactory);
 
+		// Override default error handler to consider HTTP 3xx 4xx and 5xx as errors
 		rt.setErrorHandler(restErrorHandler);
 
 		return rt;
