@@ -1,5 +1,8 @@
 package re.vianneyfaiv.persephone.ui.fragment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.vaadin.navigator.View;
@@ -8,7 +11,10 @@ import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.BorderStyle;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
@@ -26,37 +32,84 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		Map<String, String> props = env.getPropertiesMap();
 
-		this.addComponent(new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML));
+		// Title
+		Label titleLabel = new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML);
+		Label pidLabel = new Label(String.format("PID: %s", props.get("PID")));
+		Link appLink = new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT);
 
-		this.addComponent(new Label(String.format("PID: %s", props.get("PID"))));
-
-		this.addComponent(new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT));
-
+		// Overview info
 		String springProfiles = props.get("spring.profiles.active") == null ? "" : props.get("spring.profiles.active");
-		this.addComponent(new Label(String.format("Spring Profiles: %s", springProfiles)));
+		Label springProfilesLabel = new Label(String.format("Spring Profiles: %s", springProfiles));
+		Label javaLabel = new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name")));
+		Label memLabel = new Label(String.format("Memory: %s KB / %s KB (%s%% free)", metrics.getMemFree(), metrics.getMem(), metrics.getMemFreePercentage()));
+		Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
+		Label uptimeLabel = new Label(String.format("Uptime: %s", metrics.getHumanReadableUptime()));
 
-		this.addComponent(new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name"))));
+		// Buttons
+		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
+		Button propertiesButton = new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId()));
+		Button logsButton = new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
+		Button loggersButton = new Button("Loggers config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId()));
+		Button actuatorButton = new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId()));
 
-		this.addComponent(new Label(String.format("Memory: %s KB / %s KB (%s%% free)", metrics.getMemFree(), metrics.getMem(), metrics.getMemFreePercentage())));
-
-		this.addComponent(new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive())));
-
-		this.addComponent(new Label(String.format("Uptime: %s", metrics.getHumanReadableUptime())));
-
-		this.addComponent(new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId())));
-
-		this.addComponent(new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId())));
-
-		this.addComponent(new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId())));
-
-		this.addComponent(new Button("Loggers config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId())));
-
-		this.addComponent(new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId())));
-
+		this.addComponent(titleLayout(titleLabel, pidLabel, appLink));
+		this.addComponent(infoLayout(springProfilesLabel, javaLabel, memLabel, sessionsLabel, uptimeLabel));
+		this.addComponent(buttonsLayout(metricsButton, propertiesButton, logsButton, loggersButton, actuatorButton));
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+	}
+
+	private Layout titleLayout(Component... components) {
+
+		VerticalLayout layout = new VerticalLayout(components);
+
+		layout.setSizeFull();
+		layout.setSpacing(false);
+		layout.setMargin(false);
+
+		return layout;
+	}
+
+	private Layout infoLayout(Component... components) {
+
+		VerticalLayout layout = new VerticalLayout(components);
+
+		layout.setSizeFull();
+		layout.setSpacing(false);
+		layout.setMargin(false);
+
+		return layout;
+	}
+
+	private Layout buttonsLayout(Button... buttons) {
+		HorizontalLayout layout = new HorizontalLayout();
+		layout.setSizeFull();
+
+		List<Component> components = new ArrayList<>(Arrays.asList(buttons));
+
+		// Split components into sublists of 5 elements
+		int partitionSize = 5;
+		List<List<Component>> partitions = new ArrayList<>();
+		for (int i = 0; i < components.size(); i += partitionSize) {
+			partitions.add(components.subList(i, Math.min(i + partitionSize, components.size())));
+		}
+
+		// Create vertical layouts for each list of buttons
+		for(List<Component> sublist : partitions) {
+			VerticalLayout vLayout = new VerticalLayout();
+			vLayout.setMargin(false);
+
+			sublist.stream().forEach(btn -> {
+				btn.setSizeFull();
+				vLayout.addComponent(btn);
+			});
+
+			layout.addComponent(vLayout);
+		}
+
+		return layout;
 	}
 }
 

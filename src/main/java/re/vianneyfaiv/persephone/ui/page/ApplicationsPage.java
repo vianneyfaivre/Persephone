@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -46,6 +50,11 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@PostConstruct
 	public void init() {
+
+		// Title
+		Label title = new Label("<h2>Persephone: Applications</h2>", ContentMode.HTML);
+
+		// Applications Grid
 		this.grid = new Grid<>(Application.class);
 
 		this.grid.removeAllColumns();
@@ -60,18 +69,21 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		});
 
 		this.grid.addItemClickListener(applicationOnClick());
-
-		this.grid.setCaption("<h2>Applications</h2>");
-		this.grid.setCaptionAsHtml(true);
 		this.grid.setSizeFull();
 
-		this.addComponent(this.grid);
-		this.setSizeFull();
+		// Build layout
+		VerticalLayout leftLayout = new VerticalLayout(title, this.grid);
+		leftLayout.setMargin(false);
+		this.addComponent(leftLayout);
+
+		// Center align layout
+		this.setWidth("100%");
+		this.setMargin(new MarginInfo(false, true));
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI. 
+		// Set component error handler with the one from UI.
 		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
 		setErrorHandler(getUI().getErrorHandler());
 	}
