@@ -64,7 +64,7 @@ public class UIErrorHandler implements ErrorHandler {
 				msg,
 			    t.getMessage(),
 			    Notification.Type.ERROR_MESSAGE,
-			    true)
+			    false)
 			.show(Page.getCurrent());
 	}
 }

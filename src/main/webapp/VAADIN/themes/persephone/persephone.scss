@@ -10,5 +10,14 @@
  	.app-logs {
  		font-size: 10px;
  	}
+ 	
+ 	.v-Notification .v-Notification-caption {
+ 		display: block;
+ 	}
+ 	
+	.v-Notification .v-Notification-description {
+		display: block;
+		margin: 25px 0 0 0;
+	}
 }
   
