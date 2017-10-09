@@ -18,6 +18,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -39,7 +40,7 @@ public class LoggersPage extends VerticalLayout implements View {
 	@Autowired
 	private LoggersService loggersService;
 
-	private Grid<LoggerGridRow> loggersGrid;
+	private Grid<LoggerGridRow> grid;
 	private List<LoggerGridRow> loggersRows;
 	private TextField filterInput;
 
@@ -69,12 +70,12 @@ public class LoggersPage extends VerticalLayout implements View {
 		Loggers loggers = getLoggers(app.get());
 
 		// Display loggers in a grid
-		loggersGrid = new Grid<>(LoggerGridRow.class);
+		grid = new Grid<>(LoggerGridRow.class);
 
-		loggersGrid.removeAllColumns();
+		grid.removeAllColumns();
 
-		loggersGrid.addColumn(LoggerGridRow::getName).setCaption("Name");
-		loggersGrid.addComponentColumn(logger -> {
+		grid.addColumn(LoggerGridRow::getName).setCaption("Name");
+		grid.addComponentColumn(logger -> {
 			NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.getLevels());
 
 			levelsDropdown.setEmptySelectionAllowed(false);
@@ -88,15 +89,19 @@ public class LoggersPage extends VerticalLayout implements View {
 
 				// refresh data in grid (several loggers might have been impacted)
 				updateLoggers(app.get());
+
+				Notification.show(
+						String.format("Logger %s level changed to %s", logger.getName(), value.getValue())
+						, Notification.Type.TRAY_NOTIFICATION);
 			});
 
 			return levelsDropdown;
 		}).setCaption("Level");
-		loggersGrid.setRowHeight(40);
+		grid.setRowHeight(40);
 
-		loggersGrid.setItems(loggersRows);
+		grid.setItems(loggersRows);
 
-		loggersGrid.setSizeFull();
+		grid.setSizeFull();
 
 		// Filter grid by logger name
 		filterInput = new TextField();
@@ -106,7 +111,7 @@ public class LoggersPage extends VerticalLayout implements View {
 
 		this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
 		this.addComponent(new Label("Changing a level will update one/many logger(s) level(s)"));
-		this.addComponent(loggersGrid);
+		this.addComponent(grid);
 	}
 
 	private Loggers getLoggers(Application app) {
@@ -123,10 +128,10 @@ public class LoggersPage extends VerticalLayout implements View {
 	private void filterLoggers(String filterValue) {
 
 		if(StringUtils.isEmpty(filterValue)) {
-			this.loggersGrid.setItems(this.loggersRows);
+			this.grid.setItems(this.loggersRows);
 		}
 		else {
-			this.loggersGrid.setItems(
+			this.grid.setItems(
 				this.loggersRows
 					.stream()
 					.filter(logger -> logger.getName().toLowerCase().contains(filterValue.toLowerCase()))
