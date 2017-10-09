@@ -22,6 +22,7 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
+import re.vianneyfaiv.persephone.ui.util.Formatters;
 
 /**
  * Panel that displays overview of an application
@@ -31,6 +32,8 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
 
 		Map<String, String> props = env.getPropertiesMap();
+		String memFree = Formatters.readableFileSize(metrics.getMemFree() * 1000);
+		String memTotal = Formatters.readableFileSize(metrics.getMem() * 1000);
 
 		// Title
 		Label titleLabel = new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML);
@@ -41,9 +44,9 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		String springProfiles = props.get("spring.profiles.active") == null ? "" : props.get("spring.profiles.active");
 		Label springProfilesLabel = new Label(String.format("Spring Profiles: %s", springProfiles));
 		Label javaLabel = new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name")));
-		Label memLabel = new Label(String.format("Memory: %s KB / %s KB (%s%% free)", metrics.getMemFree(), metrics.getMem(), metrics.getMemFreePercentage()));
+		Label memLabel = new Label(String.format("Memory: %s / %s (%s%% free)", memFree, memTotal, metrics.getMemFreePercentage()));
 		Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
-		Label uptimeLabel = new Label(String.format("Uptime: %s", metrics.getHumanReadableUptime()));
+		Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));
 
 		// Buttons
 		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
