@@ -46,7 +46,6 @@ public class EnvironmentService {
             JsonNode rootNode = mapper.readTree(json);
 
             List<PropertyItem> properties = new ArrayList<>();
-            List<String> profiles = new ArrayList<String>();
 
             Iterator<Entry<String, JsonNode>> iterator = rootNode.fields();
 
