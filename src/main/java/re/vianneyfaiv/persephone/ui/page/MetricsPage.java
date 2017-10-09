@@ -15,6 +15,7 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -64,8 +65,15 @@ public class MetricsPage extends VerticalLayout implements View {
 												.collect(Collectors.toList());
 
 		Grid<MetricsGridRow> grid = new Grid<>(MetricsGridRow.class);
+
+		grid.removeAllColumns();
+
+		Column<MetricsGridRow, String> defaultSortColumn = grid.addColumn(MetricsGridRow::getName).setCaption("Name");
+		grid.addColumn(MetricsGridRow::getValue).setCaption("Value");
+
 		grid.setItems(metricsItems);
 		grid.setSizeFull();
+		grid.sort(defaultSortColumn);
 
 		this.addComponent(new PageHeader(app.get(), "Metrics"));
 		this.addComponent(grid);

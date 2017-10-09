@@ -11,6 +11,7 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -58,7 +59,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		this.grid = new Grid<>(Application.class);
 
 		this.grid.removeAllColumns();
-		this.grid.addColumn(Application::getName).setCaption("Application");
+		Column<Application, String> defaultSortColumn = this.grid.addColumn(Application::getName).setCaption("Application");
 		this.grid.addColumn(Application::getEnvironment).setCaption("Environment");
 		this.grid.addColumn(Application::getUrl).setCaption("URL");
 
@@ -70,6 +71,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 		this.grid.addItemClickListener(applicationOnClick());
 		this.grid.setSizeFull();
+		this.grid.sort(defaultSortColumn);
 
 		// Build layout
 		VerticalLayout leftLayout = new VerticalLayout(title, this.grid);

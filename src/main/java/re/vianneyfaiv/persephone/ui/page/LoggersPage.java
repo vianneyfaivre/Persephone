@@ -16,6 +16,7 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
@@ -74,7 +75,7 @@ public class LoggersPage extends VerticalLayout implements View {
 
 		grid.removeAllColumns();
 
-		grid.addColumn(LoggerGridRow::getName).setCaption("Name");
+		Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName).setCaption("Name");
 		grid.addComponentColumn(logger -> {
 			NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.getLevels());
 
@@ -100,6 +101,7 @@ public class LoggersPage extends VerticalLayout implements View {
 		grid.setRowHeight(40);
 
 		grid.setItems(loggersRows);
+		grid.sort(defaultSortColumn);
 
 		grid.setSizeFull();
 

@@ -9,12 +9,12 @@ import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -37,7 +37,7 @@ public class PropertiesPage extends VerticalLayout implements View {
 	private EnvironmentService envService;
 
 	private Environment currentEnv;
-	private Grid<PropertyItem> propertiesGrid;
+	private Grid<PropertyItem> grid;
 
 	@PostConstruct
 	public void init() {
@@ -65,15 +65,15 @@ public class PropertiesPage extends VerticalLayout implements View {
 		this.currentEnv = envService.getEnvironment(app.get());
 
 		// Properties grid
-		this.propertiesGrid = new Grid<>(PropertyItem.class);
+		this.grid = new Grid<>(PropertyItem.class);
 
-		this.propertiesGrid.removeAllColumns();
-		this.propertiesGrid.addColumn(PropertyItem::getKey).setCaption("Property")
-							.getSortOrder(SortDirection.ASCENDING);
-		this.propertiesGrid.addColumn(PropertyItem::getValue).setCaption("Value");
-		this.propertiesGrid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
+		this.grid.removeAllColumns();
+		Column<PropertyItem, String> defaultSortColumn = this.grid.addColumn(PropertyItem::getKey).setCaption("Property");
+		this.grid.addColumn(PropertyItem::getValue).setCaption("Value");
+		this.grid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
 
-		this.propertiesGrid.setSizeFull();
+		this.grid.sort(defaultSortColumn);
+		this.grid.setSizeFull();
 
 		// Filter by Property
 		TextField filterInput = new TextField();
@@ -82,17 +82,17 @@ public class PropertiesPage extends VerticalLayout implements View {
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
 		this.addComponent(new PageHeader(app.get(), "Properties", filterInput));
-		this.addComponent(this.propertiesGrid);
+		this.addComponent(this.grid);
 		this.updateProperties("");
 	}
 
 	private void updateProperties(String filterByPropKey) {
 
 		if(StringUtils.isEmpty(filterByPropKey)) {
-			this.propertiesGrid.setItems(this.currentEnv.getProperties());
+			this.grid.setItems(this.currentEnv.getProperties());
 		}
 		else {
-			this.propertiesGrid.setItems(
+			this.grid.setItems(
 				this.currentEnv.getProperties()
 					.stream()
 					.filter(p -> p.getKey().toLowerCase().contains(filterByPropKey.toLowerCase()))
