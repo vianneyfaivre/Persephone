@@ -29,10 +29,13 @@ public class UIErrorHandler implements ErrorHandler {
 				exceptionHandled = handlePersephoneExceptions(t.getCause());
 			}
 
+			if(exceptionHandled) {
+				return;
+			}
+
 			if(!exceptionHandled && t instanceof RuntimeException) {
 				displayErrorNotif("Unhandled runtime exception.", t);
 				return;
-
 			} else {
 				LOGGER.error("Persephone Error Handler: {} ; Message: {}", t.getClass(), t.getMessage());
 			}

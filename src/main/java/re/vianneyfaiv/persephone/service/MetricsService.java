@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Metrics;
-import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
+import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
 /**
  * Calls /metrics
@@ -34,7 +34,7 @@ public class MetricsService {
 
 			return metrics;
 		} catch(RestClientException e) {
-			throw new ApplicationRuntimeException(app, e.getMessage());
+			throw ErrorHandler.handle(app, url, e);
 		}
 	}
 

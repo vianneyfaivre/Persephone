@@ -29,7 +29,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.exception.ApplicationException;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
@@ -120,13 +119,12 @@ public class LogsPage extends VerticalLayout implements View {
 		 * Logs available
 		 */
 		else {
-			// Get logs
-			String logs = getLogs(app.get());
+			String logs = logsService.getLogs(app.get(), bytesToRetrieve);
 
 			Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
 			logsLabel.setStyleName("app-logs");
 
-			ajaxRefreshInit((args) -> logsLabel.setValue(getLogs(app.get())));
+			ajaxRefreshInit((args) -> logsLabel.setValue(logsService.getLogs(app.get(), bytesToRetrieve)));
 
 			this.addComponent(new Label(String.format("Auto-refresh every %s seconds (last %s chars).", refreshTimeout, bytesToRetrieve)));
 			this.addComponent(logsLabel);
@@ -179,15 +177,4 @@ public class LogsPage extends VerticalLayout implements View {
 		}, String.format("logs-%s-%s-%s.txt", app.getName(), app.getEnvironment(), (new Date()).getTime()));
 		return resource;
 	}
-
-	private String getLogs(Application app) {
-		String logs = "";
-		try {
-			logs = logsService.getLogs(app, bytesToRetrieve);
-		} catch (ApplicationException e1) {
-			LOGGER.warn(String.format("Unable to get logs for application with id %s : %s", app.getId(), e1.getMessage()));
-		}
-		return logs;
-	}
-
 }
