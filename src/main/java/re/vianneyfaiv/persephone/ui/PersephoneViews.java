@@ -1,10 +1,10 @@
 package re.vianneyfaiv.persephone.ui;
 
-import re.vianneyfaiv.persephone.ui.page.ApplicationEndpointsPage;
-import re.vianneyfaiv.persephone.ui.page.ApplicationLoggersPage;
-import re.vianneyfaiv.persephone.ui.page.ApplicationLogsPage;
-import re.vianneyfaiv.persephone.ui.page.ApplicationMetricsPage;
-import re.vianneyfaiv.persephone.ui.page.ApplicationPropertiesPage;
+import re.vianneyfaiv.persephone.ui.page.EndpointsPage;
+import re.vianneyfaiv.persephone.ui.page.LoggersPage;
+import re.vianneyfaiv.persephone.ui.page.LogsPage;
+import re.vianneyfaiv.persephone.ui.page.MetricsPage;
+import re.vianneyfaiv.persephone.ui.page.PropertiesPage;
 import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
 public class PersephoneViews {
@@ -14,28 +14,28 @@ public class PersephoneViews {
 	public static final String APPLICATIONS = "";
 
 	/**
-	 * {@link ApplicationPropertiesPage}
+	 * {@link PropertiesPage}
 	 */
 	public static final String PROPERTIES = "properties";
 
 	/**
-	 * {@link ApplicationLogsPage}
+	 * {@link LogsPage}
 	 */
 	public static final String LOGS = "logs";
 
 	/**
-	 * {@link ApplicationEndpointsPage}
+	 * {@link EndpointsPage}
 	 */
 	public static final String ENDPOINTS = "endpoints";
 
 	/**
-	 * {@link ApplicationLoggersPage}
+	 * {@link LoggersPage}
 	 */
 	public static final String LOGGERS = "loggers";
 
 
 	/**
-	 * {@link ApplicationMetricsPage}
+	 * {@link MetricsPage}
 	 */
 	public static final String METRICS = "metrics";
 }

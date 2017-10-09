@@ -31,7 +31,7 @@ import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGGERS)
-public class ApplicationLoggersPage extends VerticalLayout implements View {
+public class LoggersPage extends VerticalLayout implements View {
 
 	@Autowired
 	private ApplicationService appService;

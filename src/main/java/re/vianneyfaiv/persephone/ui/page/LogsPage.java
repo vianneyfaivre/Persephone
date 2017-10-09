@@ -39,9 +39,9 @@ import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)
-public class ApplicationLogsPage extends VerticalLayout implements View {
+public class LogsPage extends VerticalLayout implements View {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationLogsPage.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LogsPage.class);
 
 	@Autowired
 	private ApplicationService appService;
