@@ -5,6 +5,7 @@ import java.time.Duration;
 public class Metrics {
 
 	private int mem;
+	private int memAllocated;
 	private int memFree;
 	private long uptime;
 	private int httpSessionsActive;
@@ -12,12 +13,13 @@ public class Metrics {
 	public Metrics(int mem, int memFree, long uptime, int httpSessionsActive) {
 		this.mem = mem;
 		this.memFree = memFree;
+		this.memAllocated = this.mem - this.memFree;
 		this.uptime = uptime;
 		this.httpSessionsActive = httpSessionsActive;
 	}
 
 	public int getMemFreePercentage() {
-		return 100 - ((100 * this.memFree) / this.mem);
+		return (100 * this.memFree) / this.mem;
 	}
 
 	public Duration getUptime() {
@@ -26,6 +28,10 @@ public class Metrics {
 
 	public int getMem() {
 		return this.mem;
+	}
+
+	public int getMemAllocated() {
+		return this.memAllocated;
 	}
 
 	public int getMemFree() {
