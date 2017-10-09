@@ -29,7 +29,7 @@ Set the property `endpoints.sensitive` to `false`.
 
 **Property `logging.path` or `logging.file` set**
 
-This will enable the use of Actuator endpoint GET /logfile.
+This will enable the use of Actuator endpoint GET /logfile (available since Spring Boot 1.5)
 
 ## Pre-requisites : Persephone
 
