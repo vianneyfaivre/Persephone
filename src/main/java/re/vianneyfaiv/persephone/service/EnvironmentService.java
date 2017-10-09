@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -39,7 +40,9 @@ public class EnvironmentService {
 
 		try {
 			LOGGER.debug("GET {}", url);
-			String json = this.restTemplate.getForEntity(url, String.class).getBody();
+			ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+
+			String json = response.getBody();
 
 		    ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
