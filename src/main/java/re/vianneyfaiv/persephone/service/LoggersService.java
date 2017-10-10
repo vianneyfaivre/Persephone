@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
+import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Loggers;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
@@ -20,7 +20,7 @@ public class LoggersService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoggersService.class);
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplateFactory restTemplates;
 
 	public Loggers getLoggers(Application app) {
 
@@ -29,7 +29,7 @@ public class LoggersService {
 		LOGGER.debug("GET {}", url);
 
 		try {
-			return this.restTemplate.getForObject(url, Loggers.class);
+			return restTemplates.get(app).getForObject(url, Loggers.class);
 		} catch(RestClientException e) {
 			throw ErrorHandler.handle(app, url, e);
 		}
@@ -42,6 +42,6 @@ public class LoggersService {
 
 		LOGGER.debug("POST {} with configuredLevel={}", url, newLevel);
 
-		this.restTemplate.postForEntity(url, body, String.class);
+		restTemplates.get(app).postForEntity(url, body, String.class);
 	}
 }

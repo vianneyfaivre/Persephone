@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
+import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
@@ -22,7 +22,7 @@ public class MetricsService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MetricsService.class);
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplateFactory restTemplates;
 
 	public Map<String, Number> getAllMetrics(Application app) {
 
@@ -30,7 +30,7 @@ public class MetricsService {
 
 		try {
 			LOGGER.debug("GET {}", url);
-			Map<String, Number> metrics = this.restTemplate.getForObject(url, Map.class);
+			Map<String, Number> metrics = restTemplates.get(app).getForObject(url, Map.class);
 
 			return metrics;
 		} catch(RestClientException e) {

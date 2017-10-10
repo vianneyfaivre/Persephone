@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.PropertyItem;
@@ -32,7 +32,7 @@ public class EnvironmentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnvironmentService.class);
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplateFactory restTemplates;
 
 	public Environment getEnvironment(Application app) {
 
@@ -40,7 +40,7 @@ public class EnvironmentService {
 
 		try {
 			LOGGER.debug("GET {}", url);
-			ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+			ResponseEntity<String> response = restTemplates.get(app).getForEntity(url, String.class);
 
 			String json = response.getBody();
 

@@ -11,8 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
+import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
@@ -25,7 +25,7 @@ public class LogsService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LogsService.class);
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplateFactory restTemplates;
 
 	public boolean endpointAvailable(Application app) {
 
@@ -33,7 +33,7 @@ public class LogsService {
 
 		try {
 			LOGGER.debug("HEAD {}", url);
-			this.restTemplate.headForHeaders(new URI(url));
+			restTemplates.get(app).headForHeaders(new URI(url));
 			return true;
 		} catch (RestClientException | URISyntaxException e) {
 			LOGGER.warn("Application {} endpoint {} not reachable: {}", app.getId(), url, e.getMessage());
@@ -48,7 +48,7 @@ public class LogsService {
 			RequestEntity.HeadersBuilder request = RequestEntity.get(new URI(url));
 
 			// get Range header value
-			HttpHeaders responseHeaders = this.restTemplate.headForHeaders(new URI(url));
+			HttpHeaders responseHeaders = restTemplates.get(app).headForHeaders(new URI(url));
 			long endRange = responseHeaders.getContentLength();
 
 			long startRange = endRange - bytesToRetrieve;
@@ -61,7 +61,7 @@ public class LogsService {
 			}
 
 			// get logs
-			return this.restTemplate.exchange(request.build(), String.class).getBody();
+			return restTemplates.get(app).exchange(request.build(), String.class).getBody();
 		} catch(RestClientException e) {
 			throw ErrorHandler.handle(app, url, e);
 		} catch (URISyntaxException e) {
@@ -73,7 +73,7 @@ public class LogsService {
 		String url = app.endpoints().logfile();
 		try {
 			LOGGER.debug("GET {}", url);
-			return this.restTemplate.getForObject(url, ByteArrayResource.class);
+			return restTemplates.get(app).getForObject(url, ByteArrayResource.class);
 		} catch(RestClientException e) {
 			throw ErrorHandler.handle(app, url, e);
 		}

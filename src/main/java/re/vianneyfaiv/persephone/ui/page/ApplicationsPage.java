@@ -22,6 +22,7 @@ import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
+import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
@@ -39,6 +40,9 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@Autowired
 	private ApplicationService appService;
+
+	@Autowired
+	private HealthService healthService;
 
 	@Autowired
 	private EnvironmentService envService;

@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestConfig {
+public class DefaultRestTemplateConfig {
 
 	@Value("${persephone.rest-template.read-timeout-seconds:}")
 	private String readTimeout;

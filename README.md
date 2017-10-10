@@ -23,9 +23,10 @@ Add the following dependency to your POM:
 </dependency>
 ```
 
-**Disable security for Actuator endpoints**
+**Configure security for Actuator endpoints**
 
-Set the property `endpoints.sensitive` to `false`.
+* Enable: [See Spring documentation](https://docs.spring.io/spring-boot/docs/1.5.7.RELEASE/reference/htmlsingle/#production-ready-sensitive-endpoints)
+* Disable: set the property `endpoints.sensitive` to `false` (**don't do it in production!**).
 
 **Property `logging.path` or `logging.file` set**
 
@@ -38,9 +39,9 @@ Applications that you want to monitor have to be listed in a CSV file.
 **CSV format**
 
 ```
-Application Name,Environment,URL
-Persephone,local,http://localhost:9191
-Persephone,dev,http://devmachine:9191
+Application Name,Environment,URL,Actuator Auth Scheme,Actuator username,Actuator password
+Persephone,dev,http://localhost:9191,BASIC,admin,admin
+Persephone,dev-secured,http://devmachine:9191,,,
 ```
 
 **Path to the CSV**

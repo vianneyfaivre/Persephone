@@ -28,7 +28,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.PathResource;
 
+import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.AuthScheme;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.HealthService;
 
@@ -56,6 +58,9 @@ public class BatchReadApplicationsFromCsv {
 	@Autowired
 	private HealthService healthService;
 
+	@Autowired
+	private RestTemplateFactory restTemplateFactory;
+
 	@Bean
 	public FlatFileItemReader<Application> reader() {
 		FlatFileItemReader<Application> reader = new FlatFileItemReader<>();
@@ -73,17 +78,34 @@ public class BatchReadApplicationsFromCsv {
 				// define the name of each line token
 				this.setLineTokenizer(new DelimitedLineTokenizer() {
 					{
-						this.setNames(new String[] { "name", "environment", "url" });
+						this.setNames(new String[] { "name", "environment", "url", "authScheme", "actuatorUsername", "actuatorPassword" });
 					}
 				});
 
 				// For each line
 				this.setFieldSetMapper(line -> {
-					Application app = new Application(counter.get(), line.readString("name"), line.readString("environment"), line.readString("url"));
+
+					AuthScheme authScheme = AuthScheme.parse(line.readString("authScheme"));
+					Application app;
+
+					if(authScheme == AuthScheme.BASIC) {
+						app = new Application(
+								counter.getAndIncrement(),
+								line.readString("name"),
+								line.readString("environment"),
+								line.readString("url"),
+								line.readString("actuatorUsername"),
+								line.readString("actuatorPassword"));
+					} else {
+						app = new Application(
+								counter.getAndIncrement(),
+								line.readString("name"),
+								line.readString("environment"),
+								line.readString("url"));
+					}
 
 					LOGGER.info("Loaded {}", app);
 
-					counter.incrementAndGet();
 					return app;
 				});
 			}
@@ -116,6 +138,10 @@ public class BatchReadApplicationsFromCsv {
 
 							LOGGER.debug("Applications have been loaded. Now checking if they are up");
 
+							// Create RestTemplate with BASIC auth (if enabled)
+							restTemplateFactory.init();
+
+							// Refresh applications health
 							BatchReadApplicationsFromCsv.this.applicationService
 									.findAll()
 									.stream()
