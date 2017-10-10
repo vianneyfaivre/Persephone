@@ -42,10 +42,10 @@ public class MetricsService {
 
 		Map<String, Number> allMetrics = this.getAllMetrics(app);
 
-		int mem = allMetrics.get("mem").intValue();
-		int memFree = allMetrics.get("mem.free").intValue();
-		long uptime = allMetrics.get("uptime").longValue();
-		int httpSessionsActive = allMetrics.get("httpsessions.active").intValue();
+		int mem = allMetrics.getOrDefault("mem", -1).intValue();
+		int memFree = allMetrics.getOrDefault("mem.free", -1).intValue();
+		long uptime = allMetrics.getOrDefault("uptime", -1).longValue();
+		int httpSessionsActive = allMetrics.getOrDefault("httpsessions.active", -1).intValue();
 
 		return new Metrics(mem, memFree, uptime, httpSessionsActive);
 	}

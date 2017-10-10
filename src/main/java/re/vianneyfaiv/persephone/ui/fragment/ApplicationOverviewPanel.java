@@ -3,7 +3,6 @@ package re.vianneyfaiv.persephone.ui.fragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -31,19 +30,18 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
 
-		Map<String, String> props = env.getPropertiesMap();
 		String memAllocated = Formatters.readableFileSize(metrics.getMemAllocated() * 1000);
 		String memTotal = Formatters.readableFileSize(metrics.getMem() * 1000);
 
 		// Title
 		Label titleLabel = new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML);
-		Label pidLabel = new Label(String.format("PID: %s", props.get("PID")));
+		Label pidLabel = new Label(String.format("PID: %s", env.get("PID")));
 		Link appLink = new Link(app.getUrl(), new ExternalResource(app.getUrl()), "_blank", 0, 0, BorderStyle.DEFAULT);
 
 		// Overview info
-		String springProfiles = props.get("spring.profiles.active") == null ? "" : props.get("spring.profiles.active");
+		String springProfiles = env.get("spring.profiles.active");
 		Label springProfilesLabel = new Label(String.format("Spring Profiles: %s", springProfiles));
-		Label javaLabel = new Label(String.format("Java version %s (%s on %s)", props.get("java.version"), props.get("java.home"), props.get("os.name")));
+		Label javaLabel = new Label(String.format("Java version %s (%s on %s)", env.get("java.version"), env.get("java.home"), env.get("os.name")));
 		Label memLabel = new Label(String.format("Memory: %s / %s (%s%% free)", memAllocated, memTotal, metrics.getMemFreePercentage()));
 		Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
 		Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));

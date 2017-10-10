@@ -3,7 +3,6 @@ package re.vianneyfaiv.persephone.ui.page;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +28,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
@@ -95,9 +95,9 @@ public class LogsPage extends VerticalLayout implements View {
 		 */
 		if(!endpointAvailable) {
 
-			Map<String, String> props = this.envService.getEnvironment(app.get()).getPropertiesMap();
-			String loggingPath = props.get("logging.path") == null ? "<PROPERTY NOT SET>" : props.get("logging.path");
-			String loggingFile = props.get("logging.file") == null ? "<PROPERTY NOT SET>" : props.get("logging.file");;
+			Environment env = this.envService.getEnvironment(app.get());
+			String loggingPath = env.get("logging.path");
+			String loggingFile = env.get("logging.file");
 
 			String noLogsText = new StringBuilder()
 									.append(String.format("Endpoint %s is not available", app.get().endpoints().logfile()))
