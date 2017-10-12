@@ -23,19 +23,17 @@ public class HealthService {
 	private RestTemplateFactory restTemplates;
 
 	public boolean isUp(Application app) {
-		boolean up;
+		return this.getHealth(app).getStatus() == Status.UP;
+	}
 
+	public Health getHealth(Application app) {
 		String url = app.endpoints().health();
 
 		try {
 			LOGGER.debug("GET {}", url);
-			Health health = restTemplates.get(app).getForObject(url, Health.class);
-
-			up = health.getStatus() == Status.UP;
+			return restTemplates.get(app).getForObject(url, Health.class);
 		} catch(RestClientException rce) {
-			up = false;
+			return new Health(Status.DOWN);
 		}
-
-		return up;
 	}
 }

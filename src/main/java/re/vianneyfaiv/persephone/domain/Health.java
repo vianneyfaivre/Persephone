@@ -1,6 +1,6 @@
 package re.vianneyfaiv.persephone.domain;
 
-import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.boot.actuate.health.Status;
 
@@ -11,13 +11,25 @@ import org.springframework.boot.actuate.health.Status;
 public class Health {
 
 	private Status status;
-	private Map<String, Object> details;
+	private HealthDisk diskSpace;
+	private HealthDatabase db;
+
+	public Health() {
+	}
+
+	public Health(Status status) {
+		this.status = status;
+	}
 
 	public Status getStatus() {
 		return this.status;
 	}
 
-	public Map<String, Object> getDetails() {
-		return this.details;
+	public Optional<HealthDisk> getDiskSpace() {
+		return Optional.ofNullable(diskSpace);
+	}
+
+	public Optional<HealthDatabase> getDb() {
+		return Optional.ofNullable(db);
 	}
 }
