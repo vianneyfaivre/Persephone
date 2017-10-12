@@ -47,6 +47,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));
 
 		// Buttons
+		Button healthButton = new Button("Health", e -> getUI().getNavigator().navigateTo(PersephoneViews.HEALTH+"/"+app.getId()));
 		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
 		Button propertiesButton = new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId()));
 		Button logsButton = new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
@@ -55,7 +56,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		this.addComponent(titleLayout(titleLabel, pidLabel, appLink));
 		this.addComponent(infoLayout(springProfilesLabel, javaLabel, memLabel, sessionsLabel, uptimeLabel));
-		this.addComponent(buttonsLayout(metricsButton, propertiesButton, logsButton, loggersButton, actuatorButton));
+		this.addComponent(buttonsLayout(healthButton, metricsButton, propertiesButton, logsButton, loggersButton, actuatorButton));
 	}
 
 	@Override

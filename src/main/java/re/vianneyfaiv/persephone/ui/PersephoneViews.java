@@ -1,11 +1,12 @@
 package re.vianneyfaiv.persephone.ui;
 
+import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 import re.vianneyfaiv.persephone.ui.page.EndpointsPage;
+import re.vianneyfaiv.persephone.ui.page.HealthPage;
 import re.vianneyfaiv.persephone.ui.page.LoggersPage;
 import re.vianneyfaiv.persephone.ui.page.LogsPage;
 import re.vianneyfaiv.persephone.ui.page.MetricsPage;
 import re.vianneyfaiv.persephone.ui.page.PropertiesPage;
-import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
 public class PersephoneViews {
 	/**
@@ -38,4 +39,9 @@ public class PersephoneViews {
 	 * {@link MetricsPage}
 	 */
 	public static final String METRICS = "metrics";
+
+	/**
+	 * {@link HealthPage}
+	 */
+	public static final String HEALTH = "health";
 }
