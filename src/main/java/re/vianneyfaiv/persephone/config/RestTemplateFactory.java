@@ -16,6 +16,11 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.AuthScheme;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 
+/**
+ * Creates specific instances of {@link RestTemplate} for some {@link Application}s
+ *
+ * @see DefaultRestTemplateConfig
+ */
 @Configuration
 public class RestTemplateFactory {
 
@@ -45,13 +50,21 @@ public class RestTemplateFactory {
 	@Autowired
 	private ApplicationService applicationsService;
 
+	/**
+	 * Reads Applications and check if they need a custom RestTemplate
+	 */
 	public void init() {
+
+		// Check for HTTP Basic auth
 		applicationsService
 			.findAll().stream()
 			.filter(app -> app.getAuthScheme() == AuthScheme.BASIC && app.isAuthValid())
 			.forEach(createRestTemplateBasicAuth(registry));
 	}
 
+	/**
+	 * @return a custom RestTemplate or a default instance
+	 */
 	public RestTemplate get(Application app) {
 
 		String beanName = this.getRestTemplateBeanName(app);
@@ -68,6 +81,9 @@ public class RestTemplateFactory {
 		return restTemplate;
 	}
 
+	/**
+	 * register specific RestTemplate in Spring Application Context if needed
+	 */
 	private Consumer<Application> createRestTemplateBasicAuth(ConfigurableListableBeanFactory registry) {
 		return app -> {
 

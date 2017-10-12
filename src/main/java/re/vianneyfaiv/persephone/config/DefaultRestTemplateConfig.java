@@ -11,6 +11,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Configuration for default {@link RestTemplate}
+ */
 @Configuration
 public class DefaultRestTemplateConfig {
 
