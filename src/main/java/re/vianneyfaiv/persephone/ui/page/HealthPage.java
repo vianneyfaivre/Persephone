@@ -12,6 +12,7 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -76,6 +77,11 @@ public class HealthPage extends VerticalLayout implements View {
 		}
 
 		this.addComponent(new PageHeader(app.get(), "Health"));
-		this.addComponent(cards);
+
+		if(cards.getComponentCount() == 0) {
+			this.addComponent(new Label("No additional data to display"));
+		} else {
+			this.addComponent(cards);
+		}
 	}
 }

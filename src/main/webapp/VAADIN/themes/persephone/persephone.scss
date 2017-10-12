@@ -11,6 +11,17 @@
  		font-size: 10px;
  	}
  	
+ 	.health-card {
+ 		border: 3px solid black;
+ 		border-radius: 10px;
+ 		
+ 		.health-card-title {
+ 			width: 100%;
+ 			font-weight: bold;
+ 			text-align: center;
+ 		}
+ 	}
+ 	
  	.v-Notification .v-Notification-caption {
  		display: block;
  	}

@@ -11,9 +11,14 @@ import com.vaadin.ui.VerticalLayout;
 public class HealthCard extends VerticalLayout {
 
 	public HealthCard(String title, Status status, String... infos) {
-		this.addComponent(new Label(String.format("Health: %s", title), ContentMode.HTML));
+
+		Label titleLabel = new Label(String.format("Health: %s", title), ContentMode.HTML);
+		titleLabel.setStyleName("health-card-title");
+		this.addComponent(titleLabel);
 
 		Arrays.asList(infos).stream()
 			  .forEach(info -> this.addComponent(new Label(info)));
+
+		this.setStyleName("health-card");
 	}
 }
