@@ -3,6 +3,7 @@ package re.vianneyfaiv.persephone.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
@@ -28,9 +29,9 @@ public class HealthService {
 
 		try {
 			LOGGER.debug("GET {}", url);
-
 			Health health = restTemplates.get(app).getForObject(url, Health.class);
-			up = "UP".equals(health.getStatus());
+
+			up = health.getStatus() == Status.UP;
 		} catch(RestClientException rce) {
 			up = false;
 		}
