@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.ui.page;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,14 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.MetricsCache;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -57,25 +61,39 @@ public class MetricsPage extends VerticalLayout implements View {
 			// TODO throw exception
 		}
 
-		Map<String, Number> metrics = metricsService.getAllMetrics(app.get());
 
+		Map<String, Number> metrics = metricsService.getAllMetrics(app.get());
+		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
+
+		this.addComponent(new PageHeader(app.get(), "Metrics"));
+
+		if(!metricsCaches.isEmpty()) {
+			// TODO: refactoring: use Grid
+			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
+			metricsCaches
+				.stream()
+				.forEach(mc -> this.addComponent(new Label(String.format("%s: size=%s, hit=%s%%, miss=%s%%", mc.getName(), mc.getSize(), mc.getHitRatio(), mc.getMissRatio()))));
+		}
+
+		Grid<MetricsGridRow> grid = getAllMetricsGrid(metrics);
+		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
+		this.addComponent(grid);
+	}
+
+	private Grid<MetricsGridRow> getAllMetricsGrid(Map<String, Number> metrics) {
 		List<MetricsGridRow> metricsItems = metrics
 												.entrySet().stream()
 												.map(MetricsGridRow::new)
 												.collect(Collectors.toList());
 
 		Grid<MetricsGridRow> grid = new Grid<>(MetricsGridRow.class);
-
 		grid.removeAllColumns();
-
 		Column<MetricsGridRow, String> defaultSortColumn = grid.addColumn(MetricsGridRow::getName).setCaption("Name");
 		grid.addColumn(MetricsGridRow::getValue).setCaption("Value");
 
 		grid.setItems(metricsItems);
-		grid.setSizeFull();
 		grid.sort(defaultSortColumn);
-
-		this.addComponent(new PageHeader(app.get(), "Metrics"));
-		this.addComponent(grid);
+		grid.setSizeFull();
+		return grid;
 	}
 }
