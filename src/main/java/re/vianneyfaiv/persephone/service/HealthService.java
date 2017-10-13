@@ -23,7 +23,7 @@ public class HealthService {
 	private RestTemplateFactory restTemplates;
 
 	public boolean isUp(Application app) {
-		return this.getHealth(app).getStatus() == Status.UP;
+		return Status.UP.equals(this.getHealth(app).getStatus());
 	}
 
 	public Health getHealth(Application app) {
