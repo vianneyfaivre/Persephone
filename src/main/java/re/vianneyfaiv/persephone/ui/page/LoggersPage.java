@@ -6,11 +6,14 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
@@ -25,6 +28,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Loggers;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -34,6 +38,8 @@ import re.vianneyfaiv.persephone.ui.component.PageHeader;
 @UIScope
 @SpringView(name=PersephoneViews.LOGGERS)
 public class LoggersPage extends VerticalLayout implements View {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(LoggersPage.class);
 
 	@Autowired
 	private ApplicationService appService;
@@ -68,63 +74,76 @@ public class LoggersPage extends VerticalLayout implements View {
 		}
 
 		// Get loggers config
-		Loggers loggers = getLoggers(app.get());
+		Optional<Loggers> loggers = getLoggers(app.get());
 
-		// Display loggers in a grid
-		grid = new Grid<>(LoggerGridRow.class);
+		if(loggers.isPresent()) {
+			
+			// Display loggers in a grid
+			grid = new Grid<>(LoggerGridRow.class);
+			
+			grid.removeAllColumns();
+			
+			Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName).setCaption("Name");
+			grid.addComponentColumn(logger -> {
+				NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.get().getLevels());
+				
+				levelsDropdown.setEmptySelectionAllowed(false);
+				levelsDropdown.setSelectedItem(logger.getLevel());
+				
+				// on selected level
+				levelsDropdown.addValueChangeListener(value -> {
+					
+					// change logger level
+					loggersService.changeLevel(app.get(), logger.getName(), value.getValue());
+					
+					// refresh data in grid (several loggers might have been impacted)
+					updateLoggers(app.get());
+					
+					Notification.show(
+							String.format("Logger %s level changed to %s", logger.getName(), value.getValue())
+							, Notification.Type.TRAY_NOTIFICATION);
+				});
+				
+				return levelsDropdown;
+			}).setCaption("Level");
+			grid.setRowHeight(40);
+			
+			grid.setItems(loggersRows);
+			grid.sort(defaultSortColumn);
+			
+			grid.setSizeFull();
+			
+			// Filter grid by logger name
+			filterInput = new TextField();
+			filterInput.setPlaceholder("filter by logger name...");
+			filterInput.addValueChangeListener(e -> filterLoggers(e.getValue()));
+			filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
-		grid.removeAllColumns();
-
-		Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName).setCaption("Name");
-		grid.addComponentColumn(logger -> {
-			NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.getLevels());
-
-			levelsDropdown.setEmptySelectionAllowed(false);
-			levelsDropdown.setSelectedItem(logger.getLevel());
-
-			// on selected level
-			levelsDropdown.addValueChangeListener(value -> {
-
-				// change logger level
-				loggersService.changeLevel(app.get(), logger.getName(), value.getValue());
-
-				// refresh data in grid (several loggers might have been impacted)
-				updateLoggers(app.get());
-
-				Notification.show(
-						String.format("Logger %s level changed to %s", logger.getName(), value.getValue())
-						, Notification.Type.TRAY_NOTIFICATION);
-			});
-
-			return levelsDropdown;
-		}).setCaption("Level");
-		grid.setRowHeight(40);
-
-		grid.setItems(loggersRows);
-		grid.sort(defaultSortColumn);
-
-		grid.setSizeFull();
-
-		// Filter grid by logger name
-		filterInput = new TextField();
-		filterInput.setPlaceholder("filter by logger name...");
-		filterInput.addValueChangeListener(e -> filterLoggers(e.getValue()));
-		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
-
-		this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
-		this.addComponent(new Label("Changing a level will update one/many logger(s) level(s)"));
-		this.addComponent(grid);
+			this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
+			this.addComponent(new Label("Changing a level will update one/many logger(s) level(s)"));
+			this.addComponent(grid);
+		} else {
+			this.addComponent(new PageHeader(app.get(), "Loggers"));
+			this.addComponent(new Label(String.format("Failed to call %s<br />This endpoint is available since Spring Boot 1.5", app.get().endpoints().loggers()), ContentMode.HTML));
+		}
 	}
 
-	private Loggers getLoggers(Application app) {
-		Loggers loggers = loggersService.getLoggers(app);
-
-		// Convert loggers to grid rows
-		this.loggersRows = loggers.getLoggers()
-								.entrySet().stream()
-								.map(LoggerGridRow::new)
-								.collect(Collectors.toList());
-		return loggers;
+	private Optional<Loggers> getLoggers(Application app) {
+		
+		try {
+			Loggers loggers = loggersService.getLoggers(app);
+	
+			// Convert loggers to grid rows
+			this.loggersRows = loggers.getLoggers()
+									.entrySet().stream()
+									.map(LoggerGridRow::new)
+									.collect(Collectors.toList());
+			return Optional.of(loggers);
+		} catch (ApplicationRuntimeException ignored) {
+			LOGGER.warn(ignored.getMessage());
+		}
+		
+		return Optional.empty();
 	}
 
 	private void filterLoggers(String filterValue) {
