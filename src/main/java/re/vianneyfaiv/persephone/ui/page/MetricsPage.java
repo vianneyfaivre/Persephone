@@ -26,6 +26,7 @@ import re.vianneyfaiv.persephone.domain.MetricsCache;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
+import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;
 import re.vianneyfaiv.persephone.ui.component.MetricsGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 
@@ -68,11 +69,22 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.addComponent(new PageHeader(app.get(), "Metrics"));
 
 		if(!metricsCaches.isEmpty()) {
-			// TODO: refactoring: use Grid
+			List<MetricsCacheGridRow> metricsCacheItems = metricsCaches.stream()
+															.map(MetricsCacheGridRow::new)
+															.collect(Collectors.toList());
+
+			Grid<MetricsCacheGridRow> gridCache = new Grid<>(MetricsCacheGridRow.class);
+			gridCache.removeAllColumns();
+			gridCache.addColumn(MetricsCacheGridRow::getName).setCaption("Name");
+			gridCache.addColumn(MetricsCacheGridRow::getSize).setCaption("Size");
+			gridCache.addColumn(MetricsCacheGridRow::getHit).setCaption("Hit");
+			gridCache.addColumn(MetricsCacheGridRow::getMiss).setCaption("Miss");
+
+			gridCache.setItems(metricsCacheItems);
+			gridCache.setHeightByRows(metricsCacheItems.size());
+
 			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
-			metricsCaches
-				.stream()
-				.forEach(mc -> this.addComponent(new Label(String.format("%s: size=%s, hit=%s%%, miss=%s%%", mc.getName(), mc.getSize(), mc.getHitRatio(), mc.getMissRatio()))));
+			this.addComponent(gridCache);
 		}
 
 		Grid<MetricsGridRow> grid = getAllMetricsGrid(metrics);
