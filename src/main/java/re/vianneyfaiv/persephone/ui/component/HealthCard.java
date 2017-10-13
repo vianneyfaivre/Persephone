@@ -12,7 +12,7 @@ public class HealthCard extends VerticalLayout {
 
 	public HealthCard(String title, Status status, String... infos) {
 
-		Label titleLabel = new Label(String.format("Health: %s", title), ContentMode.HTML);
+		Label titleLabel = new Label(String.format("%s", title), ContentMode.HTML);
 		titleLabel.setStyleName("health-card-title");
 		this.addComponent(titleLabel);
 
