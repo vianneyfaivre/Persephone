@@ -64,8 +64,9 @@ public class MetricsService {
 
 				String[] parts = cacheMetric.getKey().split("\\.");
 
-				if(parts.length >= 4) {
+				if(parts.length >= 3) {
 			        String cacheName = parts[1]; // TODO : it can contains dots, so join elements parts.1 to parts.length-3
+			        String sizePart = parts[parts.length-1];
 			        String ratioType = parts[parts.length-2];
 
 			        MetricsCache mc = metricsCache.get(cacheName);
@@ -79,6 +80,8 @@ public class MetricsService {
 			        	mc.setMissRatio(cacheMetric.getValue().doubleValue());
 			        } else if("hit".equals(ratioType)) {
 			        	mc.setHitRatio(cacheMetric.getValue().doubleValue());
+			        } else if("size".equals(sizePart)) {
+			        	mc.setSize(cacheMetric.getValue().longValue());
 			        }
 				}
 			});
