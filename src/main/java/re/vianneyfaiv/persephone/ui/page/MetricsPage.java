@@ -23,6 +23,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.MetricsCache;
+import re.vianneyfaiv.persephone.domain.MetricsRest;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -62,34 +63,61 @@ public class MetricsPage extends VerticalLayout implements View {
 			// TODO throw exception
 		}
 
-
 		Map<String, Number> metrics = metricsService.getAllMetrics(app.get());
 		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
+		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics);
 
 		this.addComponent(new PageHeader(app.get(), "Metrics"));
 
 		if(!metricsCaches.isEmpty()) {
-			List<MetricsCacheGridRow> metricsCacheItems = metricsCaches.stream()
-															.map(MetricsCacheGridRow::new)
-															.collect(Collectors.toList());
-
-			Grid<MetricsCacheGridRow> gridCache = new Grid<>(MetricsCacheGridRow.class);
-			gridCache.removeAllColumns();
-			gridCache.addColumn(MetricsCacheGridRow::getName).setCaption("Name");
-			gridCache.addColumn(MetricsCacheGridRow::getSize).setCaption("Size");
-			gridCache.addColumn(MetricsCacheGridRow::getHit).setCaption("Hit");
-			gridCache.addColumn(MetricsCacheGridRow::getMiss).setCaption("Miss");
-
-			gridCache.setItems(metricsCacheItems);
-			gridCache.setHeightByRows(metricsCacheItems.size());
-
 			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
-			this.addComponent(gridCache);
+			this.addComponent(getCacheGrid(metricsCaches));
+		}
+		
+		if(!metricsRest.isEmpty()) {
+			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
+			this.addComponent(getRestGrid(metricsRest));
 		}
 
 		Grid<MetricsGridRow> grid = getAllMetricsGrid(metrics);
 		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
 		this.addComponent(grid);
+	}
+
+	private Grid<MetricsRest> getRestGrid(Collection<MetricsRest> metrics) {
+		
+		List<MetricsRest> metricsItems = metrics.stream()
+													.filter(m -> m.valid())
+													.collect(Collectors.toList());
+		
+		Grid<MetricsRest> gridCache = new Grid<>(MetricsRest.class);
+		gridCache.removeAllColumns();
+		gridCache.addColumn(MetricsRest::getName).setCaption("Path");
+		gridCache.addColumn(MetricsRest::getStatus).setCaption("HTTP Status");
+		gridCache.addColumn(MetricsRest::getValue).setCaption("Hits");
+
+		gridCache.setItems(metricsItems);
+		gridCache.setHeightByRows(metricsItems.size());
+		gridCache.setSizeFull();
+		
+		return gridCache;
+	}
+	
+	private Grid<MetricsCacheGridRow> getCacheGrid(Collection<MetricsCache> metricsCaches) {
+		List<MetricsCacheGridRow> metricsCacheItems = metricsCaches.stream()
+														.map(MetricsCacheGridRow::new)
+														.collect(Collectors.toList());
+
+		Grid<MetricsCacheGridRow> gridCache = new Grid<>(MetricsCacheGridRow.class);
+		gridCache.removeAllColumns();
+		gridCache.addColumn(MetricsCacheGridRow::getName).setCaption("Name");
+		gridCache.addColumn(MetricsCacheGridRow::getSize).setCaption("Size");
+		gridCache.addColumn(MetricsCacheGridRow::getHit).setCaption("Hit");
+		gridCache.addColumn(MetricsCacheGridRow::getMiss).setCaption("Miss");
+
+		gridCache.setItems(metricsCacheItems);
+		gridCache.setHeightByRows(metricsCacheItems.size());
+		return gridCache;
 	}
 
 	private Grid<MetricsGridRow> getAllMetricsGrid(Map<String, Number> metrics) {

@@ -2,7 +2,9 @@ package re.vianneyfaiv.persephone.service;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.domain.MetricsCache;
+import re.vianneyfaiv.persephone.domain.MetricsRest;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
 /**
@@ -87,5 +90,13 @@ public class MetricsService {
 			});
 
 		return metricsCache.values();
+	}
+	
+	public List<MetricsRest> getMetricsRest(Map<String, Number> metrics) {
+		return metrics
+			.entrySet().stream()
+			.filter(metric -> metric.getKey().startsWith("counter.status"))
+			.map(MetricsRest::new)
+			.collect(Collectors.toList());
 	}
 }
