@@ -22,10 +22,10 @@ import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.Metrics;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
-import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 /**
  * Page that lists applications.
@@ -42,13 +42,13 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	private ApplicationService appService;
 
 	@Autowired
-	private HealthService healthService;
-
-	@Autowired
 	private EnvironmentService envService;
 
 	@Autowired
 	private MetricsService metricsService;
+
+	@Autowired
+	private PageHelper pageHelper;
 
 	private Grid<Application> grid;
 	private ApplicationOverviewPanel details;
@@ -89,9 +89,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 	}
 
 	private ItemClickListener<Application> applicationOnClick() {

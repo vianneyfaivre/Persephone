@@ -3,7 +3,6 @@ package re.vianneyfaiv.persephone.ui.page;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -18,7 +17,6 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -30,11 +28,11 @@ import com.vaadin.ui.VerticalLayout;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
-import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.LogsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)
@@ -43,13 +41,13 @@ public class LogsPage extends VerticalLayout implements View {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LogsPage.class);
 
 	@Autowired
-	private ApplicationService appService;
-
-	@Autowired
 	private LogsService logsService;
 
 	@Autowired
 	private EnvironmentService envService;
+
+	@Autowired
+	private PageHelper pageHelper;
 
 	@Value("${persephone.logs.refresh-every-x-seconds}")
 	private int refreshTimeout;
@@ -59,16 +57,12 @@ public class LogsPage extends VerticalLayout implements View {
 
 	@PostConstruct
 	public void init() {
-		// Center align layout
-		this.setWidth("100%");
-		this.setMargin(new MarginInfo(false, true));
+		pageHelper.setLayoutStyle(this);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 
 		this.removeAllComponents();
 
@@ -77,30 +71,27 @@ public class LogsPage extends VerticalLayout implements View {
 
 		LOGGER.debug("Loading logs of application with id {}", appId);
 
-		Optional<Application> app = appService.findById(appId);
-		if(!app.isPresent()) {
-			// TODO: throw exception
-		}
+		Application app = pageHelper.getApp(appId);
 
 		// Download button
-		Button downloadButton = getDownloadButton(app.get());
+		Button downloadButton = getDownloadButton(app);
 
 		// header
-		this.addComponent(new PageHeader(app.get(), "Logs", downloadButton));
+		this.addComponent(new PageHeader(app, "Logs", downloadButton));
 
-		boolean endpointAvailable = this.logsService.endpointAvailable(app.get());
+		boolean endpointAvailable = this.logsService.endpointAvailable(app);
 
 		/*
 		 * Logs not available
 		 */
 		if(!endpointAvailable) {
 
-			Environment env = this.envService.getEnvironment(app.get());
+			Environment env = this.envService.getEnvironment(app);
 			String loggingPath = env.get("logging.path");
 			String loggingFile = env.get("logging.file");
 
 			String noLogsText = new StringBuilder()
-									.append(String.format("Endpoint %s is not available", app.get().endpoints().logfile()))
+									.append(String.format("Endpoint %s is not available", app.endpoints().logfile()))
 									.append("\n\n")
 									.append("Spring uses those properties for getting the logs:")
 									.append("\n")
@@ -119,12 +110,12 @@ public class LogsPage extends VerticalLayout implements View {
 		 * Logs available
 		 */
 		else {
-			String logs = logsService.getLogs(app.get(), bytesToRetrieve);
+			String logs = logsService.getLogs(app, bytesToRetrieve);
 
 			Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
 			logsLabel.setStyleName("app-logs");
 
-			ajaxRefreshInit((args) -> logsLabel.setValue(logsService.getLogs(app.get(), bytesToRetrieve)));
+			ajaxRefreshInit((args) -> logsLabel.setValue(logsService.getLogs(app, bytesToRetrieve)));
 
 			this.addComponent(new Label(String.format("Auto-refresh every %s seconds (last %s chars).", refreshTimeout, bytesToRetrieve)));
 			this.addComponent(logsLabel);

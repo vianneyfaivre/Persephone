@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -34,6 +33,7 @@ import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.LoggerGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
 @SpringView(name=PersephoneViews.LOGGERS)
@@ -47,92 +47,88 @@ public class LoggersPage extends VerticalLayout implements View {
 	@Autowired
 	private LoggersService loggersService;
 
+	@Autowired
+	private PageHelper pageHelper;
+
 	private Grid<LoggerGridRow> grid;
 	private List<LoggerGridRow> loggersRows;
 	private TextField filterInput;
 
 	@PostConstruct
 	public void init() {
-		// Center align layout
-		this.setWidth("100%");
-		this.setMargin(new MarginInfo(false, true));
+		pageHelper.setLayoutStyle(this);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 
 		this.removeAllComponents();
 
 		// Get application
 		int appId = Integer.valueOf(event.getParameters());
-		Optional<Application> app = appService.findById(appId);
-		if(!app.isPresent()) {
-			// TODO throw exception
-		}
+		Application app = pageHelper.getApp(appId);
 
 		// Get loggers config
-		Optional<Loggers> loggers = getLoggers(app.get());
+		Optional<Loggers> loggers = getLoggers(app);
 
 		if(loggers.isPresent()) {
-			
+
 			// Display loggers in a grid
 			grid = new Grid<>(LoggerGridRow.class);
-			
+
 			grid.removeAllColumns();
-			
+
 			Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName).setCaption("Name");
 			grid.addComponentColumn(logger -> {
 				NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.get().getLevels());
-				
+
 				levelsDropdown.setEmptySelectionAllowed(false);
 				levelsDropdown.setSelectedItem(logger.getLevel());
-				
+
 				// on selected level
 				levelsDropdown.addValueChangeListener(value -> {
-					
+
 					// change logger level
-					loggersService.changeLevel(app.get(), logger.getName(), value.getValue());
-					
+					loggersService.changeLevel(app, logger.getName(), value.getValue());
+
 					// refresh data in grid (several loggers might have been impacted)
-					updateLoggers(app.get());
-					
+					updateLoggers(app);
+
 					Notification.show(
 							String.format("Logger %s level changed to %s", logger.getName(), value.getValue())
 							, Notification.Type.TRAY_NOTIFICATION);
 				});
-				
+
 				return levelsDropdown;
 			}).setCaption("Level");
 			grid.setRowHeight(40);
-			
+
 			grid.setItems(loggersRows);
 			grid.sort(defaultSortColumn);
-			
+
 			grid.setSizeFull();
-			
+
 			// Filter grid by logger name
 			filterInput = new TextField();
 			filterInput.setPlaceholder("filter by logger name...");
 			filterInput.addValueChangeListener(e -> filterLoggers(e.getValue()));
 			filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
-			this.addComponent(new PageHeader(app.get(), "Loggers", filterInput));
+			this.addComponent(new PageHeader(app, "Loggers", filterInput));
 			this.addComponent(new Label("Changing a level will update one/many logger(s) level(s)"));
 			this.addComponent(grid);
 		} else {
-			this.addComponent(new PageHeader(app.get(), "Loggers"));
-			this.addComponent(new Label(String.format("Failed to call %s<br />This endpoint is available since Spring Boot 1.5", app.get().endpoints().loggers()), ContentMode.HTML));
+			this.addComponent(new PageHeader(app, "Loggers"));
+			this.addComponent(new Label(String.format("Failed to call %s<br />This endpoint is available since Spring Boot 1.5", app.endpoints().loggers()), ContentMode.HTML));
 		}
 	}
 
 	private Optional<Loggers> getLoggers(Application app) {
-		
+
 		try {
 			Loggers loggers = loggersService.getLoggers(app);
-	
+
 			// Convert loggers to grid rows
 			this.loggersRows = loggers.getLoggers()
 									.entrySet().stream()
@@ -142,7 +138,7 @@ public class LoggersPage extends VerticalLayout implements View {
 		} catch (ApplicationRuntimeException ignored) {
 			LOGGER.warn(ignored.getMessage());
 		}
-		
+
 		return Optional.empty();
 	}
 

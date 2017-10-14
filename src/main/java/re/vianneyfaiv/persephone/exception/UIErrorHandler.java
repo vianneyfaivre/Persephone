@@ -51,6 +51,11 @@ public class UIErrorHandler implements ErrorHandler {
 			displayErrorNotif("Unable to reach " + e.getApplication().getUrl(), e);
 			handled = true;
 		}
+		else if(t instanceof ApplicationNotFoundException) {
+			ApplicationNotFoundException e = (ApplicationNotFoundException) t;
+			displayErrorNotif(e.getMessage(), e);
+			handled = true;
+		}
 		// Expected exceptions (not handled)
 		else if(t instanceof ApplicationException) {
 			ApplicationException e = (ApplicationException) t;

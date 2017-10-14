@@ -1,7 +1,5 @@
 package re.vianneyfaiv.persephone.ui.page;
 
-import java.util.Optional;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -12,16 +10,15 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.BorderStyle;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
 @SpringView(name=PersephoneViews.ENDPOINTS)
@@ -30,37 +27,29 @@ public class EndpointsPage extends VerticalLayout implements View {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LogsPage.class);
 
 	@Autowired
-	private ApplicationService appService;
+	private PageHelper pageHelper;
 
 	@PostConstruct
 	public void init() {
-		// Center align layout
-		this.setWidth("100%");
-		this.setMargin(new MarginInfo(false, true));
+		pageHelper.setLayoutStyle(this);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 
 		this.removeAllComponents();
 
 		// Get application
 		int appId = Integer.valueOf(event.getParameters());
 
-		Optional<Application> app = appService.findById(appId);
-		if(!app.isPresent()) {
-			// TODO: throw exception
-		}
+		Application app = pageHelper.getApp(appId);
 
 		// Header
-		this.addComponent(new PageHeader(app.get(), "Endpoints"));
+		this.addComponent(new PageHeader(app, "Endpoints"));
 
 		// Add endpoints links
-		app.get()
-		   .endpoints().asList().stream()
+		app.endpoints().asList().stream()
 		   .forEach(endpointUrl -> this.addComponent(new Link(endpointUrl+".json", new ExternalResource(endpointUrl+".json"), "_blank", 0, 0, BorderStyle.DEFAULT)));
 	}
 }

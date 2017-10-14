@@ -1,7 +1,5 @@
 package re.vianneyfaiv.persephone.ui.page;
 
-import java.util.Optional;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -21,48 +18,41 @@ import com.vaadin.ui.VerticalLayout;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
 import re.vianneyfaiv.persephone.domain.PropertyItem;
-import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
 @SpringView(name=PersephoneViews.PROPERTIES)
 public class PropertiesPage extends VerticalLayout implements View {
 
 	@Autowired
-	private ApplicationService appService;
+	private EnvironmentService envService;
 
 	@Autowired
-	private EnvironmentService envService;
+	private PageHelper pageHelper;
 
 	private Environment currentEnv;
 	private Grid<PropertyItem> grid;
 
 	@PostConstruct
 	public void init() {
-		// Center align layout
-		this.setWidth("100%");
-		this.setMargin(new MarginInfo(false, true));
+		pageHelper.setLayoutStyle(this);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 
 		this.removeAllComponents();
 
 		// Get application
 		int appId = Integer.valueOf(event.getParameters());
-		Optional<Application> app = appService.findById(appId);
-		if(!app.isPresent()) {
-			// TODO throw exception
-		}
+		Application app = pageHelper.getApp(appId);
 
 		// Load properties
-		this.currentEnv = envService.getEnvironment(app.get());
+		this.currentEnv = envService.getEnvironment(app);
 
 		// Properties grid
 		this.grid = new Grid<>(PropertyItem.class);
@@ -81,7 +71,7 @@ public class PropertiesPage extends VerticalLayout implements View {
 		filterInput.addValueChangeListener(e -> updateProperties(e.getValue()));
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
 
-		this.addComponent(new PageHeader(app.get(), "Properties", filterInput));
+		this.addComponent(new PageHeader(app, "Properties", filterInput));
 		this.addComponent(this.grid);
 		this.updateProperties("");
 	}

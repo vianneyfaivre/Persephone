@@ -3,7 +3,6 @@ package re.vianneyfaiv.persephone.ui.page;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
@@ -30,6 +28,7 @@ import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;
 import re.vianneyfaiv.persephone.ui.component.MetricsGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
 @SpringView(name=PersephoneViews.METRICS)
@@ -41,39 +40,35 @@ public class MetricsPage extends VerticalLayout implements View {
 	@Autowired
 	private MetricsService metricsService;
 
+	@Autowired
+	private PageHelper pageHelper;
+
 	@PostConstruct
 	public void init() {
-		// Center align layout
-		this.setWidth("100%");
-		this.setMargin(new MarginInfo(false, true));
+		pageHelper.setLayoutStyle(this);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 
 		this.removeAllComponents();
 
 		// Get application
 		int appId = Integer.valueOf(event.getParameters());
-		Optional<Application> app = appService.findById(appId);
-		if(!app.isPresent()) {
-			// TODO throw exception
-		}
+		Application app = pageHelper.getApp(appId);
 
-		Map<String, Number> metrics = metricsService.getAllMetrics(app.get());
+		Map<String, Number> metrics = metricsService.getAllMetrics(app);
 		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
 		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics);
 
-		this.addComponent(new PageHeader(app.get(), "Metrics"));
+		this.addComponent(new PageHeader(app, "Metrics"));
 
 		if(!metricsCaches.isEmpty()) {
 			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
 			this.addComponent(getCacheGrid(metricsCaches));
 		}
-		
+
 		if(!metricsRest.isEmpty()) {
 			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest));
@@ -85,11 +80,11 @@ public class MetricsPage extends VerticalLayout implements View {
 	}
 
 	private Grid<MetricsRest> getRestGrid(Collection<MetricsRest> metrics) {
-		
+
 		List<MetricsRest> metricsItems = metrics.stream()
 													.filter(m -> m.valid())
 													.collect(Collectors.toList());
-		
+
 		Grid<MetricsRest> gridCache = new Grid<>(MetricsRest.class);
 		gridCache.removeAllColumns();
 		gridCache.addColumn(MetricsRest::getName).setCaption("Path");
@@ -99,10 +94,10 @@ public class MetricsPage extends VerticalLayout implements View {
 		gridCache.setItems(metricsItems);
 		gridCache.setHeightByRows(metricsItems.size());
 		gridCache.setSizeFull();
-		
+
 		return gridCache;
 	}
-	
+
 	private Grid<MetricsCacheGridRow> getCacheGrid(Collection<MetricsCache> metricsCaches) {
 		List<MetricsCacheGridRow> metricsCacheItems = metricsCaches.stream()
 														.map(MetricsCacheGridRow::new)

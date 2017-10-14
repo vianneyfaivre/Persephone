@@ -1,14 +1,11 @@
 package re.vianneyfaiv.persephone.ui.page;
 
-import java.util.Optional;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.HorizontalLayout;
@@ -17,45 +14,38 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Health;
-import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.HealthCard;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
 @SpringView(name=PersephoneViews.HEALTH)
 public class HealthPage extends VerticalLayout implements View {
 
 	@Autowired
-	private ApplicationService appService;
+	private HealthService healthService;
 
 	@Autowired
-	private HealthService healthService;
+	private PageHelper pageHelper;
 
 	@PostConstruct
 	public void init() {
-		// Center align layout
-		this.setWidth("100%");
-		this.setMargin(new MarginInfo(false, true));
+		pageHelper.setLayoutStyle(this);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// Set component error handler with the one from UI.
-		// This is required because when an exception is thrown when calling Navigator#navigateTo it won't be handled by UI' error handler
-		setErrorHandler(getUI().getErrorHandler());
+		pageHelper.setErrorHandler(this);
 
 		this.removeAllComponents();
 
 		// Get application
 		int appId = Integer.valueOf(event.getParameters());
-		Optional<Application> app = appService.findById(appId);
-		if(!app.isPresent()) {
-			// TODO throw exception
-		}
+		Application app = pageHelper.getApp(appId);
 
-		Health health = healthService.getHealth(app.get());
+		Health health = healthService.getHealth(app);
 
 		HorizontalLayout cards = new HorizontalLayout();
 
@@ -76,7 +66,7 @@ public class HealthPage extends VerticalLayout implements View {
 					String.format("Vendor: %s", health.getDb().get().getDatabase())));
 		}
 
-		this.addComponent(new PageHeader(app.get(), "Health"));
+		this.addComponent(new PageHeader(app, "Health"));
 
 		if(cards.getComponentCount() == 0) {
 			this.addComponent(new Label("No additional data to display"));
