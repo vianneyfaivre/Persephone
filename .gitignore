@@ -4,7 +4,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -65,6 +64,5 @@ $RECYCLE.BIN/
 # Eclipse
 .project
 *.classpath
-.mvn
 .settings
 target
