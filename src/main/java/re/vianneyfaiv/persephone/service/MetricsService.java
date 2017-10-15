@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.service;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,9 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsGc;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
 /**
@@ -151,5 +154,67 @@ public class MetricsService {
 			});
 
 		return metricsDb.values();
+	}
+	
+	public MetricsSystem getSystemMetrics(Map<String, Number> metrics) {
+//		Heap information in KB (heap, heap.committed, heap.init, heap.used)
+		int heap = metrics.getOrDefault("heap", -1).intValue();
+		int heapCommitted = metrics.getOrDefault("heap.committed", -1).intValue();
+		int heapInit = metrics.getOrDefault("heap.init", -1).intValue();
+		int heapUsed = metrics.getOrDefault("heap.used", -1).intValue();
+
+//		The total system memory in KB (mem)
+		int mem = metrics.getOrDefault("mem", -1).intValue();
+//		The amount of free memory in KB (mem.free)
+		int memFree = metrics.getOrDefault("mem.free", -1).intValue();
+
+//		The number of processors (processors)
+		int processors = metrics.getOrDefault("processors", -1).intValue();
+//		The system uptime in milliseconds (uptime)
+		Duration uptime = Duration.ofMillis(metrics.getOrDefault("uptime", -1).longValue());
+//		The application context uptime in milliseconds (instance.uptime)
+		Duration instanceUptime = Duration.ofMillis(metrics.getOrDefault("instance.uptime", -1).longValue());
+//		The average system load (systemload.average)
+		double systemLoadAverage = metrics.getOrDefault("systemload.average", -1).doubleValue();
+
+//		Thread information (threads, thread.peak, thread.daemon)
+		int threads = metrics.getOrDefault("threads", -1).intValue();
+		int threadPeak = metrics.getOrDefault("threads.peak", -1).intValue();
+		int threadDaemon = metrics.getOrDefault("threads.daemon", -1).intValue();
+
+//		Class load information (classes, classes.loaded, classes.unloaded)
+		int classes = metrics.getOrDefault("classes", -1).intValue();
+		int classesLoaded = metrics.getOrDefault("classes.loaded", -1).intValue();
+		int classesUnloaded = metrics.getOrDefault("classes.unloaded", -1).intValue();
+
+//		Garbage collection information (gc.xxx.count, gc.xxx.time)
+		Map<String, MetricsGc> metricsGc = new HashMap<>();
+		metrics
+			.entrySet().stream()
+			.filter(metric -> metric.getKey().startsWith("gc."))
+			.forEach(gcMetric -> {
+
+				String[] parts = gcMetric.getKey().split("\\.");
+
+				if(parts.length >= 3) {
+			        String name = parts[1];
+			        String metricType = parts[parts.length-1];
+
+			        MetricsGc mc = metricsGc.get(name);
+
+			        if(mc == null) {
+			        	mc = new MetricsGc(name);
+			        	metricsGc.put(name, mc);
+			        }
+
+			        if("count".equals(metricType)) {
+			        	mc.setCount(gcMetric.getValue().intValue());
+			        } else if("time".equals(metricType)) {
+			        	mc.setTime(Duration.ofMillis(gcMetric.getValue().longValue()));
+			        }
+				}
+			});
+
+		return new MetricsSystem(heap, heapCommitted, heapInit, heapUsed, mem, memFree, processors, uptime, instanceUptime, systemLoadAverage, threads, threadPeak, threadDaemon, classes, classesLoaded, classesUnloaded, metricsGc.values());
 	}
 }

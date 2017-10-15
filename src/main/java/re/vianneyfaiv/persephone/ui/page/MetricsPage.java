@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.ui.page;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -26,11 +29,14 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
+import re.vianneyfaiv.persephone.ui.component.HealthCard;
 import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;
 import re.vianneyfaiv.persephone.ui.component.MetricsGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.util.Formatters;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
@@ -61,12 +67,18 @@ public class MetricsPage extends VerticalLayout implements View {
 		int appId = Integer.valueOf(event.getParameters());
 		Application app = pageHelper.getApp(appId);
 
+		// Get metrics
 		Map<String, Number> metrics = metricsService.getAllMetrics(app);
 		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
 		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics);
 		Collection<MetricsDatasource> metricsDb = metricsService.getMetricsDatasources(metrics);
+		MetricsSystem metricsSystem = metricsService.getSystemMetrics(metrics);
 
+		// Build UI
 		this.addComponent(new PageHeader(app, "Metrics"));
+		
+		this.addComponent(new Label("<h3>System metrics</h3>", ContentMode.HTML));
+		this.addComponent(getSystemPanel(metricsSystem));
 
 		if(!metricsRest.isEmpty()) {
 			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
@@ -95,6 +107,61 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.addComponent(allMetricsGrid);
 	}
 	
+	private Component getSystemPanel(MetricsSystem metrics) {
+		
+		// System
+		HealthCard sys = new HealthCard("System",
+							String.format("Processors: %s", metrics.getProcessors()),
+							String.format("System Load Average: %s", metrics.getSystemLoadAverage()),
+							String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime()))
+						);
+		
+		// Heap + Memory
+		String memAllocated = Formatters.readableFileSize(metrics.getMemAllocated() * 1000);
+		String memTotal = Formatters.readableFileSize(metrics.getMem() * 1000);
+		String heapUsed = Formatters.readableFileSize(metrics.getHeapUsed() * 1000);
+		String heapMin = Formatters.readableFileSize(metrics.getHeapInit() * 1000);
+		String heapMax = Formatters.readableFileSize(metrics.getHeap() * 1000);
+		String heapCommitted = Formatters.readableFileSize(metrics.getHeapCommitted() * 1000);
+		HealthCard mem = new HealthCard("Memory",
+							String.format("Memory: %s / %s (%s%% free)", memAllocated, memTotal, metrics.getMemFreePercentage()),
+							String.format("Heap committed: %s / %s (%s%% free)", heapUsed, heapCommitted, metrics.getHeapCommittedFreePercentage()),
+							String.format("Heap min: %s", heapMin),
+							String.format("Heap max: %s", heapMax)
+						);
+		
+		// Threads
+		List<String> threadsInfos = new ArrayList<>();
+		threadsInfos.add(String.format("Active: %s", metrics.getThreads()));
+		
+		if(metrics.getThreadPeak() >= 0) {
+			threadsInfos.add(String.format("Peak: %s", metrics.getThreadPeak()));
+		}
+
+		if(metrics.getThreadDaemon() >= 0) {
+			threadsInfos.add(String.format("Daemons: %s", metrics.getThreadDaemon()));
+		}
+		
+		HealthCard threads = new HealthCard("Threads", threadsInfos);
+		
+		// Classes
+		HealthCard classes = new HealthCard("Classes",
+							String.format("Currently Loaded: %s", metrics.getClasses()),
+							String.format("Total Loaded: %s", metrics.getClassesLoaded()),
+							String.format("Total Unloaded: %s", metrics.getClassesUnloaded())
+						);
+		
+		// GCs
+		List<String> gcInfos = metrics
+							.getGarbageCollectionInfos().stream()
+							.map(gcInfo -> String.format("%s: called %s times, spent %s", gcInfo.getName(), gcInfo.getCount(), Formatters.readableDuration(gcInfo.getTime())))
+							.collect(Collectors.toList());
+		
+		HealthCard gc = new HealthCard("Garbage Collection", gcInfos);
+		
+		return new HorizontalLayout(sys, mem, threads, classes, gc);
+	}
+
 	private void updateMetrics(String filterValue) {
 
 		if(StringUtils.isEmpty(filterValue)) {
@@ -112,7 +179,7 @@ public class MetricsPage extends VerticalLayout implements View {
 	private Grid<MetricsRest> getRestGrid(Collection<MetricsRest> metrics) {
 
 		List<MetricsRest> metricsItems = metrics.stream()
-													.filter(m -> m.valid())
+													.filter(MetricsRest::valid)
 													.collect(Collectors.toList());
 
 		Grid<MetricsRest> gridCache = new Grid<>(MetricsRest.class);
@@ -124,7 +191,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		gridCache.setItems(metricsItems);
 		gridCache.setHeightByRows(metricsItems.size());
-		gridCache.setSizeFull();
+		gridCache.setWidth(100, Unit.PERCENTAGE);
 
 		return gridCache;
 	}
