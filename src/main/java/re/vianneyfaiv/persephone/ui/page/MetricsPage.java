@@ -22,7 +22,6 @@ import com.vaadin.ui.VerticalLayout;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.MetricsCache;
 import re.vianneyfaiv.persephone.domain.MetricsRest;
-import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;
@@ -33,9 +32,6 @@ import re.vianneyfaiv.persephone.ui.util.PageHelper;
 @UIScope
 @SpringView(name=PersephoneViews.METRICS)
 public class MetricsPage extends VerticalLayout implements View {
-
-	@Autowired
-	private ApplicationService appService;
 
 	@Autowired
 	private MetricsService metricsService;
@@ -88,8 +84,9 @@ public class MetricsPage extends VerticalLayout implements View {
 		Grid<MetricsRest> gridCache = new Grid<>(MetricsRest.class);
 		gridCache.removeAllColumns();
 		gridCache.addColumn(MetricsRest::getName).setCaption("Path");
-		gridCache.addColumn(MetricsRest::getStatus).setCaption("HTTP Status");
+		gridCache.addColumn(m -> m.getStatus() + " " + m.getStatus().getReasonPhrase()).setCaption("HTTP Status");
 		gridCache.addColumn(MetricsRest::getValue).setCaption("Hits");
+		gridCache.addColumn(MetricsRest::getLastResponseTime).setCaption("Last Response Time (ms)");
 
 		gridCache.setItems(metricsItems);
 		gridCache.setHeightByRows(metricsItems.size());

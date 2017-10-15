@@ -91,12 +91,29 @@ public class MetricsService {
 
 		return metricsCache.values();
 	}
-	
+
 	public List<MetricsRest> getMetricsRest(Map<String, Number> metrics) {
-		return metrics
-			.entrySet().stream()
-			.filter(metric -> metric.getKey().startsWith("counter.status"))
-			.map(MetricsRest::new)
-			.collect(Collectors.toList());
+
+		// get all Rest metrics
+		List<MetricsRest> metricsRest = metrics
+											.entrySet().stream()
+											.filter(metric -> metric.getKey().startsWith("counter.status"))
+											.map(MetricsRest::new)
+											.collect(Collectors.toList());
+
+
+		// Get last response time
+		metricsRest.stream()
+			.forEach(m -> {
+				Number lastResponseTime = metrics.get("gauge.response."+m.getName());
+
+				if(lastResponseTime != null) {
+					m.setLastResponseTime(lastResponseTime.intValue());
+				} else {
+					m.setLastResponseTime(-1);
+				}
+			});
+
+		return metricsRest;
 	}
 }
