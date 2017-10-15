@@ -113,7 +113,6 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		grid.setItems(metrics);
 		grid.setHeightByRows(metrics.size());
-		grid.setSizeFull();
 
 		return grid;
 	}

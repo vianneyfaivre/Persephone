@@ -132,7 +132,7 @@ public class MetricsService {
 				String[] parts = dbMetric.getKey().split("\\.");
 
 				if(parts.length >= 3) {
-			        String name = parts[2];
+			        String name = parts[1];
 			        String metricType = parts[parts.length-1];
 
 			        MetricsDatasource mc = metricsDb.get(name);
