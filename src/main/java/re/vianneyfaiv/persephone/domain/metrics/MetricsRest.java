@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.metrics;
 
 import java.util.Arrays;
 import java.util.Map;

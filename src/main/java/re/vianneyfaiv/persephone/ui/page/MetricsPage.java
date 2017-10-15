@@ -20,8 +20,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.MetricsCache;
-import re.vianneyfaiv.persephone.domain.MetricsRest;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;

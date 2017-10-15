@@ -19,7 +19,7 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.Environment;
-import re.vianneyfaiv.persephone.domain.Metrics;
+import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.MetricsService;

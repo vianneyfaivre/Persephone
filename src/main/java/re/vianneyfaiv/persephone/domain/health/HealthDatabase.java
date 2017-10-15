@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.health;
 
 import org.springframework.boot.actuate.health.Status;
 

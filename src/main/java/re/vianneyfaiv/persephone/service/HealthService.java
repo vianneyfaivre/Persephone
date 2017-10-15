@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Health;
+import re.vianneyfaiv.persephone.domain.health.Health;
 
 /**
  * Calls /health

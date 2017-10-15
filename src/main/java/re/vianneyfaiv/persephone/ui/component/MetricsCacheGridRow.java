@@ -2,7 +2,7 @@ package re.vianneyfaiv.persephone.ui.component;
 
 import java.text.DecimalFormat;
 
-import re.vianneyfaiv.persephone.domain.MetricsCache;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 
 public class MetricsCacheGridRow {
 

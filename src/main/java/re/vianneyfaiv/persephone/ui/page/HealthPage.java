@@ -13,7 +13,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Health;
+import re.vianneyfaiv.persephone.domain.health.Health;
 import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.HealthCard;
