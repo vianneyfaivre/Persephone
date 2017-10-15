@@ -1,5 +1,7 @@
 package re.vianneyfaiv.persephone.ui.page;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,8 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@PostConstruct
 	public void init() {
+		
+		List<Application> applications = this.appService.findAll();
 
 		// Title
 		Label title = new Label("<h2>Applications</h2>", ContentMode.HTML);
@@ -67,14 +71,13 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		this.grid.addColumn(Application::getEnvironment).setCaption("Environment");
 		this.grid.addColumn(Application::getUrl).setCaption("URL");
 
-		this.grid.setItems(this.appService.findAll());
+		this.grid.setItems(applications);
 
-		this.grid.setStyleGenerator(app -> {
-			return app.isUp() ? null : "app-down";
-		});
+		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
 
 		this.grid.addItemClickListener(applicationOnClick());
 		this.grid.setSizeFull();
+		this.grid.setHeightByRows(applications.size());
 		this.grid.sort(defaultSortColumn);
 
 		// Build layout
