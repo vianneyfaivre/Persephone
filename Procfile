@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT $JAVA_OPTS -Dpersephone.applications.csv=heroku/applications.csv -jar target/persephone-*.jar
