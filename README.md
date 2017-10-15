@@ -2,6 +2,8 @@
 
 Web application that ease the monitoring of Spring boot applications.
 
+[![Build Status](https://api.travis-ci.org/vianneyfaivre/Persephone.svg?branch=master)](https://travis-ci.org/vianneyfaivre/Persephone)
+
 ## Features
 
 For each monitored application:
