@@ -8,15 +8,18 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
@@ -39,6 +42,9 @@ public class MetricsPage extends VerticalLayout implements View {
 
 	@Autowired
 	private PageHelper pageHelper;
+	
+	private List<MetricsGridRow> allMetricsRows;
+	private Grid<MetricsGridRow> allMetricsGrid;
 
 	@PostConstruct
 	public void init() {
@@ -62,11 +68,11 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		this.addComponent(new PageHeader(app, "Metrics"));
 
-
 		if(!metricsRest.isEmpty()) {
 			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest));
 		}
+		
 		if(!metricsCaches.isEmpty()) {
 			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
 			this.addComponent(getCacheGrid(metricsCaches));
@@ -77,9 +83,30 @@ public class MetricsPage extends VerticalLayout implements View {
 			this.addComponent(getDatasourceGrid(metricsDb));
 		}
 
-		Grid<MetricsGridRow> grid = getAllMetricsGrid(metrics);
+		allMetricsGrid = getAllMetricsGrid(metrics);
+		
+		TextField filterInput = new TextField();
+		filterInput.setPlaceholder("filter by metric...");
+		filterInput.addValueChangeListener(e -> updateMetrics(e.getValue()));
+		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
+		
 		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
-		this.addComponent(grid);
+		this.addComponent(filterInput);
+		this.addComponent(allMetricsGrid);
+	}
+	
+	private void updateMetrics(String filterValue) {
+
+		if(StringUtils.isEmpty(filterValue)) {
+			this.allMetricsGrid.setItems(this.allMetricsRows);
+		}
+		else {
+			this.allMetricsGrid.setItems(
+				this.allMetricsRows
+					.stream()
+					.filter(p -> p.getName().toLowerCase().contains(filterValue.toLowerCase()))
+			);
+		}
 	}
 
 	private Grid<MetricsRest> getRestGrid(Collection<MetricsRest> metrics) {
@@ -135,17 +162,16 @@ public class MetricsPage extends VerticalLayout implements View {
 	}
 
 	private Grid<MetricsGridRow> getAllMetricsGrid(Map<String, Number> metrics) {
-		List<MetricsGridRow> metricsItems = metrics
-												.entrySet().stream()
-												.map(MetricsGridRow::new)
-												.collect(Collectors.toList());
+		allMetricsRows = metrics.entrySet().stream()
+								.map(MetricsGridRow::new)
+								.collect(Collectors.toList());
 
 		Grid<MetricsGridRow> grid = new Grid<>(MetricsGridRow.class);
 		grid.removeAllColumns();
 		Column<MetricsGridRow, String> defaultSortColumn = grid.addColumn(MetricsGridRow::getName).setCaption("Name");
 		grid.addColumn(MetricsGridRow::getValue).setCaption("Value");
 
-		grid.setItems(metricsItems);
+		grid.setItems(allMetricsRows);
 		grid.sort(defaultSortColumn);
 		grid.setSizeFull();
 		return grid;
