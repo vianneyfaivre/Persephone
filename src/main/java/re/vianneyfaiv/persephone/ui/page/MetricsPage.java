@@ -48,7 +48,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 	@Autowired
 	private PageHelper pageHelper;
-	
+
 	private List<MetricsGridRow> allMetricsRows;
 	private Grid<MetricsGridRow> allMetricsGrid;
 
@@ -76,7 +76,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		// Build UI
 		this.addComponent(new PageHeader(app, "Metrics"));
-		
+
 		this.addComponent(new Label("<h3>System metrics</h3>", ContentMode.HTML));
 		this.addComponent(getSystemPanel(metricsSystem));
 
@@ -84,7 +84,7 @@ public class MetricsPage extends VerticalLayout implements View {
 			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest));
 		}
-		
+
 		if(!metricsCaches.isEmpty()) {
 			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
 			this.addComponent(getCacheGrid(metricsCaches));
@@ -96,26 +96,27 @@ public class MetricsPage extends VerticalLayout implements View {
 		}
 
 		allMetricsGrid = getAllMetricsGrid(metrics);
-		
+
 		TextField filterInput = new TextField();
 		filterInput.setPlaceholder("filter by metric...");
 		filterInput.addValueChangeListener(e -> updateMetrics(e.getValue()));
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
-		
+
 		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
 		this.addComponent(filterInput);
 		this.addComponent(allMetricsGrid);
 	}
-	
+
 	private Component getSystemPanel(MetricsSystem metrics) {
-		
+
 		// System
+		String systemLoad = metrics.getSystemLoadAverage() != -1 ? String.format("System Load Average: %s", metrics.getSystemLoadAverage()) : "";
 		HealthCard sys = new HealthCard("System",
 							String.format("Processors: %s", metrics.getProcessors()),
-							String.format("System Load Average: %s", metrics.getSystemLoadAverage()),
+							systemLoad,
 							String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime()))
 						);
-		
+
 		// Heap + Memory
 		String memAllocated = Formatters.readableFileSize(metrics.getMemAllocated() * 1000);
 		String memTotal = Formatters.readableFileSize(metrics.getMem() * 1000);
@@ -129,11 +130,11 @@ public class MetricsPage extends VerticalLayout implements View {
 							String.format("Heap min: %s", heapMin),
 							String.format("Heap max: %s", heapMax)
 						);
-		
+
 		// Threads
 		List<String> threadsInfos = new ArrayList<>();
 		threadsInfos.add(String.format("Active: %s", metrics.getThreads()));
-		
+
 		if(metrics.getThreadPeak() >= 0) {
 			threadsInfos.add(String.format("Peak: %s", metrics.getThreadPeak()));
 		}
@@ -141,24 +142,24 @@ public class MetricsPage extends VerticalLayout implements View {
 		if(metrics.getThreadDaemon() >= 0) {
 			threadsInfos.add(String.format("Daemons: %s", metrics.getThreadDaemon()));
 		}
-		
+
 		HealthCard threads = new HealthCard("Threads", threadsInfos);
-		
+
 		// Classes
 		HealthCard classes = new HealthCard("Classes",
 							String.format("Currently Loaded: %s", metrics.getClasses()),
 							String.format("Total Loaded: %s", metrics.getClassesLoaded()),
 							String.format("Total Unloaded: %s", metrics.getClassesUnloaded())
 						);
-		
+
 		// GCs
 		List<String> gcInfos = metrics
 							.getGarbageCollectionInfos().stream()
 							.map(gcInfo -> String.format("%s: called %s times, spent %s", gcInfo.getName(), gcInfo.getCount(), Formatters.readableDuration(gcInfo.getTime())))
 							.collect(Collectors.toList());
-		
+
 		HealthCard gc = new HealthCard("Garbage Collection", gcInfos);
-		
+
 		return new HorizontalLayout(sys, mem, threads, classes, gc);
 	}
 

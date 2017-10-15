@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 public class HealthCard extends VerticalLayout {
-	
+
 	private HealthCard(String title) {
 		Label titleLabel = new Label(String.format("%s", title), ContentMode.HTML);
 		titleLabel.setStyleName("health-card-title");
@@ -23,12 +24,14 @@ public class HealthCard extends VerticalLayout {
 		this(title + ": " + status.getCode());
 		Arrays.asList(infos).stream().forEach(info -> this.addComponent(new Label(info)));
 	}
-	
+
 	public HealthCard(String title, String... infos) {
 		this(title);
-		Arrays.asList(infos).stream().forEach(info -> this.addComponent(new Label(info)));
+		Arrays.asList(infos).stream()
+			.filter(i -> !StringUtils.isEmpty(i))
+			.forEach(info -> this.addComponent(new Label(info)));
 	}
-	
+
 	public HealthCard(String title, List<String> infos) {
 		this(title);
 		infos.stream().forEach(info -> this.addComponent(new Label(info)));
