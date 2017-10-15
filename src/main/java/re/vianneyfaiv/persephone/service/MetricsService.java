@@ -16,6 +16,7 @@ import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
@@ -62,7 +63,7 @@ public class MetricsService {
 
 		metrics
 			.entrySet().stream()
-			.filter(metric -> metric.getKey().startsWith("cache"))
+			.filter(metric -> metric.getKey().startsWith("cache."))
 			.forEach(cacheMetric -> {
 
 				String[] parts = cacheMetric.getKey().split("\\.");
@@ -115,5 +116,40 @@ public class MetricsService {
 			});
 
 		return metricsRest;
+	}
+
+	public Collection<MetricsDatasource> getMetricsDatasources(Map<String, Number> metrics) {
+		// datasource.xxx.active
+		// datasource.xxx.usage
+
+		Map<String, MetricsDatasource> metricsDb = new HashMap<>();
+
+		metrics
+			.entrySet().stream()
+			.filter(metric -> metric.getKey().startsWith("datasource."))
+			.forEach(dbMetric -> {
+
+				String[] parts = dbMetric.getKey().split("\\.");
+
+				if(parts.length >= 3) {
+			        String name = parts[2];
+			        String metricType = parts[parts.length-1];
+
+			        MetricsDatasource mc = metricsDb.get(name);
+
+			        if(mc == null) {
+			        	mc = new MetricsDatasource(name);
+			        	metricsDb.put(name, mc);
+			        }
+
+			        if("active".equals(metricType)) {
+			        	mc.setActiveConnections(dbMetric.getValue().intValue());
+			        } else if("usage".equals(metricType)) {
+			        	mc.setConnectionPoolUsage(dbMetric.getValue().intValue());
+			        }
+				}
+			});
+
+		return metricsDb.values();
 	}
 }

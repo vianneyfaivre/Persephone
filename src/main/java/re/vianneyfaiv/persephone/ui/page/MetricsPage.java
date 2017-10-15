@@ -21,6 +21,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
+import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -57,17 +58,23 @@ public class MetricsPage extends VerticalLayout implements View {
 		Map<String, Number> metrics = metricsService.getAllMetrics(app);
 		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
 		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics);
+		Collection<MetricsDatasource> metricsDb = metricsService.getMetricsDatasources(metrics);
 
 		this.addComponent(new PageHeader(app, "Metrics"));
 
+
+		if(!metricsRest.isEmpty()) {
+			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
+			this.addComponent(getRestGrid(metricsRest));
+		}
 		if(!metricsCaches.isEmpty()) {
 			this.addComponent(new Label("<h3>Cache metrics</h3>", ContentMode.HTML));
 			this.addComponent(getCacheGrid(metricsCaches));
 		}
 
-		if(!metricsRest.isEmpty()) {
-			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
-			this.addComponent(getRestGrid(metricsRest));
+		if(!metricsDb.isEmpty()) {
+			this.addComponent(new Label("<h3>Datasource metrics</h3>", ContentMode.HTML));
+			this.addComponent(getDatasourceGrid(metricsDb));
 		}
 
 		Grid<MetricsGridRow> grid = getAllMetricsGrid(metrics);
@@ -93,6 +100,22 @@ public class MetricsPage extends VerticalLayout implements View {
 		gridCache.setSizeFull();
 
 		return gridCache;
+	}
+
+
+	private Grid<MetricsDatasource> getDatasourceGrid(Collection<MetricsDatasource> metrics) {
+
+		Grid<MetricsDatasource> grid = new Grid<>(MetricsDatasource.class);
+		grid.removeAllColumns();
+		grid.addColumn(MetricsDatasource::getName).setCaption("Datasource name");
+		grid.addColumn(MetricsDatasource::getActiveConnections).setCaption("Active connections");
+		grid.addColumn(MetricsDatasource::getConnectionPoolUsage).setCaption("Connection pool usage");
+
+		grid.setItems(metrics);
+		grid.setHeightByRows(metrics.size());
+		grid.setSizeFull();
+
+		return grid;
 	}
 
 	private Grid<MetricsCacheGridRow> getCacheGrid(Collection<MetricsCache> metricsCaches) {
