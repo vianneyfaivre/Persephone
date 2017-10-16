@@ -67,7 +67,7 @@ public class HealthPage extends VerticalLayout implements View {
 		}
 
 		this.addComponent(new PageHeader(app, "Health"));
-
+		this.addComponent(new Label(String.format("Application is %s", health.getStatus())));
 		if(cards.getComponentCount() == 0) {
 			this.addComponent(new Label("No additional data to display"));
 		} else {
