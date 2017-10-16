@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Loggers;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.logger.Loggers;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
 /**
@@ -38,7 +38,7 @@ public class LoggersService {
 	public void changeLevel(Application app, String loggerName, String newLevel) {
 
 		String url = app.endpoints().loggers(loggerName);
-		re.vianneyfaiv.persephone.domain.Logger body = new re.vianneyfaiv.persephone.domain.Logger(newLevel, null);
+		re.vianneyfaiv.persephone.domain.logger.Logger body = new re.vianneyfaiv.persephone.domain.logger.Logger(newLevel, null);
 
 		LOGGER.debug("POST {} with configuredLevel={}", url, newLevel);
 

@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.env;
 
 import java.util.ArrayList;
 import java.util.HashMap;

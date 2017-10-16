@@ -7,7 +7,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 
 /**

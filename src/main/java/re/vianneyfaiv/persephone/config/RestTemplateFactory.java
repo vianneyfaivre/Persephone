@@ -12,8 +12,8 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.AuthScheme;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.app.AuthScheme;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 
 /**

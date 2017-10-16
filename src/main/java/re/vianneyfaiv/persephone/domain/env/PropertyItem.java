@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.env;
 
 public class PropertyItem {
 	private String key;

@@ -15,7 +15,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;

@@ -25,8 +25,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Loggers;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.logger.Loggers;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;

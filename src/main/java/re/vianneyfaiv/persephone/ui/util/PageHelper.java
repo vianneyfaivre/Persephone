@@ -9,7 +9,7 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Layout;
 
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.exception.ApplicationNotFoundException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 

@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.app;
 
 import org.springframework.util.StringUtils;
 

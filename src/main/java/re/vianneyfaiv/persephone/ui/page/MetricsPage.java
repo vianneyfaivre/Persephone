@@ -25,7 +25,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;

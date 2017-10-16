@@ -5,7 +5,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 
 public class ErrorHandler {
 

@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.logger;
 
 import java.util.List;
 import java.util.Map;

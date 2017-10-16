@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;

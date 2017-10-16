@@ -25,8 +25,8 @@ import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Environment;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.LogsService;

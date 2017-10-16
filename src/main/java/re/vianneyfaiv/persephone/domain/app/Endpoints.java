@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.domain;
+package re.vianneyfaiv.persephone.domain.app;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +34,10 @@ public class Endpoints {
 
 	public String metrics() {
 		return this.baseUrl + "/metrics";
+	}
+
+	public String trace() {
+		return this.baseUrl + "/trace";
 	}
 
 	public String loggers() {

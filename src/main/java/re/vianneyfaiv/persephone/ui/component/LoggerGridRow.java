@@ -2,7 +2,7 @@ package re.vianneyfaiv.persephone.ui.component;
 
 import java.util.Map;
 
-import re.vianneyfaiv.persephone.domain.Logger;
+import re.vianneyfaiv.persephone.domain.logger.Logger;
 
 public class LoggerGridRow {
 

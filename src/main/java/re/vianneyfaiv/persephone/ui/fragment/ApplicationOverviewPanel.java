@@ -17,8 +17,8 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Environment;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.util.Formatters;

@@ -18,9 +18,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Environment;
-import re.vianneyfaiv.persephone.domain.PropertyItem;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.Environment;
+import re.vianneyfaiv.persephone.domain.env.PropertyItem;
 import re.vianneyfaiv.persephone.exception.ErrorHandler;
 
 /**

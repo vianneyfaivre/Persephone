@@ -1,6 +1,6 @@
 package re.vianneyfaiv.persephone.exception;
 
-import re.vianneyfaiv.persephone.domain.Application;
+import re.vianneyfaiv.persephone.domain.app.Application;
 
 public class ApplicationRuntimeException extends RuntimeException {
 

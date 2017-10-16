@@ -15,9 +15,9 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import re.vianneyfaiv.persephone.domain.Application;
-import re.vianneyfaiv.persephone.domain.Environment;
-import re.vianneyfaiv.persephone.domain.PropertyItem;
+import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.Environment;
+import re.vianneyfaiv.persephone.domain.env.PropertyItem;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
