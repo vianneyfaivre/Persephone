@@ -44,4 +44,9 @@ public class PersephoneViews {
 	 * {@link HealthPage}
 	 */
 	public static final String HEALTH = "health";
+
+	/**
+	 * {@link TracePage}
+	 */
+	public static final String TRACE = "trace";
 }

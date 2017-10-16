@@ -41,7 +41,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		// Overview info
 		String springProfiles = env.get("spring.profiles.active");
 		Label springProfilesLabel = new Label(String.format("Spring Profiles: %s", springProfiles));
-		Label javaLabel = new Label(String.format("Java version %s (%s on %s)", env.get("java.version"), env.get("java.home"), env.get("os.name")));
+		Label javaLabel = new Label(String.format("Java Version %s (%s on %s)", env.get("java.version"), env.get("java.home"), env.get("os.name")));
 		Label memLabel = new Label(String.format("Memory: %s / %s (%s%% free)", memAllocated, memTotal, metrics.getMemFreePercentage()));
 		Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
 		Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));
@@ -50,13 +50,14 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		Button healthButton = new Button("Health", e -> getUI().getNavigator().navigateTo(PersephoneViews.HEALTH+"/"+app.getId()));
 		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
 		Button propertiesButton = new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId()));
-		Button logsButton = new Button("Show logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
-		Button loggersButton = new Button("Loggers config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId()));
+		Button logsButton = new Button("Show Logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
+		Button loggersButton = new Button("Loggers Config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId()));
+		Button traceButton = new Button("Last HTTP Requests", e -> getUI().getNavigator().navigateTo(PersephoneViews.TRACE+"/"+app.getId()));
 		Button actuatorButton = new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId()));
 
 		this.addComponent(titleLayout(titleLabel, pidLabel, appLink));
 		this.addComponent(infoLayout(springProfilesLabel, javaLabel, memLabel, sessionsLabel, uptimeLabel));
-		this.addComponent(buttonsLayout(healthButton, metricsButton, propertiesButton, logsButton, loggersButton, actuatorButton));
+		this.addComponent(buttonsLayout(healthButton, metricsButton, propertiesButton, logsButton, loggersButton, traceButton, actuatorButton));
 	}
 
 	@Override

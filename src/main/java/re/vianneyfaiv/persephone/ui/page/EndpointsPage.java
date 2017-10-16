@@ -24,7 +24,7 @@ import re.vianneyfaiv.persephone.ui.util.PageHelper;
 @SpringView(name=PersephoneViews.ENDPOINTS)
 public class EndpointsPage extends VerticalLayout implements View {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LogsPage.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EndpointsPage.class);
 
 	@Autowired
 	private PageHelper pageHelper;
