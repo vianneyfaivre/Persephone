@@ -16,7 +16,7 @@ import re.vianneyfaiv.persephone.domain.Application;
 import re.vianneyfaiv.persephone.domain.health.Health;
 import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.HealthCard;
+import re.vianneyfaiv.persephone.ui.component.Card;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
@@ -55,13 +55,13 @@ public class HealthPage extends VerticalLayout implements View {
 
 			long percentageFree = (diskFree * 100) / diskTotal;
 
-			cards.addComponent(new HealthCard("Disk",
+			cards.addComponent(new Card("Disk",
 								health.getDiskSpace().get().getStatus(),
 								String.format("Free diskspace: %s %%", percentageFree)));
 		}
 
 		if(health.getDb().isPresent()) {
-			cards.addComponent(new HealthCard("Database",
+			cards.addComponent(new Card("Database",
 					health.getDiskSpace().get().getStatus(),
 					String.format("Vendor: %s", health.getDb().get().getDatabase())));
 		}

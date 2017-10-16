@@ -10,9 +10,9 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public class HealthCard extends VerticalLayout {
+public class Card extends VerticalLayout {
 
-	private HealthCard(String title) {
+	private Card(String title) {
 		Label titleLabel = new Label(String.format("%s", title), ContentMode.HTML);
 		titleLabel.setStyleName("health-card-title");
 		this.addComponent(titleLabel);
@@ -20,19 +20,19 @@ public class HealthCard extends VerticalLayout {
 		this.setStyleName("health-card");
 	}
 
-	public HealthCard(String title, Status status, String... infos) {
+	public Card(String title, Status status, String... infos) {
 		this(title + ": " + status.getCode());
 		Arrays.asList(infos).stream().forEach(info -> this.addComponent(new Label(info)));
 	}
 
-	public HealthCard(String title, String... infos) {
+	public Card(String title, String... infos) {
 		this(title);
 		Arrays.asList(infos).stream()
 			.filter(i -> !StringUtils.isEmpty(i))
 			.forEach(info -> this.addComponent(new Label(info)));
 	}
 
-	public HealthCard(String title, List<String> infos) {
+	public Card(String title, List<String> infos) {
 		this(title);
 		infos.stream().forEach(info -> this.addComponent(new Label(info)));
 	}

@@ -32,7 +32,7 @@ import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.HealthCard;
+import re.vianneyfaiv.persephone.ui.component.Card;
 import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;
 import re.vianneyfaiv.persephone.ui.component.MetricsGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
@@ -111,7 +111,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		// System
 		String systemLoad = metrics.getSystemLoadAverage() != -1 ? String.format("System Load Average: %s", metrics.getSystemLoadAverage()) : "";
-		HealthCard sys = new HealthCard("System",
+		Card sys = new Card("System",
 							String.format("Processors: %s", metrics.getProcessors()),
 							systemLoad,
 							String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime()))
@@ -124,7 +124,7 @@ public class MetricsPage extends VerticalLayout implements View {
 		String heapMin = Formatters.readableFileSize(metrics.getHeapInit() * 1000);
 		String heapMax = Formatters.readableFileSize(metrics.getHeap() * 1000);
 		String heapCommitted = Formatters.readableFileSize(metrics.getHeapCommitted() * 1000);
-		HealthCard mem = new HealthCard("Memory",
+		Card mem = new Card("Memory",
 							String.format("Memory: %s / %s (%s%% free)", memAllocated, memTotal, metrics.getMemFreePercentage()),
 							String.format("Heap committed: %s / %s (%s%% free)", heapUsed, heapCommitted, metrics.getHeapCommittedFreePercentage()),
 							String.format("Heap min: %s", heapMin),
@@ -143,10 +143,10 @@ public class MetricsPage extends VerticalLayout implements View {
 			threadsInfos.add(String.format("Daemons: %s", metrics.getThreadDaemon()));
 		}
 
-		HealthCard threads = new HealthCard("Threads", threadsInfos);
+		Card threads = new Card("Threads", threadsInfos);
 
 		// Classes
-		HealthCard classes = new HealthCard("Classes",
+		Card classes = new Card("Classes",
 							String.format("Currently Loaded: %s", metrics.getClasses()),
 							String.format("Total Loaded: %s", metrics.getClassesLoaded()),
 							String.format("Total Unloaded: %s", metrics.getClassesUnloaded())
@@ -158,7 +158,7 @@ public class MetricsPage extends VerticalLayout implements View {
 							.map(gcInfo -> String.format("%s: called %s times, spent %s", gcInfo.getName(), gcInfo.getCount(), Formatters.readableDuration(gcInfo.getTime())))
 							.collect(Collectors.toList());
 
-		HealthCard gc = new HealthCard("Garbage Collection", gcInfos);
+		Card gc = new Card("Garbage Collection", gcInfos);
 
 		HorizontalLayout hl1 = new HorizontalLayout(sys, mem, gc);
 		HorizontalLayout hl2 = new HorizontalLayout(threads, classes);
