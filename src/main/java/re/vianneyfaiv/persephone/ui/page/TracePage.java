@@ -75,8 +75,8 @@ public class TracePage extends VerticalLayout implements View {
 		grid.removeAllColumns();
 
 		grid.addColumn(TraceGridRow::getTimestamp).setCaption("Date");
-		grid.addColumn(TraceGridRow::getMethod).setCaption("HTTP Method");
-		grid.addColumn(TraceGridRow::getPath).setCaption("Path");
+		grid.addColumn(t -> t.getMethod() + " " + t.getPath()).setCaption("HTTP Request");
+		grid.addColumn(t -> t.getResponseHttp() + " " + t.getResponseHttp().getReasonPhrase()).setCaption("HTTP Response");
 		grid.addColumn(t -> t.getTimeTaken().toMillis()).setCaption("Time taken (ms)");
 
 		this.requestDetailsPopup(grid);
