@@ -1,6 +1,7 @@
 package re.vianneyfaiv.persephone.ui.page;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -11,9 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
@@ -54,6 +60,7 @@ public class TracePage extends VerticalLayout implements View {
 		List<Trace> traces = traceService.getTraces(app);
 
 		this.addComponent(new PageHeader(app, "Last HTTP requests"));
+		this.addComponent(new Label(String.format("<h3>Last %s HTTP requests</h3>", traces.size()), ContentMode.HTML));
 		this.addComponent(getTracesGrid(traces));
 	}
 
@@ -63,6 +70,7 @@ public class TracePage extends VerticalLayout implements View {
 											.map(TraceGridRow::new)
 											.collect(Collectors.toList());
 
+
 		Grid<TraceGridRow> grid = new Grid<>(TraceGridRow.class);
 		grid.removeAllColumns();
 
@@ -71,9 +79,58 @@ public class TracePage extends VerticalLayout implements View {
 		grid.addColumn(TraceGridRow::getPath).setCaption("Path");
 		grid.addColumn(t -> t.getTimeTaken().toMillis()).setCaption("Time taken (ms)");
 
+		this.requestDetailsPopup(grid);
+
 		grid.setItems(tracesInfos);
 		grid.setSizeFull();
 
 		return grid;
+	}
+
+	private void requestDetailsPopup(Grid<TraceGridRow> grid) {
+		VerticalLayout popupContent = new VerticalLayout();
+		PopupView popup = new PopupView(null, popupContent);
+
+		grid.addItemClickListener(e -> {
+			popup.setData(e.getItem());
+			popup.setPopupVisible(true);
+		});
+
+		popup.addPopupVisibilityListener(event -> {
+			if (event.isPopupVisible()) {
+				popupContent.removeAllComponents();
+
+				TraceGridRow item = (TraceGridRow) popup.getData();
+
+				HorizontalLayout title = new HorizontalLayout(
+											new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML),
+											new Button("Close", e -> popup.setPopupVisible(false))
+										);
+
+				VerticalLayout headersReq = formatHeaders("<h4>Request Headers</h4>", item.getRequestHeaders());
+				VerticalLayout headersResp = formatHeaders("<h4>Response Headers</h4>", item.getResponseHeaders());
+
+				popupContent.addComponents(title, headersReq, headersResp);
+			}
+		});
+
+		popup.setHideOnMouseOut(false);
+
+		this.addComponent(popup);
+	}
+
+	private VerticalLayout formatHeaders(String title, Map<String, String> headers) {
+		String headersStr = headers.entrySet().stream()
+										.map(h -> h.getKey()+"="+h.getValue()+"<br />")
+										.reduce("", String::concat);
+
+		VerticalLayout headersLayout = new VerticalLayout(
+											new Label(title, ContentMode.HTML),
+											new Label(headersStr, ContentMode.HTML)
+										);
+
+		headersLayout.setMargin(false);
+
+		return headersLayout;
 	}
 }
