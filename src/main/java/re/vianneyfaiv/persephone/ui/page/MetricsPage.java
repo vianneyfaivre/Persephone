@@ -26,10 +26,12 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.health.Health;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
+import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.Card;
@@ -42,6 +44,9 @@ import re.vianneyfaiv.persephone.ui.util.PageHelper;
 @UIScope
 @SpringView(name=PersephoneViews.METRICS)
 public class MetricsPage extends VerticalLayout implements View {
+
+	@Autowired
+	private HealthService healthService;
 
 	@Autowired
 	private MetricsService metricsService;
@@ -68,6 +73,7 @@ public class MetricsPage extends VerticalLayout implements View {
 		Application app = pageHelper.getApp(appId);
 
 		// Get metrics
+		Health health = healthService.getHealth(app);
 		Map<String, Number> metrics = metricsService.getAllMetrics(app);
 		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
 		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics);
@@ -76,6 +82,9 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		// Build UI
 		this.addComponent(new PageHeader(app, "Metrics"));
+
+		this.addComponent(new Label("<h3>Health</h3>", ContentMode.HTML));
+		this.addComponent(getHealth(app, health));
 
 		this.addComponent(new Label("<h3>System metrics</h3>", ContentMode.HTML));
 		this.addComponent(getSystemPanel(metricsSystem));
@@ -105,6 +114,40 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
 		this.addComponent(filterInput);
 		this.addComponent(allMetricsGrid);
+	}
+
+	private VerticalLayout getHealth(Application app, Health health) {
+		HorizontalLayout cards = new HorizontalLayout();
+
+		if(health.getDiskSpace().isPresent()) {
+			long diskFree = health.getDiskSpace().get().getFree();
+			long diskTotal = health.getDiskSpace().get().getTotal();
+
+			long percentageFree = (diskFree * 100) / diskTotal;
+
+			cards.addComponent(new Card("Disk",
+								health.getDiskSpace().get().getStatus(),
+								String.format("Free diskspace: %s %%", percentageFree)));
+		}
+
+		if(health.getDb().isPresent()) {
+			cards.addComponent(new Card("Database",
+					health.getDiskSpace().get().getStatus(),
+					String.format("Vendor: %s", health.getDb().get().getDatabase())));
+		}
+
+		VerticalLayout layout = new VerticalLayout();
+
+		layout.addComponent(new Label(String.format("Application is %s", health.getStatus())));
+		if(cards.getComponentCount() == 0) {
+			layout.addComponent(new Label("No additional data to display"));
+		} else {
+			layout.addComponent(cards);
+		}
+
+		layout.setMargin(false);
+
+		return layout;
 	}
 
 	private Component getSystemPanel(MetricsSystem metrics) {
