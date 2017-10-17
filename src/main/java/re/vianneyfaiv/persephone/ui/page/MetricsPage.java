@@ -160,9 +160,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		Card gc = new Card("Garbage Collection", gcInfos);
 
-		HorizontalLayout hl1 = new HorizontalLayout(sys, mem, gc);
-		HorizontalLayout hl2 = new HorizontalLayout(threads, classes);
-		return new VerticalLayout(hl1, hl2);
+		return new HorizontalLayout(sys, mem, gc, threads, classes);
 	}
 
 	private void updateMetrics(String filterValue) {

@@ -11,14 +11,20 @@
  		font-size: 10px;
  	}
  	
- 	.health-card {
- 		border: 3px solid black;
- 		border-radius: 10px;
+ 	.persephone-card {
+ 		border: 1px solid #d4d4d4;
+ 		border-radius: 5px;
+ 		padding: 5px;
  		
- 		.health-card-title {
+ 		.persephone-card-title {
  			width: 100%;
  			font-weight: bold;
  			text-align: center;
+ 			background-color: #d4d4d4;
+ 		}
+ 		
+ 		.persephone-card-label {
+ 			font-size: 12px;
  		}
  	}
  	
