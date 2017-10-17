@@ -18,10 +18,10 @@ import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.trace.Trace;
-import re.vianneyfaiv.persephone.domain.trace.TraceInfo;
 import re.vianneyfaiv.persephone.service.TraceService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.component.TraceGridRow;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
 @UIScope
@@ -57,17 +57,19 @@ public class TracePage extends VerticalLayout implements View {
 		this.addComponent(getTracesGrid(traces));
 	}
 
-	private Grid<TraceInfo> getTracesGrid(List<Trace> traces) {
+	private Grid<TraceGridRow> getTracesGrid(List<Trace> traces) {
 
-		List<TraceInfo> tracesInfos = traces.stream()
-											.map(Trace::getInfo)
+		List<TraceGridRow> tracesInfos = traces.stream()
+											.map(TraceGridRow::new)
 											.collect(Collectors.toList());
 
-		Grid<TraceInfo> grid = new Grid<>(TraceInfo.class);
+		Grid<TraceGridRow> grid = new Grid<>(TraceGridRow.class);
 		grid.removeAllColumns();
-		grid.addColumn(TraceInfo::getMethod).setCaption("HTTP Method");
-		grid.addColumn(TraceInfo::getPath).setCaption("Path");
-		grid.addColumn(TraceInfo::getTimeTaken).setCaption("Time taken (ms)");
+
+		grid.addColumn(TraceGridRow::getTimestamp).setCaption("Date");
+		grid.addColumn(TraceGridRow::getMethod).setCaption("HTTP Method");
+		grid.addColumn(TraceGridRow::getPath).setCaption("Path");
+		grid.addColumn(t -> t.getTimeTaken().toMillis()).setCaption("Time taken (ms)");
 
 		grid.setItems(tracesInfos);
 		grid.setSizeFull();
