@@ -17,7 +17,8 @@ public class Endpoints {
 				this.health(),
 				this.logfile(),
 				this.metrics(),
-				this.loggers());
+				this.loggers(),
+				this.trace());
 	}
 
 	public String env() {
