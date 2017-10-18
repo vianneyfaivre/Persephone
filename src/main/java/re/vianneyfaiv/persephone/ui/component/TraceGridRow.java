@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ public class TraceGridRow {
 	private Date timestamp;
 	private HttpMethod method;
 	private String path;
-	private Duration timeTaken;
+	private Optional<Duration> timeTaken;
 	private HttpStatus responseHttp;
 	private Map<String, String> requestHeaders;
 	private Map<String, String> responseHeaders;
@@ -27,7 +28,13 @@ public class TraceGridRow {
 		if(trace.getInfo() != null) {
 			this.method = trace.getInfo().getMethod();
 			this.path = trace.getInfo().getPath();
-			this.timeTaken = Duration.ofMillis(trace.getInfo().getTimeTaken());
+
+			if(trace.getInfo().getTimeTaken() > 0) {
+				this.timeTaken = Optional.of(Duration.ofMillis(trace.getInfo().getTimeTaken()));
+			} else {
+				// old versions of spring boot does not provide that info
+				this.timeTaken = Optional.empty();
+			}
 
 			if(trace.getInfo().getHeaders() != null) {
 
@@ -65,7 +72,7 @@ public class TraceGridRow {
 		return path;
 	}
 
-	public Duration getTimeTaken() {
+	public Optional<Duration> getTimeTaken() {
 		return timeTaken;
 	}
 
