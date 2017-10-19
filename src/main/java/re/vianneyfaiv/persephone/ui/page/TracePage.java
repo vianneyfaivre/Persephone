@@ -15,6 +15,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -89,6 +90,8 @@ public class TracePage extends VerticalLayout implements View {
 
 	private void requestDetailsPopup(Grid<TraceGridRow> grid) {
 		VerticalLayout popupContent = new VerticalLayout();
+		popupContent.setSizeFull();
+
 		PopupView popup = new PopupView(null, popupContent);
 
 		grid.addItemClickListener(e -> {
@@ -102,32 +105,41 @@ public class TracePage extends VerticalLayout implements View {
 
 				TraceGridRow item = (TraceGridRow) popup.getData();
 
-				HorizontalLayout title = new HorizontalLayout(
-											new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML),
-											new Button("Close", e -> popup.setPopupVisible(false))
-										);
+				Label popupTitle = new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML);
+				popupTitle.setSizeFull();
+				
+				Button popupClose = new Button("Close", e -> popup.setPopupVisible(false));
+				
+				HorizontalLayout title = new HorizontalLayout(popupTitle, popupClose);
+				title.setSizeFull();
+				title.setExpandRatio(popupTitle, 3);
+				title.setExpandRatio(popupClose, 1);
+				title.setComponentAlignment(popupClose, Alignment.TOP_RIGHT);
 
 				VerticalLayout headersReq = formatHeaders("<h4>Request Headers</h4>", item.getRequestHeaders());
 				VerticalLayout headersResp = formatHeaders("<h4>Response Headers</h4>", item.getResponseHeaders());
-
-				popupContent.addComponents(title, headersReq, headersResp);
+				
+				popupContent.addComponents(title, new HorizontalLayout(headersReq, headersResp));
 			}
 		});
 
 		popup.setHideOnMouseOut(false);
+		popup.setSizeFull();
 
 		this.addComponent(popup);
 	}
 
 	private VerticalLayout formatHeaders(String title, Map<String, String> headers) {
-		String headersStr = headers.entrySet().stream()
+		
+		Label titleLabel = new Label(title, ContentMode.HTML);
+		titleLabel.setSizeFull();
+		
+		Label headersLabel = new Label(headers.entrySet().stream()
 										.map(h -> h.getKey()+"="+h.getValue()+"<br />")
-										.reduce("", String::concat);
+										.reduce("", String::concat), ContentMode.HTML);
+		headersLabel.setSizeFull();
 
-		VerticalLayout headersLayout = new VerticalLayout(
-											new Label(title, ContentMode.HTML),
-											new Label(headersStr, ContentMode.HTML)
-										);
+		VerticalLayout headersLayout = new VerticalLayout(titleLabel, headersLabel);
 
 		headersLayout.setMargin(false);
 
