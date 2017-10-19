@@ -5,8 +5,7 @@ import java.util.Optional;
 import org.springframework.boot.actuate.health.Status;
 
 /**
- *
- * @see org.springframework.boot.actuate.health.Health
+ * Mapper for /health endpoint
  */
 public class Health {
 

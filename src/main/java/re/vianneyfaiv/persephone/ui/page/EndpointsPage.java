@@ -20,6 +20,9 @@ import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
+/**
+ * Page that lists Actuator URLs used for an application
+ */
 @UIScope
 @SpringView(name=PersephoneViews.ENDPOINTS)
 public class EndpointsPage extends VerticalLayout implements View {

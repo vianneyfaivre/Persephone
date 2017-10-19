@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.PropertySource;
 
-@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude= {
+		DataSourceAutoConfiguration.class // excluded to avoid Batch processing to store metadata info
+})
 @PropertySource("persephone.properties")
 public class PersephoneApplication {
 

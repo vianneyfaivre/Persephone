@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Mapper for /env endpoint
+ */
 public class Environment {
 
 	private List<PropertyItem> properties;

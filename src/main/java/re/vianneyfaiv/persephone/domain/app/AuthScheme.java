@@ -2,6 +2,9 @@ package re.vianneyfaiv.persephone.domain.app;
 
 import org.springframework.util.StringUtils;
 
+/**
+ * Auth scheme used to identify if RestTemplate needs to send Auth headers or not
+ */
 public enum AuthScheme {
 
 	BASIC,

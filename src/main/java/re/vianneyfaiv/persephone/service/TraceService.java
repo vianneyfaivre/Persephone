@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClientException;
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.trace.Trace;
-import re.vianneyfaiv.persephone.exception.ErrorHandler;
+import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
  * Calls /trace
@@ -40,7 +40,7 @@ public class TraceService {
 				return new ArrayList<>();
 			}
 		} catch(RestClientException e) {
-			throw ErrorHandler.handle(app, url, e);
+			throw RestTemplateErrorHandler.handle(app, url, e);
 		}
 	}
 }

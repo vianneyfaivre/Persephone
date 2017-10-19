@@ -21,7 +21,7 @@ import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsGc;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
-import re.vianneyfaiv.persephone.exception.ErrorHandler;
+import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
  * Calls /metrics
@@ -44,7 +44,7 @@ public class MetricsService {
 
 			return metrics;
 		} catch(RestClientException e) {
-			throw ErrorHandler.handle(app, url, e);
+			throw RestTemplateErrorHandler.handle(app, url, e);
 		}
 	}
 

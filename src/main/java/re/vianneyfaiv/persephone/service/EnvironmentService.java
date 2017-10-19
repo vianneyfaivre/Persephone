@@ -21,7 +21,7 @@ import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.env.PropertyItem;
-import re.vianneyfaiv.persephone.exception.ErrorHandler;
+import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
  * Calls /env
@@ -67,10 +67,10 @@ public class EnvironmentService {
 			return new Environment(properties);
 		}
 		catch(RestClientException ex) {
-			throw ErrorHandler.handle(app, url, ex);
+			throw RestTemplateErrorHandler.handle(app, url, ex);
 		}
 		catch(IOException e) {
-			throw ErrorHandler.handle(app, e);
+			throw RestTemplateErrorHandler.handle(app, e);
 		}
 	}
 }

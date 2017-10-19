@@ -3,6 +3,9 @@ package re.vianneyfaiv.persephone.domain.app;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * List of Actuator endpoints supported by Persephone
+ */
 public class Endpoints {
 
 	private String baseUrl;

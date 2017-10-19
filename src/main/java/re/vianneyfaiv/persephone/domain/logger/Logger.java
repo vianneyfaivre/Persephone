@@ -1,5 +1,8 @@
 package re.vianneyfaiv.persephone.domain.logger;
 
+/**
+ * Mapper for a logger from /loggers endpoint
+ */
 public class Logger {
 
 	private String configuredLevel;

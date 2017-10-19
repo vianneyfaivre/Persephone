@@ -8,7 +8,7 @@ import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 
 /**
- * Handle Persephone exceptions, like when an application endpoint is not available
+ * Handle Persephone exceptions and display them in error popups
  */
 public class UIErrorHandler implements ErrorHandler {
 
@@ -22,9 +22,10 @@ public class UIErrorHandler implements ErrorHandler {
 		// Loop through the exception stack
 		for (Throwable t = event.getThrowable(); t != null; t = t.getCause()) {
 
+			// Try to get a persephone exception
 			boolean exceptionHandled = handlePersephoneExceptions(t);
 
-			// Persephone exception might be in getCause
+			// If no persephone exception has been found => try from Exception#getCause
 			if(!exceptionHandled) {
 				exceptionHandled = handlePersephoneExceptions(t.getCause());
 			}

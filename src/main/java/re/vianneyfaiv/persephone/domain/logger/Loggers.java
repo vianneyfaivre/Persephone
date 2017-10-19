@@ -3,6 +3,9 @@ package re.vianneyfaiv.persephone.domain.logger;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Mapper for /loggers endpoint
+ */
 public class Loggers {
 
 	private List<String> levels;

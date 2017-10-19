@@ -1,5 +1,8 @@
 package re.vianneyfaiv.persephone.domain.metrics;
 
+/**
+ * Mapper for /metrics endpoint : datasources
+ */
 public class MetricsDatasource {
 
 	private String name;

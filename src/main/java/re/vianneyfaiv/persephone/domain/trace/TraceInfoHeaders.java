@@ -2,6 +2,9 @@ package re.vianneyfaiv.persephone.domain.trace;
 
 import java.util.Map;
 
+/**
+ * Mapper for /trace endpoint : HTTP Headers request/response
+ */
 public class TraceInfoHeaders {
 
 	private Map<String, String> request;

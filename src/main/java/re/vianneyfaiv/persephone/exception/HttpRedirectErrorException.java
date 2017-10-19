@@ -8,6 +8,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 /**
  * Exception thrown when an HTTP 3xx is received.
+ *
+ * Those HTTP statuses are handled as errors in order to inform user that an Actuator endpoint tried to send a redirection
+ * (it often means that authentification is required for that endpoint)
  */
 public class HttpRedirectErrorException extends HttpStatusCodeException {
 

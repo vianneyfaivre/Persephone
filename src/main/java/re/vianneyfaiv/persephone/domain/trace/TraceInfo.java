@@ -2,6 +2,9 @@ package re.vianneyfaiv.persephone.domain.trace;
 
 import org.springframework.http.HttpMethod;
 
+/**
+ * Mapper for /trace endpoint : HTTP request infos
+ */
 public class TraceInfo {
 
 	private HttpMethod method;

@@ -36,12 +36,15 @@ import re.vianneyfaiv.persephone.service.HealthService;
 import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.Card;
-import re.vianneyfaiv.persephone.ui.component.MetricsCacheGridRow;
-import re.vianneyfaiv.persephone.ui.component.MetricsGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.component.grid.MetricsCacheGridRow;
+import re.vianneyfaiv.persephone.ui.component.grid.MetricsGridRow;
 import re.vianneyfaiv.persephone.ui.util.Formatters;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
+/**
+ * Display various metrics about an application
+ */
 @UIScope
 @SpringView(name=PersephoneViews.METRICS)
 public class MetricsPage extends VerticalLayout implements View {
@@ -93,13 +96,13 @@ public class MetricsPage extends VerticalLayout implements View {
 		if(!metricsRest.isEmpty()) {
 			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 2xx</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest, Series.SUCCESSFUL));
-			
+
 			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 3xx</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest, Series.REDIRECTION));
-			
+
 			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 4xx</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest, Series.CLIENT_ERROR));
-			
+
 			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 5xx</h3>", ContentMode.HTML));
 			this.addComponent(getRestGrid(metricsRest, Series.SERVER_ERROR));
 		}
@@ -245,13 +248,13 @@ public class MetricsPage extends VerticalLayout implements View {
 			gridCache.addColumn(m -> m.getStatus() + " " + m.getStatus().getReasonPhrase()).setCaption("HTTP Status");
 			gridCache.addColumn(MetricsRest::getValue).setCaption("Hits");
 			gridCache.addColumn(MetricsRest::getLastResponseTime).setCaption("Last Response Time (ms)");
-			
+
 			gridCache.setItems(metricsItems);
 			if(metricsItems.size() < 10) {
 				gridCache.setHeightByRows(metricsItems.size());
 			}
 			gridCache.setWidth(100, Unit.PERCENTAGE);
-			
+
 			return gridCache;
 		}
 	}

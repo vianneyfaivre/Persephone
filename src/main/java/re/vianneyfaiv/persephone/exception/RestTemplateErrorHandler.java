@@ -7,8 +7,14 @@ import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 
-public class ErrorHandler {
+/**
+ * Error handler for all calls to Actuator endpoints, will handle HTTP 3xx/4xx/5xx statuses
+ */
+public class RestTemplateErrorHandler {
 
+	/**
+	 * Handles HTTP 3xx/4xx/5xx statuses
+	 */
 	public static ApplicationRuntimeException handle(Application app, String url, RestClientException ex) {
 
 		// HTTP 5xx
@@ -31,7 +37,7 @@ public class ErrorHandler {
 			}
 		}
 
-		return new ApplicationRuntimeException(app, ex.getMessage());
+		return handle(app, ex);
 	}
 
 	public static ApplicationRuntimeException handle(Application app, Exception ex) {

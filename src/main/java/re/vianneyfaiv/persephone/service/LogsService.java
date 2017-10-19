@@ -14,7 +14,7 @@ import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
-import re.vianneyfaiv.persephone.exception.ErrorHandler;
+import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
  * Calls /logfile
@@ -45,7 +45,7 @@ public class LogsService {
 		String url = app.endpoints().logfile();
 
 		try {
-			RequestEntity.HeadersBuilder request = RequestEntity.get(new URI(url));
+			RequestEntity.HeadersBuilder<?> request = RequestEntity.get(new URI(url));
 
 			// get Range header value
 			HttpHeaders responseHeaders = restTemplates.get(app).headForHeaders(new URI(url));
@@ -63,9 +63,9 @@ public class LogsService {
 			// get logs
 			return restTemplates.get(app).exchange(request.build(), String.class).getBody();
 		} catch(RestClientException e) {
-			throw ErrorHandler.handle(app, url, e);
+			throw RestTemplateErrorHandler.handle(app, url, e);
 		} catch (URISyntaxException e) {
-			throw ErrorHandler.handle(app, e);
+			throw RestTemplateErrorHandler.handle(app, e);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class LogsService {
 			LOGGER.debug("GET {}", url);
 			return restTemplates.get(app).getForObject(url, ByteArrayResource.class);
 		} catch(RestClientException e) {
-			throw ErrorHandler.handle(app, url, e);
+			throw RestTemplateErrorHandler.handle(app, url, e);
 		}
 	}
 }

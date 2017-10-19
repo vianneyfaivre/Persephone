@@ -2,6 +2,9 @@ package re.vianneyfaiv.persephone.domain.health;
 
 import org.springframework.boot.actuate.health.Status;
 
+/**
+ * Mapper for /health endpoint : Database
+ */
 public class HealthDatabase {
 
 	private Status status;

@@ -28,9 +28,12 @@ import re.vianneyfaiv.persephone.domain.trace.Trace;
 import re.vianneyfaiv.persephone.service.TraceService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
-import re.vianneyfaiv.persephone.ui.component.TraceGridRow;
+import re.vianneyfaiv.persephone.ui.component.grid.TraceGridRow;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
+/**
+ * Display the last HTTP requests sent to an application
+ */
 @UIScope
 @SpringView(name=PersephoneViews.TRACE)
 public class TracePage extends VerticalLayout implements View {
@@ -107,9 +110,9 @@ public class TracePage extends VerticalLayout implements View {
 
 				Label popupTitle = new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML);
 				popupTitle.setSizeFull();
-				
+
 				Button popupClose = new Button("Close", e -> popup.setPopupVisible(false));
-				
+
 				HorizontalLayout title = new HorizontalLayout(popupTitle, popupClose);
 				title.setSizeFull();
 				title.setExpandRatio(popupTitle, 3);
@@ -118,7 +121,7 @@ public class TracePage extends VerticalLayout implements View {
 
 				VerticalLayout headersReq = formatHeaders("<h4>Request Headers</h4>", item.getRequestHeaders());
 				VerticalLayout headersResp = formatHeaders("<h4>Response Headers</h4>", item.getResponseHeaders());
-				
+
 				popupContent.addComponents(title, new HorizontalLayout(headersReq, headersResp));
 			}
 		});
@@ -130,10 +133,10 @@ public class TracePage extends VerticalLayout implements View {
 	}
 
 	private VerticalLayout formatHeaders(String title, Map<String, String> headers) {
-		
+
 		Label titleLabel = new Label(title, ContentMode.HTML);
 		titleLabel.setSizeFull();
-		
+
 		Label headersLabel = new Label(headers.entrySet().stream()
 										.map(h -> h.getKey()+"="+h.getValue()+"<br />")
 										.reduce("", String::concat), ContentMode.HTML);

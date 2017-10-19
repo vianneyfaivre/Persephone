@@ -1,6 +1,10 @@
 package re.vianneyfaiv.persephone.domain.env;
 
+/**
+ * Mapper for a property from /env endpoint
+ */
 public class PropertyItem {
+
 	private String key;
 	private String value;
 	private String origin;

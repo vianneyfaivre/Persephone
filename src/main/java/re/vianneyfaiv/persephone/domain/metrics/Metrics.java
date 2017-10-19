@@ -2,6 +2,9 @@ package re.vianneyfaiv.persephone.domain.metrics;
 
 import java.time.Duration;
 
+/**
+ * Mapper for /metrics endpoint
+ */
 public class Metrics {
 
 	private int mem;

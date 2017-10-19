@@ -1,5 +1,8 @@
 package re.vianneyfaiv.persephone.domain.trace;
 
+/**
+ * Mapper for /trace endpoint
+ */
 public class Trace {
 
 	private long timestamp;

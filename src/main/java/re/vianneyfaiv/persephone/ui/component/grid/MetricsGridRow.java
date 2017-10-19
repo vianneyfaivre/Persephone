@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.ui.component;
+package re.vianneyfaiv.persephone.ui.component.grid;
 
 import java.util.Map;
 

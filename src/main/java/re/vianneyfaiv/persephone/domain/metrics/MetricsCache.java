@@ -1,5 +1,8 @@
 package re.vianneyfaiv.persephone.domain.metrics;
 
+/**
+ * Mapper for /metrics endpoint : cache
+ */
 public class MetricsCache {
 
 	private String name;

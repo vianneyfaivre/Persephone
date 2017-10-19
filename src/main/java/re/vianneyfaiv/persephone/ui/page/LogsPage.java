@@ -34,6 +34,9 @@ import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
+/**
+ * Page that display applications logs. Logs can be downloaded as a text file.
+ */
 @UIScope
 @SpringView(name=PersephoneViews.LOGS)
 public class LogsPage extends VerticalLayout implements View {

@@ -31,10 +31,13 @@ import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
-import re.vianneyfaiv.persephone.ui.component.LoggerGridRow;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.component.grid.LoggerGridRow;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
+/**
+ * Page that lists loggers configuration (package + level) and allows user to change logger levels.
+ */
 @UIScope
 @SpringView(name=PersephoneViews.LOGGERS)
 public class LoggersPage extends VerticalLayout implements View {
@@ -46,7 +49,7 @@ public class LoggersPage extends VerticalLayout implements View {
 
 	@Autowired
 	private LoggersService loggersService;
-	
+
 	@Autowired
 	private PageHelper pageHelper;
 
@@ -73,42 +76,42 @@ public class LoggersPage extends VerticalLayout implements View {
 		Optional<Loggers> loggers = getLoggers(app);
 
 		if(loggers.isPresent()) {
-			
+
 			// Display loggers in a grid
 			grid = new Grid<>(LoggerGridRow.class);
-			
+
 			grid.removeAllColumns();
-			
+
 			Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName).setCaption("Name");
 			grid.addComponentColumn(logger -> {
 				NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.get().getLevels());
-				
+
 				levelsDropdown.setEmptySelectionAllowed(false);
 				levelsDropdown.setSelectedItem(logger.getLevel());
-				
+
 				// on selected level
 				levelsDropdown.addValueChangeListener(value -> {
-					
+
 					// change logger level
 					loggersService.changeLevel(app, logger.getName(), value.getValue());
-					
+
 					// refresh data in grid (several loggers might have been impacted)
 					updateLoggers(app);
-					
+
 					Notification.show(
 							String.format("Logger %s level changed to %s", logger.getName(), value.getValue())
 							, Notification.Type.TRAY_NOTIFICATION);
 				});
-				
+
 				return levelsDropdown;
 			}).setCaption("Level");
 			grid.setRowHeight(40);
-			
+
 			grid.setItems(loggersRows);
 			grid.sort(defaultSortColumn);
-			
+
 			grid.setSizeFull();
-			
+
 			// Filter grid by logger name
 			filterInput = new TextField();
 			filterInput.setPlaceholder("filter by logger name...");
@@ -125,10 +128,10 @@ public class LoggersPage extends VerticalLayout implements View {
 	}
 
 	private Optional<Loggers> getLoggers(Application app) {
-		
+
 		try {
 			Loggers loggers = loggersService.getLoggers(app);
-	
+
 			// Convert loggers to grid rows
 			this.loggersRows = loggers.getLoggers()
 									.entrySet().stream()
@@ -138,7 +141,7 @@ public class LoggersPage extends VerticalLayout implements View {
 		} catch (ApplicationRuntimeException ignored) {
 			LOGGER.warn(ignored.getMessage());
 		}
-		
+
 		return Optional.empty();
 	}
 

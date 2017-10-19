@@ -3,6 +3,9 @@ package re.vianneyfaiv.persephone.domain.metrics;
 import java.time.Duration;
 import java.util.Collection;
 
+/**
+ * Mapper for /metrics endpoint : system
+ */
 public class MetricsSystem {
 
 	private int heap;
@@ -57,11 +60,11 @@ public class MetricsSystem {
 	public int getHeapCommitted() {
 		return heapCommitted;
 	}
-	
+
 	public int getHeapCommittedUsedPercentage() {
 		return (100 * this.heapUsed) / this.heapCommitted;
 	}
-	
+
 	public int getHeapCommittedFreePercentage() {
 		return 100 - getHeapCommittedUsedPercentage();
 	}
@@ -73,7 +76,7 @@ public class MetricsSystem {
 	public int getHeapUsed() {
 		return heapUsed;
 	}
-	
+
 	public int getMem() {
 		return mem;
 	}
@@ -85,11 +88,11 @@ public class MetricsSystem {
 	public int getMemFree() {
 		return memFree;
 	}
-	
+
 	public int getMemFreePercentage() {
 		return (100 * this.memFree) / this.mem;
 	}
-	
+
 	public int getMemInUsePercentage() {
 		return (100 * this.mem) / this.memFree;
 	}

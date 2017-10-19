@@ -8,8 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import re.vianneyfaiv.persephone.bootstrap.BatchReadApplicationsFromCsv;
 import re.vianneyfaiv.persephone.domain.app.Application;
 
+/**
+ * Service that holds all applications (loaded from {@link BatchReadApplicationsFromCsv})
+ */
 @Service
 public class ApplicationService {
 

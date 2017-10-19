@@ -10,6 +10,9 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * Display a title and some info in a small bordered box
+ */
 public class Card extends VerticalLayout {
 
 	private Card(String title) {

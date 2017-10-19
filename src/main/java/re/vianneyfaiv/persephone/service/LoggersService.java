@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClientException;
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.logger.Loggers;
-import re.vianneyfaiv.persephone.exception.ErrorHandler;
+import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
  * Calls /loggers
@@ -31,7 +31,7 @@ public class LoggersService {
 		try {
 			return restTemplates.get(app).getForObject(url, Loggers.class);
 		} catch(RestClientException e) {
-			throw ErrorHandler.handle(app, url, e);
+			throw RestTemplateErrorHandler.handle(app, url, e);
 		}
 	}
 

@@ -14,6 +14,9 @@ public class Application {
 	private String actuatorUsername;
 	private String actuatorPassword;
 
+	/**
+	 * Application without HTTP Auth
+	 */
 	public Application(int id, String name, String environment, String url) {
 		this.id = id;
 		this.name = name;
@@ -23,6 +26,9 @@ public class Application {
 		this.authScheme = AuthScheme.NONE;
 	}
 
+	/**
+	 * Application with HTTP Auth Basic enabled
+	 */
 	public Application(int id, String name, String environment, String url, String username, String password) {
 		this.id = id;
 		this.name = name;

@@ -164,6 +164,7 @@ public class BatchReadApplicationsFromCsv {
 
 	@Bean
 	public ResourcelessTransactionManager transactionManager() {
+		// resource less == no database is used to store batch metadata
 	    return new ResourcelessTransactionManager();
 	}
 

@@ -23,6 +23,9 @@ import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
+/**
+ * Display all declared properties of an application
+ */
 @UIScope
 @SpringView(name=PersephoneViews.PROPERTIES)
 public class PropertiesPage extends VerticalLayout implements View {
