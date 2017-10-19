@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus.Series;
 import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
@@ -90,8 +91,17 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.addComponent(getSystemPanel(metricsSystem));
 
 		if(!metricsRest.isEmpty()) {
-			this.addComponent(new Label("<h3>Rest Controllers metrics</h3>", ContentMode.HTML));
-			this.addComponent(getRestGrid(metricsRest));
+			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 2xx</h3>", ContentMode.HTML));
+			this.addComponent(getRestGrid(metricsRest, Series.SUCCESSFUL));
+			
+			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 3xx</h3>", ContentMode.HTML));
+			this.addComponent(getRestGrid(metricsRest, Series.REDIRECTION));
+			
+			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 4xx</h3>", ContentMode.HTML));
+			this.addComponent(getRestGrid(metricsRest, Series.CLIENT_ERROR));
+			
+			this.addComponent(new Label("<h3>Rest Controllers metrics : HTTP 5xx</h3>", ContentMode.HTML));
+			this.addComponent(getRestGrid(metricsRest, Series.SERVER_ERROR));
 		}
 
 		if(!metricsCaches.isEmpty()) {
@@ -220,24 +230,30 @@ public class MetricsPage extends VerticalLayout implements View {
 		}
 	}
 
-	private Grid<MetricsRest> getRestGrid(Collection<MetricsRest> metrics) {
+	private Component getRestGrid(Collection<MetricsRest> metrics, Series httpSerie) {
 
 		List<MetricsRest> metricsItems = metrics.stream()
-													.filter(MetricsRest::valid)
+													.filter(m -> m.valid() && m.getStatus().series() == httpSerie)
 													.collect(Collectors.toList());
 
-		Grid<MetricsRest> gridCache = new Grid<>(MetricsRest.class);
-		gridCache.removeAllColumns();
-		gridCache.addColumn(MetricsRest::getName).setCaption("Path");
-		gridCache.addColumn(m -> m.getStatus() + " " + m.getStatus().getReasonPhrase()).setCaption("HTTP Status");
-		gridCache.addColumn(MetricsRest::getValue).setCaption("Hits");
-		gridCache.addColumn(MetricsRest::getLastResponseTime).setCaption("Last Response Time (ms)");
-
-		gridCache.setItems(metricsItems);
-		gridCache.setHeightByRows(metricsItems.size());
-		gridCache.setWidth(100, Unit.PERCENTAGE);
-
-		return gridCache;
+		if(metricsItems.isEmpty()) {
+			return new Label("No requests");
+		} else {
+			Grid<MetricsRest> gridCache = new Grid<>(MetricsRest.class);
+			gridCache.removeAllColumns();
+			gridCache.addColumn(MetricsRest::getName).setCaption("Path").setExpandRatio(1);
+			gridCache.addColumn(m -> m.getStatus() + " " + m.getStatus().getReasonPhrase()).setCaption("HTTP Status");
+			gridCache.addColumn(MetricsRest::getValue).setCaption("Hits");
+			gridCache.addColumn(MetricsRest::getLastResponseTime).setCaption("Last Response Time (ms)");
+			
+			gridCache.setItems(metricsItems);
+			if(metricsItems.size() < 10) {
+				gridCache.setHeightByRows(metricsItems.size());
+			}
+			gridCache.setWidth(100, Unit.PERCENTAGE);
+			
+			return gridCache;
+		}
 	}
 
 
