@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
@@ -46,6 +48,17 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
 		Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));
 
+		List<Component> infos = new ArrayList<>();
+		if(!StringUtils.isEmpty(springProfiles)) {
+			infos.add(springProfilesLabel);
+		}
+		infos.add(javaLabel);
+		infos.add(memLabel);
+		if(metrics.getHttpSessionsActive() >= 0) {
+			infos.add(sessionsLabel);
+		}
+		infos.add(uptimeLabel);
+
 		// Buttons
 		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
 		Button propertiesButton = new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId()));
@@ -55,7 +68,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		Button actuatorButton = new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId()));
 
 		this.addComponent(titleLayout(titleLabel, pidLabel, appLink));
-		this.addComponent(infoLayout(springProfilesLabel, javaLabel, memLabel, sessionsLabel, uptimeLabel));
+		this.addComponent(infoLayout(infos.toArray(new Component[] {})));
 		this.addComponent(buttonsLayout(metricsButton, propertiesButton, logsButton, loggersButton, traceButton, actuatorButton));
 	}
 
@@ -74,7 +87,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		return layout;
 	}
 
-	private Layout infoLayout(Component... components) {
+	private Layout infoLayout(Component[] components) {
 
 		VerticalLayout layout = new VerticalLayout(components);
 
