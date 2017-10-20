@@ -1,5 +1,7 @@
 package re.vianneyfaiv.persephone.ui;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.View;
@@ -11,6 +13,7 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.SpringViewDisplay;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
@@ -29,6 +32,9 @@ import re.vianneyfaiv.persephone.exception.UIErrorHandler;
 public class PersephoneUI extends UI implements ViewDisplay {
 
 	private Panel springViewDisplay;
+
+	@Value("${info.persephone.version}")
+	private String persephoneVersion;
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -66,6 +72,7 @@ public class PersephoneUI extends UI implements ViewDisplay {
 	private Layout getFooter() {
 		Layout footer = new HorizontalLayout();
 
+		footer.addComponent(new Label("Persephone v"+persephoneVersion));
 		footer.addComponent(new Link("Created by Vianney FAIVRE", new ExternalResource("https://vianneyfaiv.re"), "_blank", 0, 0, BorderStyle.DEFAULT));
 		footer.addComponent(new Link("GitHub", new ExternalResource("https://github.com/vianneyfaivre/Persephone"), "_blank", 0, 0, BorderStyle.DEFAULT));
 
