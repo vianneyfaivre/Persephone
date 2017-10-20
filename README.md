@@ -1,16 +1,22 @@
 # Persephone [![Build Status](https://api.travis-ci.org/vianneyfaivre/Persephone.svg?branch=master)](https://travis-ci.org/vianneyfaivre/Persephone)
 
-Web application that ease the monitoring of Spring boot applications.
+Web application that ease the monitoring of Spring boot applications. 
+
+Built with Vaadin and Spring Boot.
 
 ## Features
 
 For each monitored application:
-* Display some metrics
-* List all application properties
-* Show / download real time logs
+* Display a lot of metrics
+* List all properties
+* Tail logs
+* Download full logs file
 * View / update loggers configuration
+* List the last 100 HTTP requests
 
 ## Pre-requisites : Applications to monitor
+
+Please note that only Spring Boot versions 1.3.x, 1.4.x and 1.5.x are supported.
 
 **1. Spring Boot actuator enabled**
 
