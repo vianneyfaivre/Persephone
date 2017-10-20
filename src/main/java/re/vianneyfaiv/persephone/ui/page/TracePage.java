@@ -63,9 +63,9 @@ public class TracePage extends VerticalLayout implements View {
 
 		List<Trace> traces = traceService.getTraces(app);
 
-		this.addComponent(new PageHeader(app, "Last HTTP requests"));
-		this.addComponent(new Label(String.format("<h3>Last %s HTTP requests</h3>", traces.size()), ContentMode.HTML));
+		this.addComponent(new PageHeader(app, String.format("Last %s HTTP requests", traces.size())));
 		this.addComponent(getTracesGrid(traces));
+		this.setSpacing(false);
 	}
 
 	private Grid<TraceGridRow> getTracesGrid(List<Trace> traces) {
@@ -87,7 +87,6 @@ public class TracePage extends VerticalLayout implements View {
 
 		grid.setItems(tracesInfos);
 		grid.setSizeFull();
-
 		return grid;
 	}
 
