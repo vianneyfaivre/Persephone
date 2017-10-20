@@ -1,18 +1,23 @@
 package re.vianneyfaiv.persephone.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewDisplay;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.BorderStyle;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.SpringViewDisplay;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Link;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.exception.UIErrorHandler;
-import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 
 /**
  * Vaadin UI initializer
@@ -21,20 +26,51 @@ import re.vianneyfaiv.persephone.ui.page.ApplicationsPage;
 @Theme("persephone")
 @SpringUI
 @SpringViewDisplay
-public class PersephoneUI extends UI {
+public class PersephoneUI extends UI implements ViewDisplay {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PersephoneUI.class);
-
-	@Autowired
-	private ApplicationsPage appsPage;
+	private Panel springViewDisplay;
 
 	@Override
 	protected void init(VaadinRequest request) {
 
-		// Build UI
-		this.setContent(this.appsPage);
+		// Root layout
+        final VerticalLayout root = new VerticalLayout();
+        root.setSizeFull();
 
-		// Error handler
+        root.setSpacing(false);
+        root.setMargin(false);
+
+        setContent(root);
+
+        // Main panel
+        springViewDisplay = new Panel();
+        springViewDisplay.setSizeFull();
+
+        root.addComponent(springViewDisplay);
+        root.setExpandRatio(springViewDisplay, 1);
+
+        // Footer
+        Layout footer = getFooter();
+        root.addComponent(footer);
+        root.setExpandRatio(footer, 0);
+
+        // Error handler
 		UI.getCurrent().setErrorHandler(new UIErrorHandler());
+	}
+
+	@Override
+	public void showView(View view) {
+		springViewDisplay.setContent((Component) view);
+	}
+
+	private Layout getFooter() {
+		Layout footer = new HorizontalLayout();
+
+		footer.addComponent(new Link("Created by Vianney FAIVRE", new ExternalResource("https://vianneyfaiv.re"), "_blank", 0, 0, BorderStyle.DEFAULT));
+		footer.addComponent(new Link("GitHub", new ExternalResource("https://github.com/vianneyfaivre/Persephone"), "_blank", 0, 0, BorderStyle.DEFAULT));
+
+		footer.setHeight(15, Unit.PIXELS);
+		footer.setStyleName("persephone-footer");
+		return footer;
 	}
 }
