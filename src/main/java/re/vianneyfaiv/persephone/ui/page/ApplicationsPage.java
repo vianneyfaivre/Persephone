@@ -20,8 +20,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.EnvironmentService;
 import re.vianneyfaiv.persephone.service.MetricsService;
@@ -57,7 +59,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 	@PostConstruct
 	public void init() {
-		
+
 		List<Application> applications = this.appService.findAll();
 
 		// Title
@@ -105,6 +107,12 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 			// Get application overview info
 			Application app = e.getItem();
+			ActuatorVersion actuatorVersion = this.envService.getActuatorVersion(app);
+
+			if(actuatorVersion == ActuatorVersion.NOT_SUPPORTED) {
+				throw new ApplicationRuntimeException(app, "Actuator version is not supported");
+			}
+
 			Environment env = this.envService.getEnvironment(app);
 			Metrics metrics = this.metricsService.getMetrics(app);
 
