@@ -88,15 +88,15 @@ public class RestTemplateFactory {
 		return app -> {
 
 			// Create rest template instance
-			RestTemplate restTemplate = defaultRestTemplateConfig.restTemplate(requestFactory);
+			RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory);
 
 			// Configure it with BASIC auth
-			restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(app.getActuatorUsername(), app.getActuatorPassword()));
+			restTemplateBasicAuth.getInterceptors().add(new BasicAuthorizationInterceptor(app.getActuatorUsername(), app.getActuatorPassword()));
 
 			LOGGER.info("Registered RestTemplate with BASIC auth for application with id {}", app.getId());
 
 			// Add bean in Spring application context
-			registry.registerSingleton(getRestTemplateBeanName(app), restTemplate);
+			registry.registerSingleton(getRestTemplateBeanName(app), restTemplateBasicAuth);
 		};
 	}
 

@@ -74,6 +74,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+		// nothing to do
 	}
 
 	private Layout titleLayout(Component... components) {

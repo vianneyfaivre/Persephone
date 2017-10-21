@@ -32,7 +32,7 @@ public class ApplicationService {
 	}
 
 	public void addApplications(List<Application> apps) {
-		LOGGER.debug("Adding applications: "+apps.toString());
+		LOGGER.debug("Adding {} applications", apps.size());
         this.applications.addAll(apps);
     }
 }

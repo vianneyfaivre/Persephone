@@ -88,7 +88,7 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.addComponent(new PageHeader(app, "Metrics"));
 
 		this.addComponent(new Label("<h3>Health</h3>", ContentMode.HTML));
-		this.addComponent(getHealth(app, health));
+		this.addComponent(getHealth(health));
 
 		this.addComponent(new Label("<h3>System metrics</h3>", ContentMode.HTML));
 		this.addComponent(getSystemPanel(metricsSystem));
@@ -129,7 +129,7 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.addComponent(allMetricsGrid);
 	}
 
-	private VerticalLayout getHealth(Application app, Health health) {
+	private VerticalLayout getHealth(Health health) {
 		HorizontalLayout cards = new HorizontalLayout();
 
 		if(health.getDiskSpace().isPresent()) {
@@ -145,7 +145,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		if(health.getDb().isPresent()) {
 			cards.addComponent(new Card("Database",
-					health.getDiskSpace().get().getStatus(),
+					health.getDb().get().getStatus(),
 					String.format("Vendor: %s", health.getDb().get().getDatabase())));
 		}
 

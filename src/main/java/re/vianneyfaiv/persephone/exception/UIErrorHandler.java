@@ -32,9 +32,7 @@ public class UIErrorHandler implements ErrorHandler {
 
 			if(exceptionHandled) {
 				return;
-			}
-
-			if(!exceptionHandled && t instanceof RuntimeException) {
+			} else if(t instanceof RuntimeException) {
 				displayErrorNotif("Unhandled runtime exception.", t);
 				return;
 			} else {
@@ -68,7 +66,7 @@ public class UIErrorHandler implements ErrorHandler {
 	}
 
 	private void displayErrorNotif(String msg, Throwable t) {
-		LOGGER.error("Error handler: "+msg, t);
+		LOGGER.error(String.format("Error handler: %s", msg), t);
 		new Notification(
 				msg,
 			    t.getMessage(),

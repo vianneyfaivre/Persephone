@@ -20,20 +20,17 @@ public class MetricsRest {
 
 		// length == min 4 parts (a metric name can have several dots)
 		if(parts.length >= 4) {
-			try {
-				// parts[2] == http status code
-				this.status = HttpStatus.valueOf(Integer.valueOf(parts[2]));
+			// parts[2] == http status code
+			this.status = HttpStatus.valueOf(Integer.valueOf(parts[2]));
 
-				if(parts.length - 1 == 3) {
-					// metric name has no dots, so take only parts[3]
-					this.name = parts[3];
-				} else {
-					// parts[3]..parts[length-1] == http status code
-					this.name = String.join(".", Arrays.copyOfRange(parts, 3, parts.length));
-				}
-				this.value = metric.getValue().longValue();
-			} catch (IllegalArgumentException ignored) {
+			if(parts.length - 1 == 3) {
+				// metric name has no dots, so take only parts[3]
+				this.name = parts[3];
+			} else {
+				// parts[3]..parts[length-1] == http status code
+				this.name = String.join(".", Arrays.copyOfRange(parts, 3, parts.length));
 			}
+			this.value = metric.getValue().longValue();
 		}
 	}
 

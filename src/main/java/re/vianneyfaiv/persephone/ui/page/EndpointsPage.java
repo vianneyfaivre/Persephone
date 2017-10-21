@@ -2,8 +2,6 @@ package re.vianneyfaiv.persephone.ui.page;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
@@ -26,8 +24,6 @@ import re.vianneyfaiv.persephone.ui.util.PageHelper;
 @UIScope
 @SpringView(name=PersephoneViews.ENDPOINTS)
 public class EndpointsPage extends VerticalLayout implements View {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(EndpointsPage.class);
 
 	@Autowired
 	private PageHelper pageHelper;

@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
@@ -37,8 +35,6 @@ import re.vianneyfaiv.persephone.ui.util.PageHelper;
 @UIScope
 @SpringView(name=PersephoneViews.TRACE)
 public class TracePage extends VerticalLayout implements View {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TracePage.class);
 
 	@Autowired
 	private PageHelper pageHelper;

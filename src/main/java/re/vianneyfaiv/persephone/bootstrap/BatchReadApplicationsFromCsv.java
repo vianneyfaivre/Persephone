@@ -69,47 +69,8 @@ public class BatchReadApplicationsFromCsv {
 
 		reader.setResource(new PathResource(this.csvPath));
 		reader.setLinesToSkip(1);
+		reader.setLineMapper(getLineMapper());
 
-		// counter for Application#id
-		final AtomicInteger counter = new AtomicInteger(1);
-
-		reader.setLineMapper(new DefaultLineMapper<Application>() {
-			{
-				// define the name of each line token
-				this.setLineTokenizer(new DelimitedLineTokenizer() {
-					{
-						this.setNames(new String[] { "name", "environment", "url", "authScheme", "actuatorUsername", "actuatorPassword" });
-					}
-				});
-
-				// For each line
-				this.setFieldSetMapper(line -> {
-
-					AuthScheme authScheme = AuthScheme.parse(line.readString("authScheme"));
-					Application app;
-
-					if(authScheme == AuthScheme.BASIC) {
-						app = new Application(
-								counter.getAndIncrement(),
-								line.readString("name"),
-								line.readString("environment"),
-								line.readString("url"),
-								line.readString("actuatorUsername"),
-								line.readString("actuatorPassword"));
-					} else {
-						app = new Application(
-								counter.getAndIncrement(),
-								line.readString("name"),
-								line.readString("environment"),
-								line.readString("url"));
-					}
-
-					LOGGER.info("Loaded {}", app);
-
-					return app;
-				});
-			}
-		});
 		return reader;
 	}
 
@@ -128,6 +89,7 @@ public class BatchReadApplicationsFromCsv {
 					.listener(new JobExecutionListener() {
 						@Override
 						public void beforeJob(JobExecution jobExecution) {
+							// nothing to do
 						}
 
 						/**
@@ -180,6 +142,47 @@ public class BatchReadApplicationsFromCsv {
 	    SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
 	    simpleJobLauncher.setJobRepository(jobRepository);
 	    return simpleJobLauncher;
+	}
+
+	private DefaultLineMapper<Application> getLineMapper() {
+		DefaultLineMapper<Application> mapper = new DefaultLineMapper<>();
+		DelimitedLineTokenizer delimiter = new DelimitedLineTokenizer();
+
+		// counter for Application#id
+		final AtomicInteger counter = new AtomicInteger(1);
+
+		// define the name of each line token
+		delimiter.setNames(new String[] { "name", "environment", "url", "authScheme", "actuatorUsername", "actuatorPassword" });
+		mapper.setLineTokenizer(delimiter);
+
+		// For each line
+		mapper.setFieldSetMapper(line -> {
+
+			AuthScheme authScheme = AuthScheme.parse(line.readString("authScheme"));
+			Application app;
+
+			if(authScheme == AuthScheme.BASIC) {
+				app = new Application(
+						counter.getAndIncrement(),
+						line.readString("name"),
+						line.readString("environment"),
+						line.readString("url"),
+						line.readString("actuatorUsername"),
+						line.readString("actuatorPassword"));
+			} else {
+				app = new Application(
+						counter.getAndIncrement(),
+						line.readString("name"),
+						line.readString("environment"),
+						line.readString("url"));
+			}
+
+			LOGGER.info("Loaded {}", app);
+
+			return app;
+		});
+
+		return mapper;
 	}
 
 }

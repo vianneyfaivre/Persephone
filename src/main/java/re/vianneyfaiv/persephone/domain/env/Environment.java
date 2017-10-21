@@ -21,7 +21,8 @@ public class Environment {
 		for(PropertyItem p : properties) {
 			List<String> values = this.propertiesMap.get(p.getKey());
             if (values == null) {
-				this.propertiesMap.put(p.getKey(), values = new ArrayList<>());
+            	values = new ArrayList<>();
+				this.propertiesMap.put(p.getKey(), values);
 			}
             values.add(p.getValue());
 		}
