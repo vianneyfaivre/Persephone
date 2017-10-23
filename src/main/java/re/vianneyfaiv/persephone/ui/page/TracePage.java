@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
@@ -106,7 +107,8 @@ public class TracePage extends VerticalLayout implements View {
 				Label popupTitle = new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML);
 				popupTitle.setSizeFull();
 
-				Button popupClose = new Button("Close", e -> popup.setPopupVisible(false));
+				Button popupClose = new Button(VaadinIcons.CLOSE);
+				popupClose.addClickListener(e -> popup.setPopupVisible(false));
 
 				HorizontalLayout title = new HorizontalLayout(popupTitle, popupClose);
 				title.setSizeFull();
