@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.ui.component;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -35,11 +36,12 @@ public class PageHeader extends VerticalLayout {
 	}
 
 	private HorizontalLayout getButtons(Component... components) {
-		Button backButton = new Button("Back to applications list",
-											e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS));
+		Button backButton = new Button("Go Back", VaadinIcons.BACKSPACE_A);
+		backButton.addClickListener(e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS));
 
-		HorizontalLayout layout = new HorizontalLayout(components);
+		HorizontalLayout layout = new HorizontalLayout();
 		layout.addComponent(backButton);
+		layout.addComponents(components);
 		return layout;
 	}
 }
