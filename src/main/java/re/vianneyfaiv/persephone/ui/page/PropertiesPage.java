@@ -61,8 +61,12 @@ public class PropertiesPage extends VerticalLayout implements View {
 		this.grid = new Grid<>(PropertyItem.class);
 
 		this.grid.removeAllColumns();
-		Column<PropertyItem, String> defaultSortColumn = this.grid.addColumn(PropertyItem::getKey).setCaption("Property");
-		this.grid.addColumn(PropertyItem::getValue).setCaption("Value");
+		Column<PropertyItem, String> defaultSortColumn = this.grid.addColumn(PropertyItem::getKey)
+																.setCaption("Property")
+																.setExpandRatio(1);
+		this.grid.addColumn(PropertyItem::getValue)
+					.setCaption("Value")
+					.setExpandRatio(1);
 		this.grid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
 
 		this.grid.sort(defaultSortColumn);

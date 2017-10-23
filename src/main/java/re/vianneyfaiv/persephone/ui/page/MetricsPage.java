@@ -264,7 +264,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		Grid<MetricsDatasource> grid = new Grid<>(MetricsDatasource.class);
 		grid.removeAllColumns();
-		grid.addColumn(MetricsDatasource::getName).setCaption("Datasource name");
+		grid.addColumn(MetricsDatasource::getName).setCaption("Datasource name").setExpandRatio(1);
 		grid.addColumn(MetricsDatasource::getActiveConnections).setCaption("Active connections");
 		grid.addColumn(MetricsDatasource::getConnectionPoolUsage).setCaption("Connection pool usage");
 
@@ -281,7 +281,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		Grid<MetricsCacheGridRow> gridCache = new Grid<>(MetricsCacheGridRow.class);
 		gridCache.removeAllColumns();
-		gridCache.addColumn(MetricsCacheGridRow::getName).setCaption("Name");
+		gridCache.addColumn(MetricsCacheGridRow::getName).setCaption("Name").setExpandRatio(1);
 		gridCache.addColumn(MetricsCacheGridRow::getSize).setCaption("Size");
 		gridCache.addColumn(MetricsCacheGridRow::getHit).setCaption("Hit");
 		gridCache.addColumn(MetricsCacheGridRow::getMiss).setCaption("Miss");
@@ -298,7 +298,9 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		Grid<MetricsGridRow> grid = new Grid<>(MetricsGridRow.class);
 		grid.removeAllColumns();
-		Column<MetricsGridRow, String> defaultSortColumn = grid.addColumn(MetricsGridRow::getName).setCaption("Name");
+		Column<MetricsGridRow, String> defaultSortColumn = grid.addColumn(MetricsGridRow::getName)
+																.setCaption("Name")
+																.setExpandRatio(1);
 		grid.addColumn(MetricsGridRow::getValue).setCaption("Value");
 
 		grid.setItems(allMetricsRows);

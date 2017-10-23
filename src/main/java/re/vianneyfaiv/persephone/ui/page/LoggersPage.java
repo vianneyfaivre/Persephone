@@ -28,7 +28,6 @@ import com.vaadin.ui.VerticalLayout;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.logger.Loggers;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
-import re.vianneyfaiv.persephone.service.ApplicationService;
 import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
@@ -43,9 +42,6 @@ import re.vianneyfaiv.persephone.ui.util.PageHelper;
 public class LoggersPage extends VerticalLayout implements View {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoggersPage.class);
-
-	@Autowired
-	private ApplicationService appService;
 
 	@Autowired
 	private LoggersService loggersService;
@@ -69,7 +65,7 @@ public class LoggersPage extends VerticalLayout implements View {
 		this.removeAllComponents();
 
 		// Get application
-		int appId = Integer.valueOf(event.getParameters());
+		int appId = Integer.parseInt(event.getParameters());
 		Application app = pageHelper.getApp(appId);
 
 		// Get loggers config
@@ -82,7 +78,9 @@ public class LoggersPage extends VerticalLayout implements View {
 
 			grid.removeAllColumns();
 
-			Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName).setCaption("Name");
+			Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName)
+																	.setCaption("Name")
+																	.setExpandRatio(2);
 			grid.addComponentColumn(logger -> {
 				NativeSelect<String> levelsDropdown = new NativeSelect<>(null, loggers.get().getLevels());
 
@@ -104,7 +102,9 @@ public class LoggersPage extends VerticalLayout implements View {
 				});
 
 				return levelsDropdown;
-			}).setCaption("Level");
+			})	.setCaption("Level")
+				.setExpandRatio(1);
+
 			grid.setRowHeight(40);
 
 			grid.setItems(loggersRows);
