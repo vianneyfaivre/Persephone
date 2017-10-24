@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.bootstrap;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,6 +62,8 @@ public class BatchReadApplicationsFromCsv {
 	@Autowired
 	private RestTemplateFactory restTemplateFactory;
 
+	private List<Application> applicationsTmp = new ArrayList<>();
+
 	@Bean
 	public FlatFileItemReader<Application> reader() {
 		FlatFileItemReader<Application> reader = new FlatFileItemReader<>();
@@ -76,7 +79,7 @@ public class BatchReadApplicationsFromCsv {
 
 	@Bean
 	public ItemWriter<Application> writer() {
-		return items -> this.applicationService.addApplications((List<Application>) items);
+		return items -> this.applicationsTmp.addAll(items);
 	}
 
 	@Bean
@@ -98,16 +101,18 @@ public class BatchReadApplicationsFromCsv {
 						@Override
 						public void afterJob(JobExecution jobExecution) {
 
+							applicationService.setApplications(applicationsTmp);
+
 							LOGGER.debug("Applications have been loaded. Now checking if they are up");
 
 							// Create RestTemplate with BASIC auth (if enabled)
 							restTemplateFactory.init();
 
-							// Refresh applications health
-							BatchReadApplicationsFromCsv.this.applicationService
+							// Check applications status
+							applicationService
 									.findAll()
 									.stream()
-									.forEach(app -> app.setUp(BatchReadApplicationsFromCsv.this.healthService.isUp(app)));
+									.forEach(app -> applicationService.setUp(app, healthService.isUp(app)));
 						}
 					})
 					.build();

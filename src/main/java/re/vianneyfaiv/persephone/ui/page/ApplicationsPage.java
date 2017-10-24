@@ -121,7 +121,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 			Metrics metrics = this.metricsService.getMetrics(app);
 
 			// No exception has been thrown : app is up and running !
-			app.setUp(true);
+			appService.setUp(app, true);
 
 			// Add overview panel to page
 			this.details = new ApplicationOverviewPanel(app, env, metrics);
