@@ -37,6 +37,7 @@ public class PageHeader extends VerticalLayout {
 
 	private HorizontalLayout getButtons(Component... components) {
 		Button backButton = new Button("Go Back", VaadinIcons.BACKSPACE_A);
+		backButton.setId("back-btn");
 		backButton.addClickListener(e -> getUI().getNavigator().navigateTo(PersephoneViews.APPLICATIONS));
 
 		HorizontalLayout layout = new HorizontalLayout();

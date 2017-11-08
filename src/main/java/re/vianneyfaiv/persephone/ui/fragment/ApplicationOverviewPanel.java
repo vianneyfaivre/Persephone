@@ -105,6 +105,11 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		List<Component> components = new ArrayList<>(Arrays.asList(buttons));
 
+		// Set HTML id for each button
+		for(Component b : components) {
+			b.setId(b.getCaption().replace(' ', '-')+"-btn");
+		}
+
 		// Split components into sublists of 5 elements
 		int partitionSize = 5;
 		List<List<Component>> partitions = new ArrayList<>();
