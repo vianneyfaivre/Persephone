@@ -20,6 +20,12 @@ For each monitored application:
 * View / update loggers configuration
 * List the last 100 HTTP requests
 
+## Bugs, Feedback
+
+Create an issue in [Github Issues](https://github.com/vianneyfaivre/Persephone/issues)
+
+Get in touch with me through [this contact form](https://vianneyfaiv.re/contact/)
+
 ## License 
 
 GNU General Public License v3.0
