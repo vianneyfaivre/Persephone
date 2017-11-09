@@ -1,4 +1,6 @@
-# Persephone - Monitor your Spring web applications [![Build Status](https://api.travis-ci.org/vianneyfaivre/Persephone.svg?branch=master)](https://travis-ci.org/vianneyfaivre/Persephone)
+# Persephone - Monitor your Spring web applications
+
+[![Build Status](https://api.travis-ci.org/vianneyfaivre/Persephone.svg?branch=master)](https://travis-ci.org/vianneyfaivre/Persephone)
 
 Web application that ease the monitoring of Spring boot applications. 
 
