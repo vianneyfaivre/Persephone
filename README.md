@@ -33,7 +33,7 @@ Stay tuned!
 
 ## Bugs :bug:, Feedback :microphone:
 
-Create an issue in [Github Issues](https://github.com/vianneyfaivre/Persephone/issues)
+Create an issue in [Github Issues :octocat: ](https://github.com/vianneyfaivre/Persephone/issues)
 
 Get in touch with me through [this contact form :mailbox:](https://vianneyfaiv.re/contact/)
 
