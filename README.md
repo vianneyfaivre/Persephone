@@ -28,6 +28,6 @@ Get in touch with me through [this contact form](https://vianneyfaiv.re/contact/
 
 ## License 
 
-Copyright (C) 2017 [Vianney FAIVRE](https://vianneyfaiv.re)
+Copyright © 2017 [Vianney FAIVRE](https://vianneyfaiv.re)
 
 Persephone binaries and source code can be used according to the GNU General Public License v3.0
