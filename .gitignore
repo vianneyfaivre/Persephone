@@ -65,4 +65,5 @@ $RECYCLE.BIN/
 .project
 *.classpath
 .settings
+application.pid
 target

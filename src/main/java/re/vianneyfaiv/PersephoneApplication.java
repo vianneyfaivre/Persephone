@@ -3,6 +3,7 @@ package re.vianneyfaiv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication(exclude= {
@@ -12,6 +13,10 @@ import org.springframework.context.annotation.PropertySource;
 public class PersephoneApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PersephoneApplication.class, args);
+		SpringApplication springApplication = new SpringApplication(PersephoneApplication.class);
+
+		springApplication.addListeners(new ApplicationPidFileWriter());
+
+		springApplication.run(args);
 	}
 }
