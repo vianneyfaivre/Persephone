@@ -55,7 +55,7 @@ public class TracePage extends VerticalLayout implements View {
 		this.removeAllComponents();
 
 		// Get application
-		int appId = Integer.valueOf(event.getParameters());
+		int appId = Integer.parseInt(event.getParameters());
 		Application app = pageHelper.getApp(appId);
 
 		List<Trace> traces = traceService.getTraces(app);
@@ -71,13 +71,17 @@ public class TracePage extends VerticalLayout implements View {
 											.map(TraceGridRow::new)
 											.collect(Collectors.toList());
 
-
 		Grid<TraceGridRow> grid = new Grid<>(TraceGridRow.class);
 		grid.removeAllColumns();
 
 		grid.addColumn(TraceGridRow::getTimestamp).setCaption("Date");
 		grid.addColumn(t -> t.getMethod() + " " + t.getPath()).setCaption("HTTP Request").setExpandRatio(1);
-		grid.addColumn(t -> t.getResponseHttp() + " " + t.getResponseHttp().getReasonPhrase()).setCaption("HTTP Response");
+		grid.addColumn(t -> {
+			if(t.getResponseHttp().isPresent()) {
+				return t.getResponseHttp().get() + " " + t.getResponseHttp().get().getReasonPhrase();
+			}
+			return "";
+		}).setCaption("HTTP Response");
 		grid.addColumn(t -> t.getTimeTaken().isPresent() ? t.getTimeTaken().get().toMillis() : -1).setCaption("Time taken (ms)");
 
 		this.requestDetailsPopup(grid);
@@ -129,7 +133,7 @@ public class TracePage extends VerticalLayout implements View {
 		this.addComponent(popup);
 	}
 
-	private VerticalLayout formatHeaders(String title, Map<String, String> headers) {
+	private VerticalLayout formatHeaders(String title, Map<String, List<String>> headers) {
 
 		Label titleLabel = new Label(title, ContentMode.HTML);
 		titleLabel.setSizeFull();

@@ -15,4 +15,9 @@ public class Trace {
 	public TraceInfo getInfo() {
 		return info;
 	}
+
+	@Override
+	public String toString() {
+		return "Trace [timestamp=" + timestamp + ", info=" + info + "]";
+	}
 }

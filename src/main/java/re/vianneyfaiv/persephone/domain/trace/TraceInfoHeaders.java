@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.domain.trace;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -7,14 +8,19 @@ import java.util.Map;
  */
 public class TraceInfoHeaders {
 
-	private Map<String, String> request;
-	private Map<String, String> response;
+	private Map<String, List<String>> request;
+	private Map<String, List<String>> response;
 
-	public Map<String, String> getRequest() {
+	public TraceInfoHeaders(Map<String, List<String>> request, Map<String, List<String>> response) {
+		this.request = request;
+		this.response = response;
+	}
+
+	public Map<String, List<String>> getRequest() {
 		return request;
 	}
 
-	public Map<String, String> getResponse() {
+	public Map<String, List<String>> getResponse() {
 		return response;
 	}
 }

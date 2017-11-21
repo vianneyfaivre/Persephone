@@ -27,4 +27,10 @@ public class TraceInfo {
 	public long getTimeTaken() {
 		return timeTaken;
 	}
+
+	@Override
+	public String toString() {
+		return "TraceInfo [method=" + method + ", path=" + path + ", headers=" + headers + ", timeTaken=" + timeTaken
+				+ "]";
+	}
 }

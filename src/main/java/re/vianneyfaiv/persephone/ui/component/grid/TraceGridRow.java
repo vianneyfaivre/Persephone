@@ -1,8 +1,10 @@
 package re.vianneyfaiv.persephone.ui.component.grid;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,9 +20,9 @@ public class TraceGridRow {
 	private HttpMethod method;
 	private String path;
 	private Optional<Duration> timeTaken;
-	private HttpStatus responseHttp;
-	private Map<String, String> requestHeaders;
-	private Map<String, String> responseHeaders;
+	private Optional<HttpStatus> responseHttp;
+	private Map<String, List<String>> requestHeaders;
+	private Map<String, List<String>> responseHeaders;
 
 	public TraceGridRow(Trace trace) {
 		this.timestamp = new Date(trace.getTimestamp());
@@ -50,9 +52,11 @@ public class TraceGridRow {
 					this.responseHeaders = new HashMap<>();
 				}
 
-				String status = trace.getInfo().getHeaders().getResponse().get("status");
-				if(!StringUtils.isEmpty(status)) {
-					this.responseHttp = HttpStatus.valueOf(Integer.valueOf(status));
+				List<String> statusList = this.responseHeaders.getOrDefault("status", new ArrayList<>());
+				if(!statusList.isEmpty() && !StringUtils.isEmpty(statusList.get(0))) {
+					this.responseHttp = Optional.of(HttpStatus.valueOf(Integer.valueOf(statusList.get(0))));
+				} else {
+					this.responseHttp = Optional.empty();
 				}
 			}
 
@@ -76,15 +80,15 @@ public class TraceGridRow {
 		return timeTaken;
 	}
 
-	public Map<String, String> getRequestHeaders() {
+	public Map<String, List<String>> getRequestHeaders() {
 		return requestHeaders;
 	}
 
-	public Map<String, String> getResponseHeaders() {
+	public Map<String, List<String>> getResponseHeaders() {
 		return responseHeaders;
 	}
 
-	public HttpStatus getResponseHttp() {
+	public Optional<HttpStatus> getResponseHttp() {
 		return responseHttp;
 	}
 
