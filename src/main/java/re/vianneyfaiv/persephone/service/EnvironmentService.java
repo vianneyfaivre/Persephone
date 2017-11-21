@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -47,6 +49,16 @@ public class EnvironmentService {
 
 			return ActuatorVersion.parse(headers.getContentType());
 		} catch (RestClientException ex) {
+
+			if(ex instanceof HttpClientErrorException) {
+				HttpClientErrorException clientEx = ((HttpClientErrorException)ex);
+
+				// Spring Boot 1.3 does not allow HEAD method, so let's assume the app is up
+				if(clientEx.getStatusCode() == HttpStatus.METHOD_NOT_ALLOWED) {
+					return ActuatorVersion.V1;
+				}
+			}
+
 			throw RestTemplateErrorHandler.handle(app, url, ex);
 		} catch (URISyntaxException e) {
 			throw RestTemplateErrorHandler.handle(app, e);
