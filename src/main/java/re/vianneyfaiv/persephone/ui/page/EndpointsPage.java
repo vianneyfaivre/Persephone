@@ -40,7 +40,7 @@ public class EndpointsPage extends VerticalLayout implements View {
 		this.removeAllComponents();
 
 		// Get application
-		int appId = Integer.valueOf(event.getParameters());
+		int appId = Integer.parseInt(event.getParameters());
 
 		Application app = pageHelper.getApp(appId);
 

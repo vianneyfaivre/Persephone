@@ -16,32 +16,68 @@ public class Endpoints {
 
 	public List<String> asList() {
 		return Arrays.asList(
-				this.env(),
-				this.health(),
-				this.logfile(),
-				this.metrics(),
-				this.loggers(),
-				this.trace());
+				this.actuator(), this.auditevents(), this.autoconfig(), this.beans(),
+				this.configprops(), this.docs(), this.dump(), this.env(), this.flyway(),
+				this.health(), this.heapdump(), this.jolokia(), this.liquibase(),
+				this.logfile(), this.loggers(), this.mappings(), this.metrics(),
+				this.trace()
+		);
+	}
+
+	public String actuator() {
+		return this.baseUrl + "/actuator";
+	}
+
+	public String auditevents() {
+		return this.baseUrl + "/auditevents";
+	}
+
+	public String autoconfig() {
+		return this.baseUrl + "/autoconfig";
+	}
+
+	public String beans() {
+		return this.baseUrl + "/beans";
+	}
+
+	public String configprops() {
+		return this.baseUrl + "/configprops";
+	}
+
+	public String docs() {
+		return this.baseUrl + "/docs";
+	}
+
+	public String dump() {
+		return this.baseUrl + "/dump";
 	}
 
 	public String env() {
 		return this.baseUrl + "/env";
 	}
 
+	public String flyway() {
+		return this.baseUrl + "/flyway";
+	}
+
 	public String health() {
 		return this.baseUrl + "/health";
 	}
 
+	public String heapdump() {
+		return this.baseUrl + "/heapdump";
+	}
+
+	public String jolokia() {
+		return this.baseUrl + "/jolokia";
+	}
+
+	public String liquibase() {
+		return this.baseUrl + "/liquibase";
+	}
+
 	public String logfile() {
 		return this.baseUrl + "/logfile";
-	}
-
-	public String metrics() {
-		return this.baseUrl + "/metrics";
-	}
-
-	public String trace() {
-		return this.baseUrl + "/trace";
 	}
 
 	public String loggers() {
@@ -50,5 +86,21 @@ public class Endpoints {
 
 	public String loggers(String logger) {
 		return this.baseUrl + "/loggers/" + logger;
+	}
+
+	public String mappings() {
+		return this.baseUrl + "/mappings";
+	}
+
+	public String metrics() {
+		return this.baseUrl + "/metrics";
+	}
+
+	public String shutdown() {
+		return this.baseUrl + "/shutdown";
+	}
+
+	public String trace() {
+		return this.baseUrl + "/trace";
 	}
 }
