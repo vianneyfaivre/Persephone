@@ -43,7 +43,7 @@ public class RestTemplateFactory {
 	private ClientHttpRequestFactory requestFactory;
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplate defaultRestTemplate;
 
 	// Persephone service
 
@@ -78,7 +78,7 @@ public class RestTemplateFactory {
 			}
 		}
 
-		return restTemplate;
+		return defaultRestTemplate;
 	}
 
 	/**

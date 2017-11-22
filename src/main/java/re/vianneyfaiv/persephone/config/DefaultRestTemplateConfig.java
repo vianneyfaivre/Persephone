@@ -56,6 +56,10 @@ public class DefaultRestTemplateConfig {
 	}
 
 	@Bean
+	public RestTemplate defaultRestTemplate(ClientHttpRequestFactory rf) {
+		return this.restTemplate(rf);
+	}
+
 	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
 		RestTemplate rt = new RestTemplate(requestFactory);
 
