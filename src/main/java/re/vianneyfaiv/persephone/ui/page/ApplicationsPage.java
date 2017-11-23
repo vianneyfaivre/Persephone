@@ -72,10 +72,8 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		Column<Application, String> defaultSortColumn = this.grid.addColumn(Application::getName)
 																	.setCaption("Application")
 																	.setExpandRatio(0);
-		this.grid.addColumn(Application::getEnvironment).setCaption("Environment");
-		this.grid.addColumn(Application::getUrl)
-					.setCaption("URL")
-					.setExpandRatio(1);
+		this.grid.addColumn(Application::getEnvironment).setCaption("Environment").setExpandRatio(0);
+		this.grid.addColumn(Application::getUrl).setCaption("URL").setExpandRatio(1);
 
 		this.grid.setItems(applications);
 
