@@ -1,6 +1,8 @@
 package re.vianneyfaiv.persephone.ui.page;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -113,19 +115,30 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	}
 
 	private void initFilterRow(Column<Application, String> appColumn, Column<Application, String> envColumn, Column<Application, String> urlColumn) {
+		TextField filterApp = new TextField();
+		TextField filterEnv = new TextField();
+		TextField filterUrl = new TextField();
 
-		// Filter by Application
-		TextField filterInput = new TextField();
-		filterInput.setPlaceholder("filter by application...");
-		filterInput.addValueChangeListener(e -> updateApplications(e.getValue()));
-		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
-		filterInput.setSizeFull();
+		filterApp.setPlaceholder("filter by application...");
+		filterApp.addValueChangeListener(e -> updateApplications(e.getValue(), filterEnv.getValue(), filterUrl.getValue()));
+		filterApp.setValueChangeMode(ValueChangeMode.LAZY);
+		filterApp.setSizeFull();
+
+		filterEnv.setPlaceholder("filter by environment...");
+		filterEnv.addValueChangeListener(e -> updateApplications(filterApp.getValue(), e.getValue(), filterUrl.getValue()));
+		filterEnv.setValueChangeMode(ValueChangeMode.LAZY);
+		filterEnv.setSizeFull();
+
+		filterUrl.setPlaceholder("filter by URL...");
+		filterUrl.addValueChangeListener(e -> updateApplications(filterApp.getValue(), filterEnv.getValue(), e.getValue()));
+		filterUrl.setValueChangeMode(ValueChangeMode.LAZY);
+		filterUrl.setSizeFull();
 
 		// Header row
 		HeaderRow filterRow = grid.addHeaderRowAt(grid.getHeaderRowCount());
-		filterRow.getCell(appColumn).setComponent(filterInput);
-		// TODO: filter by env
-		// TODO: filter by url
+		filterRow.getCell(appColumn).setComponent(filterApp);
+		filterRow.getCell(envColumn).setComponent(filterEnv);
+		filterRow.getCell(urlColumn).setComponent(filterUrl);
 	}
 
 	private ItemClickListener<Application> applicationOnClick() {
@@ -156,16 +169,28 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		};
 	}
 
-	private void updateApplications(String filterApp) {
+	private void updateApplications(String filterApp, String filterEnv, String filterUrl) {
 
-		if(StringUtils.isEmpty(filterApp)) {
-			this.grid.setItems(this.applications);
+		List<Application> filteredApps = new ArrayList<>(this.applications);
+
+		if(!StringUtils.isEmpty(filterApp)) {
+			filteredApps = filteredApps.stream()
+				.filter(app -> app.getName().toLowerCase().contains(filterApp.toLowerCase()))
+				.collect(Collectors.toList());
 		}
-		else {
-			this.grid.setItems(
-				this.applications.stream()
-					.filter(app -> app.getName().toLowerCase().contains(filterApp.toLowerCase()))
-			);
+
+		if(!StringUtils.isEmpty(filterEnv)) {
+			filteredApps = filteredApps.stream()
+				.filter(app -> app.getEnvironment().toLowerCase().contains(filterEnv.toLowerCase()))
+				.collect(Collectors.toList());
 		}
+
+		if(!StringUtils.isEmpty(filterUrl)) {
+			filteredApps = filteredApps.stream()
+				.filter(app -> app.getUrl().toLowerCase().contains(filterUrl.toLowerCase()))
+				.collect(Collectors.toList());
+		}
+
+		this.grid.setItems(filteredApps);
 	}
 }
