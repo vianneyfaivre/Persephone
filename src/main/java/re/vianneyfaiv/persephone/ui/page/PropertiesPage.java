@@ -5,13 +5,20 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
@@ -86,8 +93,51 @@ public class PropertiesPage extends VerticalLayout implements View {
 		filterRow.getCell(propertyColumn).setComponent(filterInput);
 
 		this.addComponent(new PageHeader(app, "Properties"));
+		this.addComponent(this.popupRowOnClick());
 		this.addComponent(this.grid);
 		this.updateProperties("");
+	}
+
+	private PopupView popupRowOnClick() {
+		VerticalLayout popupContent = new VerticalLayout();
+		popupContent.setSizeFull();
+
+		PopupView popup = new PopupView(null, popupContent);
+
+		grid.addItemClickListener(e -> {
+			popup.setData(e.getItem());
+			popup.setPopupVisible(true);
+		});
+
+		popup.addPopupVisibilityListener(event -> {
+			if (event.isPopupVisible()) {
+				popupContent.removeAllComponents();
+
+				PropertyItem item = (PropertyItem) popup.getData();
+
+				Label popupTitle = new Label(String.format("<h3>Property '%s' from %s</h3>", item.getKey(), item.getOrigin()), ContentMode.HTML);
+				popupTitle.setSizeFull();
+
+				Button popupClose = new Button(VaadinIcons.CLOSE);
+				popupClose.addClickListener(e -> popup.setPopupVisible(false));
+
+				HorizontalLayout title = new HorizontalLayout(popupTitle, popupClose);
+				title.setSizeFull();
+				title.setExpandRatio(popupTitle, 3);
+				title.setExpandRatio(popupClose, 1);
+				title.setComponentAlignment(popupClose, Alignment.TOP_RIGHT);
+
+				Label propertyValue = new Label(item.getValue(), ContentMode.TEXT);
+				propertyValue.setSizeFull();
+
+				popupContent.addComponents(title, propertyValue);
+			}
+		});
+
+		popup.setHideOnMouseOut(false);
+		popup.setSizeFull();
+
+		return popup;
 	}
 
 	private void updateProperties(String filterByPropKey) {
