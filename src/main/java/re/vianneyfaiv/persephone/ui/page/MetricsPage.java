@@ -25,6 +25,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.health.Health;
@@ -119,13 +120,7 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		allMetricsGrid = getAllMetricsGrid(metrics);
 
-		TextField filterInput = new TextField();
-		filterInput.setPlaceholder("filter by metric...");
-		filterInput.addValueChangeListener(e -> updateMetrics(e.getValue()));
-		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
-
 		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
-		this.addComponent(filterInput);
 		this.addComponent(allMetricsGrid);
 	}
 
@@ -219,20 +214,6 @@ public class MetricsPage extends VerticalLayout implements View {
 		return new HorizontalLayout(sys, mem, gc, threads, classes);
 	}
 
-	private void updateMetrics(String filterValue) {
-
-		if(StringUtils.isEmpty(filterValue)) {
-			this.allMetricsGrid.setItems(this.allMetricsRows);
-		}
-		else {
-			this.allMetricsGrid.setItems(
-				this.allMetricsRows
-					.stream()
-					.filter(p -> p.getName().toLowerCase().contains(filterValue.toLowerCase()))
-			);
-		}
-	}
-
 	private Component getRestGrid(Collection<MetricsRest> metrics, Series httpSerie) {
 
 		List<MetricsRest> metricsItems = metrics.stream()
@@ -298,14 +279,40 @@ public class MetricsPage extends VerticalLayout implements View {
 
 		Grid<MetricsGridRow> grid = new Grid<>(MetricsGridRow.class);
 		grid.removeAllColumns();
-		Column<MetricsGridRow, String> defaultSortColumn = grid.addColumn(MetricsGridRow::getName)
+		Column<MetricsGridRow, String> nameColumn = grid.addColumn(MetricsGridRow::getName)
 																.setCaption("Name")
 																.setExpandRatio(1);
 		grid.addColumn(MetricsGridRow::getValue).setCaption("Value");
 
 		grid.setItems(allMetricsRows);
-		grid.sort(defaultSortColumn);
+		grid.sort(nameColumn);
 		grid.setSizeFull();
+		grid.setRowHeight(40);
+
+		TextField filterInput = new TextField();
+		filterInput.setPlaceholder("filter by metric...");
+		filterInput.addValueChangeListener(e -> updateMetrics(e.getValue()));
+		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
+		filterInput.setSizeFull();
+
+		// Header row
+		HeaderRow filterRow = grid.addHeaderRowAt(grid.getHeaderRowCount());
+		filterRow.getCell(nameColumn).setComponent(filterInput);
+
 		return grid;
+	}
+
+	private void updateMetrics(String filterValue) {
+
+		if(StringUtils.isEmpty(filterValue)) {
+			this.allMetricsGrid.setItems(this.allMetricsRows);
+		}
+		else {
+			this.allMetricsGrid.setItems(
+				this.allMetricsRows
+					.stream()
+					.filter(p -> p.getName().toLowerCase().contains(filterValue.toLowerCase()))
+			);
+		}
 	}
 }
