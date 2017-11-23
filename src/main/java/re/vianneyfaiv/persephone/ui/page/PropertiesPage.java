@@ -14,6 +14,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.env.Environment;
@@ -51,7 +52,7 @@ public class PropertiesPage extends VerticalLayout implements View {
 		this.removeAllComponents();
 
 		// Get application
-		int appId = Integer.valueOf(event.getParameters());
+		int appId = Integer.parseInt(event.getParameters());
 		Application app = pageHelper.getApp(appId);
 
 		// Load properties
@@ -61,7 +62,7 @@ public class PropertiesPage extends VerticalLayout implements View {
 		this.grid = new Grid<>(PropertyItem.class);
 
 		this.grid.removeAllColumns();
-		Column<PropertyItem, String> defaultSortColumn = this.grid.addColumn(PropertyItem::getKey)
+		Column<PropertyItem, String> propertyColumn = this.grid.addColumn(PropertyItem::getKey)
 																.setCaption("Property")
 																.setExpandRatio(1);
 		this.grid.addColumn(PropertyItem::getValue)
@@ -69,16 +70,22 @@ public class PropertiesPage extends VerticalLayout implements View {
 					.setExpandRatio(1);
 		this.grid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
 
-		this.grid.sort(defaultSortColumn);
+		this.grid.sort(propertyColumn);
 		this.grid.setSizeFull();
+		this.grid.setRowHeight(40);
 
 		// Filter by Property
 		TextField filterInput = new TextField();
 		filterInput.setPlaceholder("filter by property key...");
 		filterInput.addValueChangeListener(e -> updateProperties(e.getValue()));
 		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
+		filterInput.setSizeFull();
 
-		this.addComponent(new PageHeader(app, "Properties", filterInput));
+		// Header row
+		HeaderRow filterRow = grid.addHeaderRowAt(grid.getHeaderRowCount());
+		filterRow.getCell(propertyColumn).setComponent(filterInput);
+
+		this.addComponent(new PageHeader(app, "Properties"));
 		this.addComponent(this.grid);
 		this.updateProperties("");
 	}
