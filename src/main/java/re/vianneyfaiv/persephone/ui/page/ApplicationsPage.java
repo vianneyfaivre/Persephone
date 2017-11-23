@@ -5,18 +5,22 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.components.grid.ItemClickListener;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
@@ -54,38 +58,22 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	@Autowired
 	private PageHelper pageHelper;
 
-	private Grid<Application> grid;
 	private ApplicationOverviewPanel details;
+	private List<Application> applications;
+	private Grid<Application> grid;
 
 	@PostConstruct
 	public void init() {
 
-		List<Application> applications = this.appService.findAll();
+		applications = this.appService.findAll();
 
 		// Title
 		Label title = new Label("<h2>Applications</h2>", ContentMode.HTML);
 
-		// Applications Grid
-		this.grid = new Grid<>(Application.class);
-
-		this.grid.removeAllColumns();
-		Column<Application, String> defaultSortColumn = this.grid.addColumn(Application::getName)
-																	.setCaption("Application")
-																	.setExpandRatio(0);
-		this.grid.addColumn(Application::getEnvironment).setCaption("Environment").setExpandRatio(0);
-		this.grid.addColumn(Application::getUrl).setCaption("URL").setExpandRatio(1);
-
-		this.grid.setItems(applications);
-
-		this.grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
-
-		this.grid.addItemClickListener(applicationOnClick());
-		this.grid.setSizeFull();
-		this.grid.setHeightByRows(applications.size());
-		this.grid.sort(defaultSortColumn);
+		initApplicationsGrid();
 
 		// Build layout
-		VerticalLayout leftLayout = new VerticalLayout(title, this.grid);
+		VerticalLayout leftLayout = new VerticalLayout(title, grid);
 		leftLayout.setMargin(false);
 		this.addComponent(leftLayout);
 
@@ -97,6 +85,47 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		pageHelper.setErrorHandler(this);
+	}
+
+	private void initApplicationsGrid() {
+
+		grid = new Grid<>();
+
+		// Columns
+		grid.removeAllColumns();
+		Column<Application, String> appColumn = grid.addColumn(Application::getName).setCaption("Application").setExpandRatio(0);
+		Column<Application, String> envColumn = grid.addColumn(Application::getEnvironment).setCaption("Environment").setExpandRatio(0);
+		Column<Application, String> urlColumn = grid.addColumn(Application::getUrl).setCaption("URL").setExpandRatio(1);
+
+		// Items
+		grid.setItems(applications);
+
+		// Header filter row
+		initFilterRow(appColumn, envColumn, urlColumn);
+
+		// Style
+		grid.setStyleGenerator(app -> app.isUp() ? null : "app-down");
+		grid.addItemClickListener(applicationOnClick());
+		grid.setSizeFull();
+		grid.setHeightByRows(applications.size());
+		grid.sort(appColumn);
+		grid.setRowHeight(40);
+	}
+
+	private void initFilterRow(Column<Application, String> appColumn, Column<Application, String> envColumn, Column<Application, String> urlColumn) {
+
+		// Filter by Application
+		TextField filterInput = new TextField();
+		filterInput.setPlaceholder("filter by application...");
+		filterInput.addValueChangeListener(e -> updateApplications(e.getValue()));
+		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
+		filterInput.setSizeFull();
+
+		// Header row
+		HeaderRow filterRow = grid.addHeaderRowAt(grid.getHeaderRowCount());
+		filterRow.getCell(appColumn).setComponent(filterInput);
+		// TODO: filter by env
+		// TODO: filter by url
 	}
 
 	private ItemClickListener<Application> applicationOnClick() {
@@ -125,5 +154,18 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 			this.details = new ApplicationOverviewPanel(app, env, metrics);
 			this.addComponent(this.details);
 		};
+	}
+
+	private void updateApplications(String filterApp) {
+
+		if(StringUtils.isEmpty(filterApp)) {
+			this.grid.setItems(this.applications);
+		}
+		else {
+			this.grid.setItems(
+				this.applications.stream()
+					.filter(app -> app.getName().toLowerCase().contains(filterApp.toLowerCase()))
+			);
+		}
 	}
 }
