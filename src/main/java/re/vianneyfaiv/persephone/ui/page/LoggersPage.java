@@ -24,6 +24,7 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.logger.Loggers;
@@ -78,7 +79,7 @@ public class LoggersPage extends VerticalLayout implements View {
 
 			grid.removeAllColumns();
 
-			Column<LoggerGridRow, String> defaultSortColumn = grid.addColumn(LoggerGridRow::getName)
+			Column<LoggerGridRow, String> nameColumn = grid.addColumn(LoggerGridRow::getName)
 																	.setCaption("Name")
 																	.setExpandRatio(2);
 			grid.addComponentColumn(logger -> {
@@ -105,20 +106,24 @@ public class LoggersPage extends VerticalLayout implements View {
 			})	.setCaption("Level")
 				.setExpandRatio(1);
 
+			grid.setSizeFull();
 			grid.setRowHeight(40);
 
 			grid.setItems(loggersRows);
-			grid.sort(defaultSortColumn);
-
-			grid.setSizeFull();
+			grid.sort(nameColumn);
 
 			// Filter grid by logger name
 			filterInput = new TextField();
 			filterInput.setPlaceholder("filter by logger name...");
 			filterInput.addValueChangeListener(e -> filterLoggers(e.getValue()));
 			filterInput.setValueChangeMode(ValueChangeMode.LAZY);
+			filterInput.setSizeFull();
 
-			this.addComponent(new PageHeader(app, "Loggers", filterInput));
+			// Header row
+			HeaderRow filterRow = grid.addHeaderRowAt(grid.getHeaderRowCount());
+			filterRow.getCell(nameColumn).setComponent(filterInput);
+
+			this.addComponent(new PageHeader(app, "Loggers"));
 			this.addComponent(new Label("Changing a level will update one/many logger(s) level(s)"));
 			this.addComponent(grid);
 		} else {
