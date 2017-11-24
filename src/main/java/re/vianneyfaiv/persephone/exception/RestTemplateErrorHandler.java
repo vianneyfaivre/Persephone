@@ -20,12 +20,12 @@ public class RestTemplateErrorHandler {
 		// HTTP 5xx
 		if(ex instanceof HttpServerErrorException) {
 			HttpServerErrorException serverEx = ((HttpServerErrorException)ex);
-			return new ApplicationRuntimeException(app, String.format("A server error happened while calling %s (Got HTTP %s)", url, serverEx.getRawStatusCode()));
+			return new ApplicationRuntimeException(app, String.format("A server error happened while calling %s (HTTP %s)", url, serverEx.getRawStatusCode()));
 		}
 		// HTTP 4xx
 		else if(ex instanceof HttpClientErrorException) {
 			HttpClientErrorException clientEx = ((HttpClientErrorException)ex);
-			return new ApplicationRuntimeException(app, String.format("Endpoint %s is not available (Got HTTP %s)", url, clientEx.getRawStatusCode()));
+			return new ApplicationRuntimeException(app, String.format("Bad request on endpoint %s (HTTP %s)", url, clientEx.getRawStatusCode()));
 		}
 		// HTTP 3xx
 		else if(ex instanceof HttpRedirectErrorException) {
@@ -33,7 +33,7 @@ public class RestTemplateErrorHandler {
 			HttpRedirectErrorException redirectEx = ((HttpRedirectErrorException)ex);
 
 			if(redirectEx.getStatusCode().series() == Series.REDIRECTION) {
-				return new ApplicationRuntimeException(app, String.format("Endpoint %s is available but security might be enabled (Got HTTP %s)", url, redirectEx.getRawStatusCode() ));
+				return new ApplicationRuntimeException(app, String.format("Endpoint %s is available but security might be enabled (HTTP %s)", url, redirectEx.getRawStatusCode() ));
 			}
 		}
 
