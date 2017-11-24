@@ -14,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.logs.LogsRange;
 import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
@@ -41,26 +42,58 @@ public class LogsService {
 		}
 	}
 
-	public String getLogs(Application app, long bytesToRetrieve) {
+	public LogsRange getLastLogsRange(Application app, long bytesToRetrieve) {
 		String url = app.endpoints().logfile();
 
 		try {
-			RequestEntity.HeadersBuilder<?> request = RequestEntity.get(new URI(url));
-
 			// get Range header value
 			HttpHeaders responseHeaders = restTemplates.get(app).headForHeaders(new URI(url));
 			long endRange = responseHeaders.getContentLength();
 
 			long startRange = endRange - bytesToRetrieve;
-			startRange = startRange <= 0 ? 0 : startRange;
+			startRange = startRange < 0 ? 0 : startRange;
 
-			if(endRange > startRange) {
-				String range = responseHeaders.get(HttpHeaders.ACCEPT_RANGES).get(0)+"="+startRange+"-"+endRange;
-				LOGGER.debug("GET {} with Range {}", url, range);
-				request.header(HttpHeaders.RANGE, range);
+			return new LogsRange(startRange, endRange);
+		} catch(RestClientException e) {
+			throw RestTemplateErrorHandler.handle(app, url, e);
+		} catch (URISyntaxException e) {
+			throw RestTemplateErrorHandler.handle(app, e);
+		}
+	}
+
+	public LogsRange getLogsRange(Application app, LogsRange currentRange, long bytesToRetrieve) {
+		String url = app.endpoints().logfile();
+
+		try {
+			long startRange = currentRange.getMax() + 1;
+			long endRange = startRange + bytesToRetrieve;
+
+			// check if max range is not too much
+			HttpHeaders responseHeaders = restTemplates.get(app).headForHeaders(new URI(url));
+			long maxRange = responseHeaders.getContentLength();
+			if(endRange > maxRange) {
+				endRange = maxRange;
 			}
 
-			// get logs
+			return new LogsRange(startRange, endRange);
+		} catch(RestClientException e) {
+			throw RestTemplateErrorHandler.handle(app, url, e);
+		} catch (URISyntaxException e) {
+			throw RestTemplateErrorHandler.handle(app, e);
+		}
+	}
+
+	public String getLogs(Application app, LogsRange range) {
+		String url = app.endpoints().logfile();
+
+		try {
+			RequestEntity.HeadersBuilder<?> request = RequestEntity.get(new URI(url));
+
+			String httpHeaderRange = range.toHttpHeader();
+			LOGGER.debug("GET {} with Range {}", url, httpHeaderRange);
+
+			request.header(HttpHeaders.RANGE, httpHeaderRange);
+
 			return restTemplates.get(app).exchange(request.build(), String.class).getBody();
 		} catch(RestClientException e) {
 			throw RestTemplateErrorHandler.handle(app, url, e);

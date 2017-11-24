@@ -20,6 +20,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import re.vianneyfaiv.persephone.domain.session.UserData;
 import re.vianneyfaiv.persephone.exception.UIErrorHandler;
 
 /**
@@ -35,6 +36,8 @@ public class PersephoneUI extends UI implements ViewDisplay {
 
 	@Value("${info.persephone.version}")
 	private String persephoneVersion;
+
+	private UserData userData = new UserData();
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -67,6 +70,10 @@ public class PersephoneUI extends UI implements ViewDisplay {
 	@Override
 	public void showView(View view) {
 		springViewDisplay.setContent((Component) view);
+	}
+
+	public UserData getUserData() {
+		return userData;
 	}
 
 	private Layout getFooter() {
