@@ -2,28 +2,35 @@ package re.vianneyfaiv.persephone.domain.logs;
 
 import org.springframework.http.HttpHeaders;
 
+/**
+ * Class used for generating HTTP Header "Range"
+ */
 public class LogsRange {
 
-	private long min;
-	private long max;
+	private long start;
+	private long end;
 
-	public LogsRange(long min, long max) {
-		this.min = min;
-		this.max = max;
+	public LogsRange(long start, long end) {
+		this.start = start;
+		this.end = end;
 	}
 
-	public long getMin() {
-		return min;
+	public long getStart() {
+		return start;
 	}
 
-	public long getMax() {
-		return max;
+	public long getEnd() {
+		return end;
+	}
+
+	public boolean isValid() {
+		return start >= end;
 	}
 
 	/**
 	 * @return the value for header {@link HttpHeaders#RANGE}
 	 */
 	public String toHttpHeader() {
-		return String.format("bytes=%s-%s", min, max);
+		return String.format("bytes=%s-%s", start, end);
 	}
 }

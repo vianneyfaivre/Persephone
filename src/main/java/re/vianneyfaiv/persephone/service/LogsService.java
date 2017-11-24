@@ -65,7 +65,7 @@ public class LogsService {
 		String url = app.endpoints().logfile();
 
 		try {
-			long startRange = currentRange.getMax() + 1;
+			long startRange = currentRange.getEnd() + 1;
 			long endRange = startRange + bytesToRetrieve;
 
 			// check if max range is not too much
@@ -73,6 +73,10 @@ public class LogsService {
 			long maxRange = responseHeaders.getContentLength();
 			if(endRange > maxRange) {
 				endRange = maxRange;
+			}
+
+			if(endRange < startRange) {
+				endRange = startRange;
 			}
 
 			return new LogsRange(startRange, endRange);
@@ -83,8 +87,17 @@ public class LogsService {
 		}
 	}
 
+	/**
+	 * @return logs with specified range, or empty string if range is invalid
+	 * @see LogsRange#isValid()
+	 */
 	public String getLogs(Application app, LogsRange range) {
 		String url = app.endpoints().logfile();
+
+		if(range.isValid()) {
+			LOGGER.debug("Range {} is invalid, no call will be made", range.toHttpHeader());
+			return "";
+		}
 
 		try {
 			RequestEntity.HeadersBuilder<?> request = RequestEntity.get(new URI(url));

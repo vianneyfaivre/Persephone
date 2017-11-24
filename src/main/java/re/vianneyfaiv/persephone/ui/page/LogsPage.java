@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
@@ -125,7 +126,7 @@ public class LogsPage extends VerticalLayout implements View {
 			// Put range into user session
 			UserData sessionUserData = ((PersephoneUI)getUI()).getUserData();
 			sessionUserData.setCurrentRange(logsRange);
-			LOGGER.trace("UI-{}: Logs Init Range: {}-{}", ((PersephoneUI)getUI()).getUIId(), logsRange.getMin(), logsRange.getMax());
+			LOGGER.trace("UI-{}: Logs Init Range: {}-{}", ((PersephoneUI)getUI()).getUIId(), logsRange.getStart(), logsRange.getEnd());
 
 			// Get logs
 			String logs = logsService.getLogs(app, logsRange);
@@ -141,18 +142,21 @@ public class LogsPage extends VerticalLayout implements View {
 
 				// Get current session range
 				LogsRange currentSessionRange = ((PersephoneUI)getUI()).getUserData().getCurrentRange();
-				LOGGER.trace("UI-{}: Logs Refresh: Current Range: {}-{}", uiId, currentSessionRange.getMin(), currentSessionRange.getMax());
+				LOGGER.trace("UI-{}: Logs Refresh: Current Range: {}-{}", uiId, currentSessionRange.getStart(), currentSessionRange.getEnd());
 
 				// Get next logs range to retrieve
 				LogsRange nextRange = logsService.getLogsRange(app, currentSessionRange, bytesToRetrieveRefresh);
-				LOGGER.trace("UI-{}: Logs Refresh: Next Range: {}-{}", uiId, nextRange.getMin(), nextRange.getMax());
+				LOGGER.trace("UI-{}: Logs Refresh: Next Range: {}-{}", uiId, nextRange.getStart(), nextRange.getEnd());
 
 				// Update current range into user session
 				((PersephoneUI)getUI()).getUserData().setCurrentRange(nextRange);
 
 				// Get logs
 				String newLogs = logsService.getLogs(app, nextRange);
-				logsLabel.setValue(logsLabel.getValue() + newLogs);
+
+				if(!StringUtils.isEmpty(newLogs)) {
+					logsLabel.setValue(logsLabel.getValue() + newLogs);
+				}
 
 				LOGGER.trace("UI-{} Logs Refresh End", uiId);
 			});
