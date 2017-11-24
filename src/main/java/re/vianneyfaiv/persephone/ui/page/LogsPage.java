@@ -24,6 +24,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
@@ -131,45 +132,62 @@ public class LogsPage extends VerticalLayout implements View {
 			// Get logs
 			String logs = logsService.getLogs(app, logsRange);
 
-			// Logs text area
-			Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
-			logsLabel.setStyleName("app-logs");
+			// Create UI for logs
+			Panel logsPanel = getLogsPanel(app, logs);
 
-			// Auto refresh logs
-			ajaxRefreshInit(args -> {
-				int uiId = ((PersephoneUI)getUI()).getUIId();
-				LOGGER.trace("UI-{}: Logs Refresh Start", uiId);
-
-				// Get current session range
-				LogsRange currentSessionRange = ((PersephoneUI)getUI()).getUserData().getCurrentRange();
-				LOGGER.trace("UI-{}: Logs Refresh: Current Range: {}-{}", uiId, currentSessionRange.getStart(), currentSessionRange.getEnd());
-
-				// Get next logs range to retrieve
-				LogsRange nextRange = logsService.getLogsRange(app, currentSessionRange, bytesToRetrieveRefresh);
-				LOGGER.trace("UI-{}: Logs Refresh: Next Range: {}-{}", uiId, nextRange.getStart(), nextRange.getEnd());
-
-				// Update current range into user session
-				((PersephoneUI)getUI()).getUserData().setCurrentRange(nextRange);
-
-				// Get logs
-				String newLogs = logsService.getLogs(app, nextRange);
-
-				if(!StringUtils.isEmpty(newLogs)) {
-					logsLabel.setValue(logsLabel.getValue() + newLogs);
-				}
-
-				LOGGER.trace("UI-{} Logs Refresh End", uiId);
-			});
-
-			this.addComponent(new Label(String.format("Loaded the last %s chars. Auto-refresh every %s seconds (last %s chars).", bytesToRetrieveInit, refreshTimeout, bytesToRetrieveRefresh)));
-			this.addComponent(logsLabel);
+			this.addComponent(new Label(String.format("Loaded the last %s chars. Auto-refresh every %s seconds (last %s chars).", bytesToRetrieveInit, refreshTimeout, bytesToRetrieveRefresh)));			this.addComponent(logsPanel);
+			this.addComponent(logsPanel);
 		}
 	}
 
 	@Override
 	public void beforeLeave(ViewBeforeLeaveEvent event) {
+		// when leaving the view, remove the setInterval JS function
 		ajaxRefreshDestroy();
+
+		// then call default beforeLeave method
 		View.super.beforeLeave(event);
+	}
+
+	private Panel getLogsPanel(Application app, String logs) {
+		// Logs text area
+		Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
+		logsLabel.setStyleName("app-logs");
+
+		// Auto refresh logs
+		ajaxRefreshInit(args -> {
+			int uiId = ((PersephoneUI)getUI()).getUIId();
+			LOGGER.trace("UI-{}: Logs Refresh Start", uiId);
+
+			// Get current session range
+			LogsRange currentSessionRange = ((PersephoneUI)getUI()).getUserData().getCurrentRange();
+			LOGGER.trace("UI-{}: Logs Refresh: Current Range: {}-{}", uiId, currentSessionRange.getStart(), currentSessionRange.getEnd());
+
+			// Get next logs range to retrieve
+			LogsRange nextRange = logsService.getLogsRange(app, currentSessionRange, bytesToRetrieveRefresh);
+			LOGGER.trace("UI-{}: Logs Refresh: Next Range: {}-{}", uiId, nextRange.getStart(), nextRange.getEnd());
+
+			// Update current range into user session
+			((PersephoneUI)getUI()).getUserData().setCurrentRange(nextRange);
+
+			// Get logs
+			String newLogs = logsService.getLogs(app, nextRange);
+
+			if(!StringUtils.isEmpty(newLogs)) {
+				logsLabel.setValue(logsLabel.getValue() + newLogs);
+			}
+
+			LOGGER.trace("UI-{} Logs Refresh End", uiId);
+		});
+
+		VerticalLayout layout = new VerticalLayout(logsLabel);
+		layout.setSizeUndefined();
+
+		// Create panel
+		Panel panel = new Panel(layout);
+		panel.setHeight(500, Unit.PIXELS);
+
+		return panel;
 	}
 
 	private void ajaxRefreshInit(JavaScriptFunction intervalFn) {
