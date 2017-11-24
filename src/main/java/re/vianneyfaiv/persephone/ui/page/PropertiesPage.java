@@ -1,5 +1,9 @@
 package re.vianneyfaiv.persephone.ui.page;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,36 +70,55 @@ public class PropertiesPage extends VerticalLayout implements View {
 		this.currentEnv = envService.getEnvironment(app);
 
 		// Properties grid
+		initGrid();
+
+		this.addComponent(new PageHeader(app, "Properties"));
+		this.addComponent(this.popupRowOnClick());
+		this.addComponent(this.grid);
+		this.updateProperties("", "", "");
+	}
+
+	private void initGrid() {
 		this.grid = new Grid<>(PropertyItem.class);
 
 		this.grid.removeAllColumns();
 		Column<PropertyItem, String> propertyColumn = this.grid.addColumn(PropertyItem::getKey)
 																.setCaption("Property")
 																.setExpandRatio(1);
-		this.grid.addColumn(PropertyItem::getValue)
-					.setCaption("Value")
-					.setExpandRatio(1);
-		this.grid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
+		Column<PropertyItem, String> valueColumn = this.grid.addColumn(PropertyItem::getValue)
+																.setCaption("Value")
+																.setExpandRatio(1);
+		Column<PropertyItem, String> originColumn = this.grid.addColumn(PropertyItem::getOrigin).setCaption("Origin");
 
 		this.grid.sort(propertyColumn);
 		this.grid.setSizeFull();
 		this.grid.setRowHeight(40);
 
-		// Filter by Property
-		TextField filterInput = new TextField();
-		filterInput.setPlaceholder("filter by property key...");
-		filterInput.addValueChangeListener(e -> updateProperties(e.getValue()));
-		filterInput.setValueChangeMode(ValueChangeMode.LAZY);
-		filterInput.setSizeFull();
+		// Filters
+		TextField filterProperty = new TextField();
+		TextField filterValue = new TextField();
+		TextField filterOrigin = new TextField();
+
+		filterProperty.setPlaceholder("filter by key...");
+		filterProperty.addValueChangeListener(e -> updateProperties(e.getValue(), filterValue.getValue(), filterOrigin.getValue()));
+		filterProperty.setValueChangeMode(ValueChangeMode.LAZY);
+		filterProperty.setSizeFull();
+
+		filterValue.setPlaceholder("filter by value...");
+		filterValue.addValueChangeListener(e -> updateProperties(filterProperty.getValue(), e.getValue(), filterOrigin.getValue()));
+		filterValue.setValueChangeMode(ValueChangeMode.LAZY);
+		filterValue.setSizeFull();
+
+		filterOrigin.setPlaceholder("filter by origin...");
+		filterOrigin.addValueChangeListener(e -> updateProperties(filterProperty.getValue(), filterValue.getValue(), e.getValue()));
+		filterOrigin.setValueChangeMode(ValueChangeMode.LAZY);
+		filterOrigin.setSizeFull();
 
 		// Header row
 		HeaderRow filterRow = grid.addHeaderRowAt(grid.getHeaderRowCount());
-		filterRow.getCell(propertyColumn).setComponent(filterInput);
-
-		this.addComponent(new PageHeader(app, "Properties"));
-		this.addComponent(this.popupRowOnClick());
-		this.addComponent(this.grid);
-		this.updateProperties("");
+		filterRow.getCell(propertyColumn).setComponent(filterProperty);
+		filterRow.getCell(valueColumn).setComponent(filterValue);
+		filterRow.getCell(originColumn).setComponent(filterOrigin);
 	}
 
 	private PopupView popupRowOnClick() {
@@ -140,18 +163,29 @@ public class PropertiesPage extends VerticalLayout implements View {
 		return popup;
 	}
 
-	private void updateProperties(String filterByPropKey) {
+	private void updateProperties(String filterKey, String filterValue, String filterOrigin) {
 
-		if(StringUtils.isEmpty(filterByPropKey)) {
-			this.grid.setItems(this.currentEnv.getProperties());
+		List<PropertyItem> filteredProperties = new ArrayList<>(this.currentEnv.getProperties());
+
+		if(!StringUtils.isEmpty(filterKey)) {
+			filteredProperties = filteredProperties.stream()
+				.filter(prop -> prop.getKey().toLowerCase().contains(filterKey.toLowerCase()))
+				.collect(Collectors.toList());
 		}
-		else {
-			this.grid.setItems(
-				this.currentEnv.getProperties()
-					.stream()
-					.filter(p -> p.getKey().toLowerCase().contains(filterByPropKey.toLowerCase()))
-			);
+
+		if(!StringUtils.isEmpty(filterValue)) {
+			filteredProperties = filteredProperties.stream()
+				.filter(prop -> prop.getValue().toLowerCase().contains(filterValue.toLowerCase()))
+				.collect(Collectors.toList());
 		}
+
+		if(!StringUtils.isEmpty(filterOrigin)) {
+			filteredProperties = filteredProperties.stream()
+				.filter(prop -> prop.getOrigin().toLowerCase().contains(filterOrigin.toLowerCase()))
+				.collect(Collectors.toList());
+		}
+
+		this.grid.setItems(filteredProperties);
 	}
 
 }
