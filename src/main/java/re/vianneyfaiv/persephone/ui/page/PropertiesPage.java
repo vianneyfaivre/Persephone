@@ -22,6 +22,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -94,10 +95,18 @@ public class PropertiesPage extends VerticalLayout implements View {
 		this.grid.setSizeFull();
 		this.grid.setRowHeight(40);
 
+		// distinct origin
+		List<String> origins = this.currentEnv.getProperties().stream()
+													.map(PropertyItem::getOrigin)
+													.distinct()
+													.sorted(String::compareTo)
+													.collect(Collectors.toList());
+
 		// Filters
 		TextField filterProperty = new TextField();
 		TextField filterValue = new TextField();
-		TextField filterOrigin = new TextField();
+		NativeSelect<String> filterOrigin = new NativeSelect<>(null, origins);
+
 
 		filterProperty.setPlaceholder("filter by key...");
 		filterProperty.addValueChangeListener(e -> updateProperties(e.getValue(), filterValue.getValue(), filterOrigin.getValue()));
@@ -109,9 +118,7 @@ public class PropertiesPage extends VerticalLayout implements View {
 		filterValue.setValueChangeMode(ValueChangeMode.LAZY);
 		filterValue.setSizeFull();
 
-		filterOrigin.setPlaceholder("filter by origin...");
 		filterOrigin.addValueChangeListener(e -> updateProperties(filterProperty.getValue(), filterValue.getValue(), e.getValue()));
-		filterOrigin.setValueChangeMode(ValueChangeMode.LAZY);
 		filterOrigin.setSizeFull();
 
 		// Header row
