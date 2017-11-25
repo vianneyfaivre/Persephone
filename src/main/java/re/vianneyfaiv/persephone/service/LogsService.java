@@ -95,7 +95,7 @@ public class LogsService {
 		String url = app.endpoints().logfile();
 
 		if(range.isValid()) {
-			LOGGER.debug("Range {} is invalid, no call will be made", range.toHttpHeader());
+			LOGGER.info("GET {} : Range {} is invalid, no call will be made", url, range.toHttpHeader());
 			return "";
 		}
 
