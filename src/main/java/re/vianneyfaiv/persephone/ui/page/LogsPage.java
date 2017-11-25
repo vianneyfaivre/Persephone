@@ -84,11 +84,10 @@ public class LogsPage extends VerticalLayout implements View {
 
 		Application app = pageHelper.getApp(appId);
 
-		// Download button
+		// Page Header
 		Button downloadButton = getDownloadButton(app);
-
-		// header
-		this.addComponent(new PageHeader(app, "Logs", downloadButton));
+		Button autoScrollButton = getAutoScrollButton();
+		this.addComponent(new PageHeader(app, "Logs", downloadButton, autoScrollButton));
 
 		boolean endpointAvailable = this.logsService.endpointAvailable(app);
 		Environment env = this.envService.getEnvironment(app);
@@ -151,9 +150,18 @@ public class LogsPage extends VerticalLayout implements View {
 	}
 
 	private Panel getLogsPanel(Application app, String logs, String propertyLoggingPath) {
+
 		// Logs text area
 		Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
 		logsLabel.setStyleName("app-logs");
+
+		// Create panel
+		VerticalLayout layout = new VerticalLayout(logsLabel);
+		layout.setSpacing(false);
+		layout.setSizeUndefined();
+
+		Panel panel = new Panel(String.format("Application Logs (from %s)", propertyLoggingPath), layout);
+		panel.setHeight(500, Unit.PIXELS);
 
 		// Auto refresh logs
 		ajaxRefreshInit(args -> {
@@ -178,16 +186,13 @@ public class LogsPage extends VerticalLayout implements View {
 				logsLabel.setValue(logsLabel.getValue() + newLogs);
 			}
 
+			// Scroll to the bottom (if enabled)
+			if(((PersephoneUI)getUI()).getUserData().isTailAutoScrollEnabled()) {
+				panel.setScrollTop(Integer.MAX_VALUE);
+			}
+
 			LOGGER.trace("UI-{} Logs Refresh End", uiId);
 		});
-
-		// Create panel
-		VerticalLayout layout = new VerticalLayout(logsLabel);
-		layout.setSpacing(false);
-		layout.setSizeUndefined();
-
-		Panel panel = new Panel(String.format("Application Logs (from %s)", propertyLoggingPath), layout);
-		panel.setHeight(500, Unit.PIXELS);
 
 		return panel;
 	}
@@ -218,6 +223,16 @@ public class LogsPage extends VerticalLayout implements View {
 		// Download logs button : on click
 		downloadButton.addClickListener(e -> fileDownloader.setFileDownloadResource(getLogsStream(app)));
 		return downloadButton;
+	}
+
+	private Button getAutoScrollButton() {
+		Button btn = new Button("Toggle auto scroll");
+
+		btn.addClickListener(e -> {
+			((PersephoneUI)getUI()).getUserData().toggleTailAutoScroll();
+		});
+
+		return btn;
 	}
 
 	private StreamResource getLogsStream(Application app) {
