@@ -91,15 +91,14 @@ public class LogsPage extends VerticalLayout implements View {
 		this.addComponent(new PageHeader(app, "Logs", downloadButton));
 
 		boolean endpointAvailable = this.logsService.endpointAvailable(app);
+		Environment env = this.envService.getEnvironment(app);
+		String loggingPath = env.get("logging.path");
+		String loggingFile = env.get("logging.file");
 
 		/*
 		 * Logs not available
 		 */
 		if(!endpointAvailable) {
-
-			Environment env = this.envService.getEnvironment(app);
-			String loggingPath = env.get("logging.path");
-			String loggingFile = env.get("logging.file");
 
 			String noLogsText = new StringBuilder()
 									.append(String.format("Endpoint %s is not available", app.endpoints().logfile()))
@@ -112,7 +111,6 @@ public class LogsPage extends VerticalLayout implements View {
 									.append("\n\n")
 									.append("(at least one of those properties have to be properly set)")
 									.toString();
-
 
 			Label noLogsLabel = new Label(noLogsText, ContentMode.PREFORMATTED);
 			this.addComponent(noLogsLabel);
@@ -132,10 +130,13 @@ public class LogsPage extends VerticalLayout implements View {
 			// Get logs
 			String logs = logsService.getLogs(app, logsRange);
 
-			// Create UI for logs
-			Panel logsPanel = getLogsPanel(app, logs);
+			String logsPath = loggingPath;
+			if(!StringUtils.isEmpty(loggingFile)) {
+				logsPath = loggingFile;
+			}
 
-			this.addComponent(new Label(String.format("Loaded the last %s chars. Auto-refresh every %s seconds (last %s chars).", bytesToRetrieveInit, refreshTimeout, bytesToRetrieveRefresh)));			this.addComponent(logsPanel);
+			// Create UI for logs
+			Panel logsPanel = getLogsPanel(app, logs, logsPath);
 			this.addComponent(logsPanel);
 		}
 	}
@@ -149,7 +150,7 @@ public class LogsPage extends VerticalLayout implements View {
 		View.super.beforeLeave(event);
 	}
 
-	private Panel getLogsPanel(Application app, String logs) {
+	private Panel getLogsPanel(Application app, String logs, String propertyLoggingPath) {
 		// Logs text area
 		Label logsLabel = new Label(logs, ContentMode.PREFORMATTED);
 		logsLabel.setStyleName("app-logs");
@@ -180,11 +181,12 @@ public class LogsPage extends VerticalLayout implements View {
 			LOGGER.trace("UI-{} Logs Refresh End", uiId);
 		});
 
+		// Create panel
 		VerticalLayout layout = new VerticalLayout(logsLabel);
+		layout.setSpacing(false);
 		layout.setSizeUndefined();
 
-		// Create panel
-		Panel panel = new Panel(layout);
+		Panel panel = new Panel(String.format("Application Logs (from %s)", propertyLoggingPath), layout);
 		panel.setHeight(500, Unit.PIXELS);
 
 		return panel;
