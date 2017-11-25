@@ -66,6 +66,9 @@ public class LogsPage extends VerticalLayout implements View {
 	@Value("${persephone.logs.bytes-to-retrieve.refresh}")
 	private long bytesToRetrieveRefresh;
 
+	@Value("${persephone.logs.bytes-to-display.max}")
+	private int bytesToDisplayMax;
+
 	@PostConstruct
 	public void init() {
 		pageHelper.setLayoutStyle(this);
@@ -183,8 +186,22 @@ public class LogsPage extends VerticalLayout implements View {
 			// Get logs
 			String newLogs = logsService.getLogs(app, nextRange);
 
+			// Update UI
 			if(!StringUtils.isEmpty(newLogs)) {
-				logsLabel.setValue(logsLabel.getValue() + newLogs);
+
+				String oldLogs = logsLabel.getValue();
+
+				// Too much logs displayed => let's strip them out
+				if(oldLogs.length() + newLogs.length() > bytesToDisplayMax) {
+					newLogs = oldLogs + newLogs;
+					LOGGER.trace("UI-{}: Logs Refresh: Too much logs are going to be displayed (length={}), it will be stripped to {} chars", uiId, newLogs.length(), bytesToDisplayMax);
+					newLogs = newLogs.substring(newLogs.length() - bytesToDisplayMax);
+					logsLabel.setValue(newLogs);
+				}
+				// max length not reached yet
+				else {
+					logsLabel.setValue(oldLogs + newLogs);
+				}
 			}
 
 			scrollToBottom(panel);
