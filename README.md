@@ -24,8 +24,7 @@ For each monitored application:
 
 Next big features to come:
 
-* Analyze application metrics and show "possible" issues  
-* A real tail-like for logs
+* Analyze application metrics and show "possible" issues 
 * Spring Actuator v2 support (coming with Spring Boot 2)
 * Read more info from /health
 
