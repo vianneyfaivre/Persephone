@@ -162,6 +162,7 @@ public class LogsPage extends VerticalLayout implements View {
 
 		Panel panel = new Panel(String.format("Application Logs (from %s)", propertyLoggingPath), layout);
 		panel.setHeight(500, Unit.PIXELS);
+		scrollToBottom(panel);
 
 		// Auto refresh logs
 		ajaxRefreshInit(args -> {
@@ -186,15 +187,18 @@ public class LogsPage extends VerticalLayout implements View {
 				logsLabel.setValue(logsLabel.getValue() + newLogs);
 			}
 
-			// Scroll to the bottom (if enabled)
-			if(((PersephoneUI)getUI()).getUserData().isTailAutoScrollEnabled()) {
-				panel.setScrollTop(Integer.MAX_VALUE);
-			}
+			scrollToBottom(panel);
 
 			LOGGER.trace("UI-{} Logs Refresh End", uiId);
 		});
 
 		return panel;
+	}
+
+	private void scrollToBottom(Panel panel) {
+		if(((PersephoneUI)getUI()).getUserData().isTailAutoScrollEnabled()) {
+			panel.setScrollTop(Integer.MAX_VALUE);
+		}
 	}
 
 	private void ajaxRefreshInit(JavaScriptFunction intervalFn) {
@@ -226,13 +230,24 @@ public class LogsPage extends VerticalLayout implements View {
 	}
 
 	private Button getAutoScrollButton() {
-		Button btn = new Button("Toggle auto scroll");
+		Button btn = new Button();
+		updateAutoScrollButtonCaption(btn);
 
 		btn.addClickListener(e -> {
 			((PersephoneUI)getUI()).getUserData().toggleTailAutoScroll();
+
+			updateAutoScrollButtonCaption(btn);
 		});
 
 		return btn;
+	}
+
+	private void updateAutoScrollButtonCaption(Button btn) {
+		if(((PersephoneUI)getUI()).getUserData().isTailAutoScrollEnabled()) {
+			btn.setCaption("Disable auto scroll");
+		} else {
+			btn.setCaption("Enable auto scroll");
+		}
 	}
 
 	private StreamResource getLogsStream(Application app) {
