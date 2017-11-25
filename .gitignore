@@ -67,4 +67,3 @@ $RECYCLE.BIN/
 .settings
 application.pid
 target
-src/main/resources/VAADIN/themes/persephone/styles.css
