@@ -71,7 +71,7 @@ public class RestTemplateFactory {
 
 		if(app.getAuthScheme() == AuthScheme.BASIC) {
 			if(applicationContext.containsBean(beanName)) {
-				LOGGER.debug("Found RestTemplate with BASIC auth for application with id {}", app.getId());
+				LOGGER.trace("Found RestTemplate with BASIC auth for application with id {}", app.getId());
 				return applicationContext.getBean(beanName, RestTemplate.class);
 			} else {
 				LOGGER.warn("Application with id {} has BASIC auth enabled but the RestTemplate bean has not been registered", app.getId());
