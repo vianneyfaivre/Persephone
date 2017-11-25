@@ -123,7 +123,11 @@ public class TracePage extends VerticalLayout implements View {
 				VerticalLayout headersReq = formatHeaders("<h4>Request Headers</h4>", item.getRequestHeaders());
 				VerticalLayout headersResp = formatHeaders("<h4>Response Headers</h4>", item.getResponseHeaders());
 
-				popupContent.addComponents(title, new HorizontalLayout(headersReq, headersResp));
+				VerticalLayout headersLayout = new VerticalLayout(headersReq, headersResp);
+				headersLayout.setSpacing(false);
+				headersLayout.setMargin(false);
+
+				popupContent.addComponents(title, headersLayout);
 			}
 		});
 
