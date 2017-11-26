@@ -17,16 +17,19 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.trace.Trace;
 import re.vianneyfaiv.persephone.service.TraceService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
+import re.vianneyfaiv.persephone.ui.component.grid.HeaderGridRow;
 import re.vianneyfaiv.persephone.ui.component.grid.TraceGridRow;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
 
@@ -109,7 +112,6 @@ public class TracePage extends VerticalLayout implements View {
 				TraceGridRow item = (TraceGridRow) popup.getData();
 
 				Label popupTitle = new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML);
-				popupTitle.setSizeFull();
 
 				Button popupClose = new Button(VaadinIcons.CLOSE);
 				popupClose.addClickListener(e -> popup.setPopupVisible(false));
@@ -120,11 +122,10 @@ public class TracePage extends VerticalLayout implements View {
 				title.setExpandRatio(popupClose, 1);
 				title.setComponentAlignment(popupClose, Alignment.TOP_RIGHT);
 
-				VerticalLayout headersReq = formatHeaders("<h4>Request Headers</h4>", item.getRequestHeaders());
-				VerticalLayout headersResp = formatHeaders("<h4>Response Headers</h4>", item.getResponseHeaders());
+				Grid<HeaderGridRow> headersReq = formatHeaders("Request Headers", item.getRequestHeaders());
+				Grid<HeaderGridRow> headersResp = formatHeaders("Response Headers", item.getResponseHeaders());
 
-				VerticalLayout headersLayout = new VerticalLayout(headersReq, headersResp);
-				headersLayout.setSpacing(false);
+				HorizontalLayout headersLayout = new HorizontalLayout(headersReq, headersResp);
 				headersLayout.setMargin(false);
 
 				popupContent.addComponents(title, headersLayout);
@@ -137,20 +138,23 @@ public class TracePage extends VerticalLayout implements View {
 		this.addComponent(popup);
 	}
 
-	private VerticalLayout formatHeaders(String title, Map<String, List<String>> headers) {
+	private Grid<HeaderGridRow> formatHeaders(String title, Map<String, List<String>> headers) {
+		Grid<HeaderGridRow> grid = new Grid<>(HeaderGridRow.class);
 
-		Label titleLabel = new Label(title, ContentMode.HTML);
-		titleLabel.setSizeFull();
+		grid.removeAllColumns();
 
-		Label headersLabel = new Label(headers.entrySet().stream()
-										.map(h -> h.getKey()+"="+h.getValue()+"<br />")
-										.reduce("", String::concat), ContentMode.HTML);
-		headersLabel.setSizeFull();
+		Column<HeaderGridRow, String> headerColumn = grid.addColumn(HeaderGridRow::getHeader)
+				.setCaption("Header")
+				.setExpandRatio(1);
+		Column<HeaderGridRow, String> valuesColumn = grid.addColumn(HeaderGridRow::getValues)
+				.setCaption("Values")
+				.setExpandRatio(1);
 
-		VerticalLayout headersLayout = new VerticalLayout(titleLabel, headersLabel);
+		grid.setItems(headers.entrySet().stream().map(HeaderGridRow::new));
 
-		headersLayout.setMargin(false);
+		HeaderRow titleRow = grid.prependHeaderRow();
+		titleRow.join(headerColumn, valuesColumn).setHtml(title);
 
-		return headersLayout;
+		return grid;
 	}
 }
