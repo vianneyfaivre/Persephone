@@ -145,7 +145,7 @@ public class PropertiesPage extends VerticalLayout implements View {
 
 				PropertyItem item = (PropertyItem) popup.getData();
 
-				Label popupTitle = new Label(String.format("<h3>Property '%s' from %s</h3>", item.getKey(), item.getOrigin()), ContentMode.HTML);
+				Label popupTitle = new Label("<h2>Property details</h2>", ContentMode.HTML);
 				popupTitle.setSizeFull();
 
 				Button popupClose = new Button(VaadinIcons.CLOSE);
@@ -157,10 +157,12 @@ public class PropertiesPage extends VerticalLayout implements View {
 				title.setExpandRatio(popupClose, 1);
 				title.setComponentAlignment(popupClose, Alignment.TOP_RIGHT);
 
-				Label propertyValue = new Label(item.getValue(), ContentMode.TEXT);
+				Label propertyKey= new Label(String.format("Key: '%s'", item.getKey()), ContentMode.TEXT);
+				Label propertyValue = new Label(String.format("Value: '%s'", item.getValue()), ContentMode.TEXT);
 				propertyValue.setSizeFull();
+				Label propertyOrigin = new Label(String.format("Origin: '%s'", item.getOrigin()), ContentMode.TEXT);
 
-				popupContent.addComponents(title, propertyValue);
+				popupContent.addComponents(title, propertyKey, propertyValue, propertyOrigin);
 			}
 		});
 
