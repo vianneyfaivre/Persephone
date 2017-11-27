@@ -151,6 +151,7 @@ public class TracePage extends VerticalLayout implements View {
 				.setExpandRatio(1);
 
 		grid.setItems(headers.entrySet().stream().map(HeaderGridRow::new));
+		grid.sort(headerColumn);
 
 		HeaderRow titleRow = grid.prependHeaderRow();
 		titleRow.join(headerColumn, valuesColumn).setHtml(title);
