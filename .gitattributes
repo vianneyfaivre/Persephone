@@ -16,4 +16,5 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
+# Exclude files for Github - Language Details
 styles.css linguist-generated=true
