@@ -87,11 +87,7 @@ public class LogsPage extends VerticalLayout implements View {
 
 		Application app = pageHelper.getApp(appId);
 
-		// Page Header
-		Button downloadButton = getDownloadButton(app);
-		Button autoScrollButton = getAutoScrollButton();
-		this.addComponent(new PageHeader(app, "Logs", downloadButton, autoScrollButton));
-
+		// Check logs required properties
 		boolean endpointAvailable = this.logsService.endpointAvailable(app);
 		Environment env = this.envService.getEnvironment(app);
 		String loggingPath = env.get("logging.path");
@@ -102,25 +98,42 @@ public class LogsPage extends VerticalLayout implements View {
 		 */
 		if(!endpointAvailable) {
 
+			String loggingPathUnavailable;
+			if(StringUtils.isEmpty(loggingPath)) {
+				loggingPathUnavailable = "- Property 'logging.path' is not set";
+			} else {
+				loggingPathUnavailable = String.format("- Property 'logging.path' is set to '%s'", loggingPath);
+			}
+
+			String loggingFileUnavailable;
+			if(StringUtils.isEmpty(loggingFile)) {
+				loggingFileUnavailable = "- Property 'logging.file' is not set";
+			} else {
+				loggingFileUnavailable = String.format("- Property 'logging.file' is set to '%s'", loggingFile);
+			}
+
 			String noLogsText = new StringBuilder()
-									.append(String.format("Endpoint %s is not available", app.endpoints().logfile()))
-									.append("\n\n")
-									.append("Spring uses those properties for getting the logs:")
+									.append(String.format("Endpoint %s is not available because:", app.endpoints().logfile()))
 									.append("\n")
-									.append(String.format("- logging.path=%s", loggingPath))
+									.append(loggingPathUnavailable)
 									.append("\n")
-									.append(String.format("- logging.file=%s", loggingFile))
-									.append("\n\n")
+									.append(loggingFileUnavailable)
 									.append("(at least one of those properties have to be properly set)")
 									.toString();
 
 			Label noLogsLabel = new Label(noLogsText, ContentMode.PREFORMATTED);
+			this.addComponent(new PageHeader(app, "Logs"));
 			this.addComponent(noLogsLabel);
 		}
 		/*
 		 * Logs available
 		 */
 		else {
+
+			// Page Header
+			Button downloadButton = getDownloadButton(app);
+			Button autoScrollButton = getAutoScrollButton();
+
 			// Get range
 			LogsRange logsRange = logsService.getLastLogsRange(app, bytesToRetrieveInit);
 
@@ -139,6 +152,7 @@ public class LogsPage extends VerticalLayout implements View {
 
 			// Create UI for logs
 			Panel logsPanel = getLogsPanel(app, logs, logsPath);
+			this.addComponent(new PageHeader(app, "Logs", downloadButton, autoScrollButton));
 			this.addComponent(logsPanel);
 		}
 	}
