@@ -18,3 +18,4 @@
 
 # Exclude files for Github - Language Details
 styles.css linguist-generated=true
+mvnw* linguist-generated=true
