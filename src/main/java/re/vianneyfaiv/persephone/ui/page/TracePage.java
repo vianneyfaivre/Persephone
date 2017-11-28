@@ -111,7 +111,13 @@ public class TracePage extends VerticalLayout implements View {
 
 				TraceGridRow item = (TraceGridRow) popup.getData();
 
-				Label popupTitle = new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML);
+				Label popupTitle;
+				if(item.getResponseHttp().isPresent()) {
+					popupTitle = new Label(String.format("<h3>%s %s : %s %s</h3>", item.getMethod(), item.getPath(), item.getResponseHttp().get(), item.getResponseHttp().get().getReasonPhrase()), ContentMode.HTML);
+				}
+				else {
+					popupTitle = new Label(String.format("<h3>%s %s</h3>", item.getMethod(), item.getPath()), ContentMode.HTML);
+				}
 
 				Button popupClose = new Button(VaadinIcons.CLOSE);
 				popupClose.addClickListener(e -> popup.setPopupVisible(false));
@@ -148,6 +154,7 @@ public class TracePage extends VerticalLayout implements View {
 				.setExpandRatio(1);
 		Column<HeaderGridRow, String> valuesColumn = grid.addColumn(HeaderGridRow::getValues)
 				.setCaption("Values")
+				.setDescriptionGenerator(HeaderGridRow::getValues)
 				.setExpandRatio(1);
 
 		grid.setItems(headers.entrySet().stream().map(HeaderGridRow::new));
