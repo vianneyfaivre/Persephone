@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,12 +41,16 @@ public class EnvironmentService {
 	@Autowired
 	private RestTemplateFactory restTemplates;
 
+	@Autowired
+	private RestTemplate headRestTemplate;
+
 	public ActuatorVersion getActuatorVersion(Application app) {
 		String url = app.endpoints().env();
 
 		try {
 			LOGGER.debug("HEAD {}", url);
-			HttpHeaders headers = restTemplates.get(app).headForHeaders(new URI(url));
+
+			HttpHeaders headers = headRestTemplate.headForHeaders(new URI(url));
 
 			return ActuatorVersion.parse(headers.getContentType());
 		} catch (RestClientException ex) {

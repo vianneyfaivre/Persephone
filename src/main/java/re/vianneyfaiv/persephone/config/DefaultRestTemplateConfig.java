@@ -25,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class DefaultRestTemplateConfig {
 
+	public static final MediaType DEFAULT_ACCEPT_HEADER = MediaType.APPLICATION_JSON;
+
 	@Value("${persephone.rest-template.read-timeout-seconds:}")
 	private String readTimeout;
 
@@ -57,27 +59,42 @@ public class DefaultRestTemplateConfig {
 
 	@Bean
 	public RestTemplate defaultRestTemplate(ClientHttpRequestFactory rf) {
-		return this.restTemplate(rf);
+		return this.restTemplate(rf, getDefaultAcceptHeader());
 	}
 
-	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
+	@Bean
+	public RestTemplate headRestTemplate(ClientHttpRequestFactory rf) {
+		return this.restTemplate(rf, MediaType.ALL);
+	}
+
+	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory, MediaType type) {
 		RestTemplate rt = new RestTemplate(requestFactory);
 
 		// Override default error handler to consider HTTP 3xx 4xx and 5xx as errors
 		rt.setErrorHandler(restErrorHandler);
 
 		// Default HTTP 'Accept' header value will be application/json
-		rt.getInterceptors().add(new AcceptJsonRequestInterceptor());
+		rt.getInterceptors().add(new AcceptJsonRequestInterceptor(type));
 
 		return rt;
 	}
 
+	public MediaType getDefaultAcceptHeader() {
+		return DEFAULT_ACCEPT_HEADER;
+	}
+
 	static class AcceptJsonRequestInterceptor implements ClientHttpRequestInterceptor {
+
+		private MediaType type;
+
+		public AcceptJsonRequestInterceptor(MediaType type) {
+			this.type = type;
+		}
 
 		@Override
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 				throws IOException {
-			request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+			request.getHeaders().setAccept(Arrays.asList(this.type));
 			return execution.execute(request, body);
 		}
 

@@ -16,9 +16,17 @@ public enum ActuatorVersion {
 	}
 
 	public static ActuatorVersion parse(MediaType contentType) {
-		if(V2.mediaType.equals(contentType.getSubtype())) {
-			return NOT_SUPPORTED;
+
+		String simpleType = contentType.getType() + "/" + contentType.getSubtype();
+
+		if(V1.mediaType.equals(simpleType)) {
+			return V1;
 		}
+
+		if(V2.mediaType.equals(simpleType)) {
+			return V2;
+		}
+
 		// By default, consider it's Actuator from spring boot 1.x
 		return V1;
 	}

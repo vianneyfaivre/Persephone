@@ -88,7 +88,7 @@ public class RestTemplateFactory {
 		return app -> {
 
 			// Create rest template instance
-			RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory);
+			RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory, defaultRestTemplateConfig.getDefaultAcceptHeader());
 
 			// Configure it with BASIC auth
 			restTemplateBasicAuth.getInterceptors().add(new BasicAuthorizationInterceptor(app.getActuatorUsername(), app.getActuatorPassword()));
