@@ -6,8 +6,7 @@ import org.springframework.http.MediaType;
 public enum ActuatorVersion {
 
 	V1(ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE),
-	V2("application/vnd.spring-boot.actuator.v2+json"),
-	NOT_SUPPORTED(null);
+	V2("application/vnd.spring-boot.actuator.v2+json");
 
 	private String mediaType;
 

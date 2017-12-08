@@ -2,17 +2,20 @@ package re.vianneyfaiv.persephone.domain.app;
 
 import org.springframework.util.StringUtils;
 
+import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
+
 public class Application {
 
 	private int id;
 	private String name;
 	private String environment;
 	private String url;
-	private boolean up;
+	private boolean up; // set when application is clicked
 	private Endpoints endpoints;
 	private AuthScheme authScheme;
 	private String actuatorUsername;
 	private String actuatorPassword;
+	private ActuatorVersion actuatorVersion; // set when application is clicked
 
 	/**
 	 * Application without HTTP Auth
@@ -86,6 +89,14 @@ public class Application {
 
 	public String getActuatorPassword() {
 		return actuatorPassword;
+	}
+
+	public ActuatorVersion getActuatorVersion() {
+		return actuatorVersion;
+	}
+
+	public void setActuatorVersion(ActuatorVersion actuatorVersion) {
+		this.actuatorVersion = actuatorVersion;
 	}
 
 	@Override

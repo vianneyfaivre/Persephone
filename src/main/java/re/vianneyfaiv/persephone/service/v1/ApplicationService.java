@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import re.vianneyfaiv.persephone.bootstrap.BatchReadApplicationsFromCsv;
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 
 /**
  * Service that holds all applications (loaded from {@link BatchReadApplicationsFromCsv})
@@ -38,8 +39,15 @@ public class ApplicationService {
 
 	public void setUp(Application app, boolean up) {
 		if(app.isUp() != up) {
-			LOGGER.debug("Changing Application#up to {} for application with id {}", up, app.getId());
+			LOGGER.info("Changing Application#up to {} for application with id {}", up, app.getId());
 			app.setUp(up);
+		}
+	}
+
+	public void setActuatorVersion(Application app, ActuatorVersion actuatorVersion) {
+		if(app.getActuatorVersion() == null) {
+			LOGGER.info("Changing Application#actuatorVersion to {} for application with id {}", actuatorVersion, app.getId());
+			app.setActuatorVersion(actuatorVersion);
 		}
 	}
 }
