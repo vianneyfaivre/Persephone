@@ -118,7 +118,7 @@ public class LogsPage extends VerticalLayout implements View {
 									.append(loggingPathUnavailable)
 									.append("\n")
 									.append(loggingFileUnavailable)
-									.append("(at least one of those properties have to be properly set)")
+									.append("\n(at least one of those properties have to be properly set)")
 									.toString();
 
 			Label noLogsLabel = new Label(noLogsText, ContentMode.PREFORMATTED);
