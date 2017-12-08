@@ -31,7 +31,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.env.PropertyItem;
-import re.vianneyfaiv.persephone.service.EnvironmentService;
+import re.vianneyfaiv.persephone.service.v1.EnvironmentService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;

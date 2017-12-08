@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.service;
+package re.vianneyfaiv.persephone.service.v1;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.service;
+package re.vianneyfaiv.persephone.service.v1;
 
 import java.net.URI;
 import java.net.URISyntaxException;

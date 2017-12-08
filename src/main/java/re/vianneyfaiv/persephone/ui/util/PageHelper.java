@@ -11,7 +11,7 @@ import com.vaadin.ui.Layout;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.exception.ApplicationNotFoundException;
-import re.vianneyfaiv.persephone.service.ApplicationService;
+import re.vianneyfaiv.persephone.service.v1.ApplicationService;
 
 @Component
 public class PageHelper {
