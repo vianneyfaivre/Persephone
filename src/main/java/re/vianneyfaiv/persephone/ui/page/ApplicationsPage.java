@@ -122,6 +122,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 		filterApp.setPlaceholder("filter by application...");
 		filterApp.addValueChangeListener(e -> updateApplications(e.getValue(), filterEnv.getValue(), filterUrl.getValue()));
 		filterApp.setValueChangeMode(ValueChangeMode.LAZY);
+		filterApp.focus();
 		filterApp.setSizeFull();
 
 		filterEnv.setPlaceholder("filter by environment...");

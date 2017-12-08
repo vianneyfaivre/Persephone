@@ -107,10 +107,10 @@ public class PropertiesPage extends VerticalLayout implements View {
 		TextField filterValue = new TextField();
 		NativeSelect<String> filterOrigin = new NativeSelect<>(null, origins);
 
-
 		filterProperty.setPlaceholder("filter by key...");
 		filterProperty.addValueChangeListener(e -> updateProperties(e.getValue(), filterValue.getValue(), filterOrigin.getValue()));
 		filterProperty.setValueChangeMode(ValueChangeMode.LAZY);
+		filterProperty.focus();
 		filterProperty.setSizeFull();
 
 		filterValue.setPlaceholder("filter by value...");

@@ -117,6 +117,7 @@ public class LoggersPage extends VerticalLayout implements View {
 			filterInput.setPlaceholder("filter by logger name...");
 			filterInput.addValueChangeListener(e -> filterLoggers(e.getValue()));
 			filterInput.setValueChangeMode(ValueChangeMode.LAZY);
+			filterInput.focus();
 			filterInput.setSizeFull();
 
 			// Header row
