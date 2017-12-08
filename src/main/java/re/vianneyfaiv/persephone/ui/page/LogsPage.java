@@ -145,10 +145,7 @@ public class LogsPage extends VerticalLayout implements View {
 			// Get logs
 			String logs = logsService.getLogs(app, logsRange);
 
-			String logsPath = loggingPath;
-			if(!StringUtils.isEmpty(loggingFile)) {
-				logsPath = loggingFile;
-			}
+			String logsPath = getLogsFilePath(env);
 
 			// Create UI for logs
 			Panel logsPanel = getLogsPanel(app, logs, logsPath);
@@ -164,6 +161,23 @@ public class LogsPage extends VerticalLayout implements View {
 
 		// then call default beforeLeave method
 		View.super.beforeLeave(event);
+	}
+
+	private String getLogsFilePath(Environment env) {
+
+		if(!StringUtils.isEmpty(env.get("LOG_FILE"))) {
+			return env.get("LOG_FILE");
+		}
+
+		if(!StringUtils.isEmpty(env.get("logging.file"))) {
+			return env.get("logging.file");
+		}
+
+		if(!StringUtils.isEmpty(env.get("logging.path"))) {
+			return env.get("logging.path");
+		}
+
+		return "";
 	}
 
 	private Panel getLogsPanel(Application app, String logs, String propertyLoggingPath) {
