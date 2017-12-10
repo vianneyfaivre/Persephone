@@ -2,6 +2,7 @@ package re.vianneyfaiv.persephone.ui.page;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -28,9 +29,9 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
-import re.vianneyfaiv.persephone.service.v1.ApplicationService;
-import re.vianneyfaiv.persephone.service.v1.EnvironmentService;
-import re.vianneyfaiv.persephone.service.v1.MetricsService;
+import re.vianneyfaiv.persephone.service.ApplicationService;
+import re.vianneyfaiv.persephone.service.EnvironmentService;
+import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.fragment.ApplicationOverviewPanel;
 import re.vianneyfaiv.persephone.ui.util.PageHelper;
@@ -155,7 +156,7 @@ public class ApplicationsPage extends HorizontalLayout implements View {
 
 			// Get application overview info
 			Environment env = this.envService.getEnvironment(app);
-			Metrics metrics = this.metricsService.getMetrics(app);
+			Optional<Metrics> metrics = this.metricsService.getMetrics(app);
 
 			// No exception has been thrown : app is up and running !
 			appService.setUp(app, true);

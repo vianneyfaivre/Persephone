@@ -32,8 +32,8 @@ import org.springframework.core.io.PathResource;
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.app.AuthScheme;
-import re.vianneyfaiv.persephone.service.v1.ApplicationService;
-import re.vianneyfaiv.persephone.service.v1.HealthService;
+import re.vianneyfaiv.persephone.service.ApplicationService;
+import re.vianneyfaiv.persephone.service.HealthService;
 
 /**
  * Batch ran at startup. Reads {@link Application}s from a CSV file and load them in memory

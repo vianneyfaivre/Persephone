@@ -1,10 +1,11 @@
-package re.vianneyfaiv.persephone.service.v1;
+package re.vianneyfaiv.persephone.service;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -15,13 +16,13 @@ import org.springframework.web.client.RestClientException;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsGc;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
-import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
  * Calls /metrics
@@ -34,7 +35,11 @@ public class MetricsService {
 	@Autowired
 	private RestTemplateFactory restTemplates;
 
-	public Map<String, Number> getAllMetrics(Application app) {
+	public Optional<Map<String, Number>> getAllMetrics(Application app) {
+
+		if(app.getActuatorVersion() == ActuatorVersion.V2) {
+			return Optional.empty();
+		}
 
 		String url = app.endpoints().metrics();
 
@@ -42,25 +47,33 @@ public class MetricsService {
 			LOGGER.debug("GET {}", url);
 			Map<String, Number> metrics = restTemplates.get(app).getForObject(url, Map.class);
 
-			return metrics;
+			return Optional.of(metrics);
 		} catch(RestClientException e) {
-			throw RestTemplateErrorHandler.handle(app, url, e);
+			LOGGER.warn(String.format("Unable to get metrics for application %s", app.getName()), e);
+			return Optional.empty();
 		}
 	}
 
-	public Metrics getMetrics(Application app) {
+	public Optional<Metrics> getMetrics(Application app) {
 
-		Map<String, Number> allMetrics = this.getAllMetrics(app);
+		Optional<Map<String, Number>> allMetrics = this.getAllMetrics(app);
 
-		int mem = allMetrics.getOrDefault("mem", -1).intValue();
-		int memFree = allMetrics.getOrDefault("mem.free", -1).intValue();
-		long uptime = allMetrics.getOrDefault("uptime", -1).longValue();
-		int httpSessionsActive = allMetrics.getOrDefault("httpsessions.active", -1).intValue();
+		if(allMetrics.isPresent()) {
+			int mem = allMetrics.get().getOrDefault("mem", -1).intValue();
+			int memFree = allMetrics.get().getOrDefault("mem.free", -1).intValue();
+			long uptime = allMetrics.get().getOrDefault("uptime", -1).longValue();
+			int httpSessionsActive = allMetrics.get().getOrDefault("httpsessions.active", -1).intValue();
+			return Optional.of(new Metrics(mem, memFree, uptime, httpSessionsActive));
+		}
 
-		return new Metrics(mem, memFree, uptime, httpSessionsActive);
+		return Optional.empty();
 	}
 
-	public Collection<MetricsCache> getMetricsCaches(Map<String, Number> metrics) {
+	public Optional<Collection<MetricsCache>> getMetricsCaches(Map<String, Number> metrics) {
+
+		if(metrics.isEmpty()) {
+			return Optional.empty();
+		}
 
 		Map<String, MetricsCache> metricsCache = new HashMap<>();
 
@@ -93,10 +106,14 @@ public class MetricsService {
 				}
 			});
 
-		return metricsCache.values();
+		return Optional.of(metricsCache.values());
 	}
 
-	public List<MetricsRest> getMetricsRest(Map<String, Number> metrics) {
+	public Optional<List<MetricsRest>> getMetricsRest(Map<String, Number> metrics) {
+
+		if(metrics.isEmpty()) {
+			return Optional.empty();
+		}
 
 		// get all Rest metrics
 		List<MetricsRest> metricsRest = metrics
@@ -118,12 +135,14 @@ public class MetricsService {
 				}
 			});
 
-		return metricsRest;
+		return Optional.of(metricsRest);
 	}
 
-	public Collection<MetricsDatasource> getMetricsDatasources(Map<String, Number> metrics) {
-		// datasource.xxx.active
-		// datasource.xxx.usage
+	public Optional<Collection<MetricsDatasource>> getMetricsDatasources(Map<String, Number> metrics) {
+
+		if(metrics.isEmpty()) {
+			return Optional.empty();
+		}
 
 		Map<String, MetricsDatasource> metricsDb = new HashMap<>();
 
@@ -153,10 +172,15 @@ public class MetricsService {
 				}
 			});
 
-		return metricsDb.values();
+		return Optional.of(metricsDb.values());
 	}
-	
-	public MetricsSystem getSystemMetrics(Map<String, Number> metrics) {
+
+	public Optional<MetricsSystem> getSystemMetrics(Map<String, Number> metrics) {
+
+		if(metrics.isEmpty()) {
+			return Optional.empty();
+		}
+
 //		Heap information in KB (heap, heap.committed, heap.init, heap.used)
 		int heap = metrics.getOrDefault("heap", -1).intValue();
 		int heapCommitted = metrics.getOrDefault("heap.committed", -1).intValue();
@@ -215,6 +239,8 @@ public class MetricsService {
 				}
 			});
 
-		return new MetricsSystem(heap, heapCommitted, heapInit, heapUsed, mem, memFree, processors, uptime, instanceUptime, systemLoadAverage, threads, threadPeak, threadDaemon, classes, classesLoaded, classesUnloaded, metricsGc.values());
+		return Optional.of(new MetricsSystem(heap, heapCommitted, heapInit, heapUsed, mem,
+				memFree, processors, uptime, instanceUptime, systemLoadAverage, threads, threadPeak,
+				threadDaemon, classes, classesLoaded, classesUnloaded, metricsGc.values()));
 	}
 }

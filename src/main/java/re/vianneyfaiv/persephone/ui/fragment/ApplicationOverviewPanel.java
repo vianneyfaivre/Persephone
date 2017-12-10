@@ -3,6 +3,7 @@ package re.vianneyfaiv.persephone.ui.fragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.util.StringUtils;
 
@@ -30,10 +31,7 @@ import re.vianneyfaiv.persephone.ui.util.Formatters;
  */
 public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
-	public ApplicationOverviewPanel(Application app, Environment env, Metrics metrics) {
-
-		String memAllocated = Formatters.readableFileSize(metrics.getMemAllocated() * 1000);
-		String memTotal = Formatters.readableFileSize(metrics.getMem() * 1000);
+	public ApplicationOverviewPanel(Application app, Environment env, Optional<Metrics> metricsOpt) {
 
 		// Title
 		Label titleLabel = new Label(String.format("<h3>%s (%s)</h3>", app.getName(), app.getEnvironment()), ContentMode.HTML);
@@ -44,23 +42,34 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		String springProfiles = env.get("spring.profiles.active");
 		Label springProfilesLabel = new Label(String.format("Spring Profiles: %s", springProfiles));
 		Label javaLabel = new Label(String.format("Java Version %s (%s on %s)", env.get("java.version"), env.get("java.home"), env.get("os.name")));
-		Label memLabel = new Label(String.format("Memory: %s / %s (%s%% free)", memAllocated, memTotal, metrics.getMemFreePercentage()));
-		Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
-		Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));
 
 		List<Component> infos = new ArrayList<>();
 		if(!StringUtils.isEmpty(springProfiles)) {
 			infos.add(springProfilesLabel);
 		}
 		infos.add(javaLabel);
-		infos.add(memLabel);
-		if(metrics.getHttpSessionsActive() >= 0) {
-			infos.add(sessionsLabel);
+
+		if(metricsOpt.isPresent()) {
+			Metrics metrics = metricsOpt.get();
+
+			String memAllocated = Formatters.readableFileSize(metrics.getMemAllocated() * 1000);
+			String memTotal = Formatters.readableFileSize(metrics.getMem() * 1000);
+			Label memLabel = new Label(String.format("Memory: %s / %s (%s%% free)", memAllocated, memTotal, metrics.getMemFreePercentage()));
+
+			Label sessionsLabel = new Label(String.format("HTTP Sessions Active: %s", metrics.getHttpSessionsActive()));
+			Label uptimeLabel = new Label(String.format("Uptime: %s", Formatters.readableDuration(metrics.getUptime())));
+
+			infos.add(memLabel);
+			infos.add(uptimeLabel);
+
+			if(metricsOpt.get().getHttpSessionsActive() >= 0) {
+				infos.add(sessionsLabel);
+			}
 		}
-		infos.add(uptimeLabel);
 
 		// Buttons
 		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
+		metricsButton.setEnabled(metricsOpt.isPresent());
 		Button propertiesButton = new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId()));
 		Button logsButton = new Button("Show Logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
 		Button loggersButton = new Button("Loggers Config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId()));

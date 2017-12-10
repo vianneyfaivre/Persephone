@@ -29,7 +29,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.logger.Loggers;
 import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
-import re.vianneyfaiv.persephone.service.v1.LoggersService;
+import re.vianneyfaiv.persephone.service.LoggersService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.component.grid.LoggerGridRow;

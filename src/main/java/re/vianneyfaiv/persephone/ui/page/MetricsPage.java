@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -33,8 +34,9 @@ import re.vianneyfaiv.persephone.domain.metrics.MetricsCache;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsDatasource;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsRest;
 import re.vianneyfaiv.persephone.domain.metrics.MetricsSystem;
-import re.vianneyfaiv.persephone.service.v1.HealthService;
-import re.vianneyfaiv.persephone.service.v1.MetricsService;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
+import re.vianneyfaiv.persephone.service.HealthService;
+import re.vianneyfaiv.persephone.service.MetricsService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.Card;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
@@ -74,16 +76,21 @@ public class MetricsPage extends VerticalLayout implements View {
 		this.removeAllComponents();
 
 		// Get application
-		int appId = Integer.valueOf(event.getParameters());
+		int appId = Integer.parseInt(event.getParameters());
 		Application app = pageHelper.getApp(appId);
 
 		// Get metrics
 		Health health = healthService.getHealth(app);
-		Map<String, Number> metrics = metricsService.getAllMetrics(app);
-		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics);
-		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics);
-		Collection<MetricsDatasource> metricsDb = metricsService.getMetricsDatasources(metrics);
-		MetricsSystem metricsSystem = metricsService.getSystemMetrics(metrics);
+		Optional<Map<String, Number>> metrics = metricsService.getAllMetrics(app);
+
+		if(!metrics.isPresent()) {
+			throw new ApplicationRuntimeException(app, "No metrics found");
+		}
+
+		Collection<MetricsCache> metricsCaches = metricsService.getMetricsCaches(metrics.get()).get();
+		List<MetricsRest> metricsRest = metricsService.getMetricsRest(metrics.get()).get();
+		Collection<MetricsDatasource> metricsDb = metricsService.getMetricsDatasources(metrics.get()).get();
+		MetricsSystem metricsSystem = metricsService.getSystemMetrics(metrics.get()).get();
 
 		// Build UI
 		this.addComponent(new PageHeader(app, "Metrics"));
@@ -118,7 +125,7 @@ public class MetricsPage extends VerticalLayout implements View {
 			this.addComponent(getDatasourceGrid(metricsDb));
 		}
 
-		allMetricsGrid = getAllMetricsGrid(metrics);
+		allMetricsGrid = getAllMetricsGrid(metrics.get());
 
 		this.addComponent(new Label("<h3>All metrics</h3>", ContentMode.HTML));
 		this.addComponent(allMetricsGrid);

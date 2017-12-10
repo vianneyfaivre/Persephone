@@ -1,4 +1,4 @@
-package re.vianneyfaiv.persephone.service.v1;
+package re.vianneyfaiv.persephone.service;
 
 import java.io.IOException;
 import java.net.URI;

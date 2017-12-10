@@ -26,7 +26,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.trace.Trace;
-import re.vianneyfaiv.persephone.service.v1.TraceService;
+import re.vianneyfaiv.persephone.service.TraceService;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
 import re.vianneyfaiv.persephone.ui.component.PageHeader;
 import re.vianneyfaiv.persephone.ui.component.grid.HeaderGridRow;

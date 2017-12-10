@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.app.AuthScheme;
-import re.vianneyfaiv.persephone.service.v1.ApplicationService;
+import re.vianneyfaiv.persephone.service.ApplicationService;
 
 /**
  * Creates specific instances of {@link RestTemplate} for some {@link Application}s
