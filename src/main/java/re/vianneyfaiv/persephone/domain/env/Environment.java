@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
+import re.vianneyfaiv.persephone.domain.env.v2.EnvironmentResponse;
+
 /**
  * Mapper for /env endpoint
  */
@@ -13,19 +17,48 @@ public class Environment {
 	private List<PropertyItem> properties;
 	private Map<String, List<String>> propertiesMap;
 
+	public Environment(EnvironmentResponse env) {
+		this.properties = new ArrayList<>();
+
+		env.getPropertySources()
+			.stream()
+			.forEach(ps -> {
+				// get properties origin
+				String baseOrigin = ps.getName();
+
+				ps.getProperties()
+					.entrySet().stream()
+					.forEach(p -> {
+						if(!StringUtils.isEmpty(p.getValue().getOrigin())) {
+							properties.add(new PropertyItem(p.getKey(), p.getValue().getValue(), p.getValue().getOrigin()));
+						} else {
+							properties.add(new PropertyItem(p.getKey(), p.getValue().getValue(), baseOrigin));
+						}
+					});
+			});
+
+		this.propertiesMap = getPropertiesAsMap(properties);
+	}
+
 	public Environment(List<PropertyItem> properties) {
 		this.properties = properties;
-		this.propertiesMap = new HashMap<>();
+		this.propertiesMap = getPropertiesAsMap(properties);
+	}
+
+	private static Map<String, List<String>> getPropertiesAsMap(List<PropertyItem> properties) {
+		Map<String, List<String>> propertiesMap = new HashMap<>();
 
 		// a property can be defined in multiple files
 		for(PropertyItem p : properties) {
-			List<String> values = this.propertiesMap.get(p.getKey());
+			List<String> values = propertiesMap.get(p.getKey());
             if (values == null) {
             	values = new ArrayList<>();
-				this.propertiesMap.put(p.getKey(), values);
+				propertiesMap.put(p.getKey(), values);
 			}
             values.add(p.getValue());
 		}
+
+		return propertiesMap;
 	}
 
 	public List<PropertyItem> getProperties() {

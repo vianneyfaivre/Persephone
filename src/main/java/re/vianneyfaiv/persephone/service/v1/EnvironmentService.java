@@ -28,6 +28,7 @@ import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.env.PropertyItem;
+import re.vianneyfaiv.persephone.domain.env.v2.EnvironmentResponse;
 import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
@@ -72,6 +73,16 @@ public class EnvironmentService {
 	}
 
 	public Environment getEnvironment(Application app) {
+		switch (app.getActuatorVersion()) {
+		case V2:
+			return this.getEnvironmentV2(app);
+		case V1:
+		default:
+			return this.getEnvironmentV1(app);
+		}
+	}
+
+	public Environment getEnvironmentV1(Application app) {
 
 		String url = app.endpoints().env();
 
@@ -106,4 +117,19 @@ public class EnvironmentService {
 			throw RestTemplateErrorHandler.handle(app, e);
 		}
 	}
+
+	public Environment getEnvironmentV2(Application app) {
+
+		String url = app.endpoints().env();
+
+		try {
+			LOGGER.debug("GET {}", url);
+			ResponseEntity<EnvironmentResponse> response = restTemplates.get(app).getForEntity(url, EnvironmentResponse.class);
+
+			return new Environment(response.getBody());
+		} catch (RestClientException ex) {
+			throw RestTemplateErrorHandler.handle(app, url, ex);
+		}
+	}
+
 }
