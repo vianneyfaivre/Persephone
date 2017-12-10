@@ -21,6 +21,7 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 import re.vianneyfaiv.persephone.domain.env.Environment;
 import re.vianneyfaiv.persephone.domain.metrics.Metrics;
 import re.vianneyfaiv.persephone.ui.PersephoneViews;
@@ -74,6 +75,7 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 		Button logsButton = new Button("Show Logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
 		Button loggersButton = new Button("Loggers Config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId()));
 		Button traceButton = new Button("Last HTTP Requests", e -> getUI().getNavigator().navigateTo(PersephoneViews.TRACE+"/"+app.getId()));
+		traceButton.setEnabled(app.getActuatorVersion() == ActuatorVersion.V1);
 		Button actuatorButton = new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId()));
 
 		this.addComponent(titleLayout(titleLabel, pidLabel, appLink));

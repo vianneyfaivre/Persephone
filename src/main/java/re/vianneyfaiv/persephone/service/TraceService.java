@@ -24,8 +24,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import re.vianneyfaiv.persephone.config.RestTemplateFactory;
 import re.vianneyfaiv.persephone.domain.app.Application;
+import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 import re.vianneyfaiv.persephone.domain.trace.Trace;
 import re.vianneyfaiv.persephone.domain.trace.TraceInfoHeaders;
+import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
 import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
@@ -40,6 +42,10 @@ public class TraceService {
 	private RestTemplateFactory restTemplates;
 
 	public List<Trace> getTraces(Application app) {
+
+		if(app.getActuatorVersion() == ActuatorVersion.V2) {
+			throw new ApplicationRuntimeException(app, "There is no /trace endpoint in Actuator v2");
+		}
 
 		String url = app.endpoints().trace();
 
