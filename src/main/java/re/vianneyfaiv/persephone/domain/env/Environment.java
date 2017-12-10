@@ -17,7 +17,7 @@ public class Environment {
 	private List<PropertyItem> properties;
 	private Map<String, List<String>> propertiesMap;
 
-	public Environment(EnvironmentResponse env) {
+	public Environment(EnvironmentResponse env, ActuatorVersion actuatorVersion) {
 		this.properties = new ArrayList<>();
 
 		env.getPropertySources()
@@ -36,6 +36,28 @@ public class Environment {
 						}
 					});
 			});
+
+		// remove parts of origin (TMI in actuator v2)
+		if(actuatorVersion == ActuatorVersion.V2) {
+			this.properties.stream()
+			.forEach(p -> {
+
+				//
+				if(p.getOrigin().contains(" \"")) {
+					String parts[] = p.getOrigin().split(" \"");
+					if(parts.length > 0) {
+						p.setOrigin(parts[0]);
+					}
+				}
+				//
+				else if(p.getOrigin().contains(":")) {
+					String parts[] = p.getOrigin().split(":");
+					if(parts.length > 0) {
+						p.setOrigin(parts[0]);
+					}
+				}
+			});
+		}
 
 		this.propertiesMap = getPropertiesAsMap(properties);
 	}

@@ -26,4 +26,8 @@ public class PropertyItem {
 	public String getOrigin() {
 		return this.origin;
 	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
 }

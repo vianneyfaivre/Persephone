@@ -126,7 +126,7 @@ public class EnvironmentService {
 			LOGGER.debug("GET {}", url);
 			ResponseEntity<EnvironmentResponse> response = restTemplates.get(app).getForEntity(url, EnvironmentResponse.class);
 
-			return new Environment(response.getBody());
+			return new Environment(response.getBody(), app.getActuatorVersion());
 		} catch (RestClientException ex) {
 			throw RestTemplateErrorHandler.handle(app, url, ex);
 		}
