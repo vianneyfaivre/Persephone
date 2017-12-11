@@ -97,41 +97,14 @@ public class LogsPage extends VerticalLayout implements View {
 		 * Logs not available
 		 */
 		if(!endpointAvailable) {
-
-			String loggingPathUnavailable;
-			if(StringUtils.isEmpty(loggingPath)) {
-				loggingPathUnavailable = "- Property 'logging.path' is not set";
-			} else {
-				loggingPathUnavailable = String.format("- Property 'logging.path' is set to '%s'", loggingPath);
-			}
-
-			String loggingFileUnavailable;
-			if(StringUtils.isEmpty(loggingFile)) {
-				loggingFileUnavailable = "- Property 'logging.file' is not set";
-			} else {
-				loggingFileUnavailable = String.format("- Property 'logging.file' is set to '%s'", loggingFile);
-			}
-
-			String noLogsText = new StringBuilder()
-									.append(String.format("Endpoint %s is not available because:", app.endpoints().logfile()))
-									.append("\n")
-									.append(loggingPathUnavailable)
-									.append("\n")
-									.append(loggingFileUnavailable)
-									.append("\n(at least one of those properties have to be properly set)")
-									.toString();
-
-			Label noLogsLabel = new Label(noLogsText, ContentMode.PREFORMATTED);
 			this.addComponent(new PageHeader(app, "Logs"));
-			this.addComponent(noLogsLabel);
+			this.addComponent(getNoLogsText(app, env, loggingPath, loggingFile));
 		}
 		/*
 		 * Logs available
 		 */
 		else {
-
 			// Page Header
-			Button downloadButton = getDownloadButton(app);
 			Button autoScrollButton = getAutoScrollButton();
 
 			// Get range
@@ -149,7 +122,7 @@ public class LogsPage extends VerticalLayout implements View {
 
 			// Create UI for logs
 			Panel logsPanel = getLogsPanel(app, logs, logsPath);
-			this.addComponent(new PageHeader(app, "Logs", downloadButton, autoScrollButton));
+			this.addComponent(new PageHeader(app, "Logs", getDownloadButton(app), autoScrollButton));
 			this.addComponent(logsPanel);
 		}
 	}
@@ -161,6 +134,36 @@ public class LogsPage extends VerticalLayout implements View {
 
 		// then call default beforeLeave method
 		View.super.beforeLeave(event);
+	}
+
+	private Label getNoLogsText(Application app, Environment env, String loggingPath, String loggingFile) {
+		String loggingPathUnavailable;
+		if(StringUtils.isEmpty(loggingPath)) {
+			loggingPathUnavailable = "- Property 'logging.path' is not set";
+		} else {
+			loggingPathUnavailable = String.format("- Property 'logging.path' is set to '%s'", loggingPath);
+		}
+
+		String loggingFileUnavailable;
+		if(StringUtils.isEmpty(loggingFile)) {
+			loggingFileUnavailable = "- Property 'logging.file' is not set";
+		} else {
+			loggingFileUnavailable = String.format("- Property 'logging.file' is set to '%s'", loggingFile);
+		}
+
+		String noLogsText = new StringBuilder()
+								.append(String.format("Endpoint %s is not available because:", app.endpoints().logfile()))
+								.append("\n")
+								.append(loggingPathUnavailable)
+								.append("\n")
+								.append(loggingFileUnavailable)
+								.append("\n")
+								.append("(at least one of those properties have to be properly set)")
+								.append("\n\n")
+								.append(String.format("Generated value for LOG_FILE property: %s", env.get("LOG_FILE")))
+								.toString();
+
+		return new Label(noLogsText, ContentMode.PREFORMATTED);
 	}
 
 	private String getLogsFilePath(Environment env) {

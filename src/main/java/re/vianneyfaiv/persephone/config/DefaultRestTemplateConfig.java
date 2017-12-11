@@ -2,6 +2,7 @@ package re.vianneyfaiv.persephone.config;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -59,22 +60,22 @@ public class DefaultRestTemplateConfig {
 
 	@Bean
 	public RestTemplate defaultRestTemplate(ClientHttpRequestFactory rf) {
-		return this.restTemplate(rf, getDefaultAcceptHeader());
+		return this.restTemplate(rf, Arrays.asList(getDefaultAcceptHeader(), MediaType.ALL));
 	}
 
 	@Bean
 	public RestTemplate headRestTemplate(ClientHttpRequestFactory rf) {
-		return this.restTemplate(rf, MediaType.ALL);
+		return this.restTemplate(rf, Arrays.asList(MediaType.ALL));
 	}
 
-	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory, MediaType type) {
+	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory, List<MediaType> types) {
 		RestTemplate rt = new RestTemplate(requestFactory);
 
 		// Override default error handler to consider HTTP 3xx 4xx and 5xx as errors
 		rt.setErrorHandler(restErrorHandler);
 
 		// Default HTTP 'Accept' header value will be application/json
-		rt.getInterceptors().add(new AcceptJsonRequestInterceptor(type));
+		rt.getInterceptors().add(new AcceptRequestInterceptor(types));
 
 		return rt;
 	}
@@ -83,18 +84,18 @@ public class DefaultRestTemplateConfig {
 		return DEFAULT_ACCEPT_HEADER;
 	}
 
-	static class AcceptJsonRequestInterceptor implements ClientHttpRequestInterceptor {
+	static class AcceptRequestInterceptor implements ClientHttpRequestInterceptor {
 
-		private MediaType type;
+		private List<MediaType> types;
 
-		public AcceptJsonRequestInterceptor(MediaType type) {
-			this.type = type;
+		public AcceptRequestInterceptor(List<MediaType> types) {
+			this.types = types;
 		}
 
 		@Override
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 				throws IOException {
-			request.getHeaders().setAccept(Arrays.asList(this.type));
+			request.getHeaders().setAccept(types);
 			return execution.execute(request, body);
 		}
 

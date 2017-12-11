@@ -1,5 +1,6 @@
 package re.vianneyfaiv.persephone.config;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
@@ -88,7 +90,7 @@ public class RestTemplateFactory {
 		return app -> {
 
 			// Create rest template instance
-			RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory, defaultRestTemplateConfig.getDefaultAcceptHeader());
+			RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory, Arrays.asList(defaultRestTemplateConfig.getDefaultAcceptHeader(), MediaType.ALL));
 
 			// Configure it with BASIC auth
 			restTemplateBasicAuth.getInterceptors().add(new BasicAuthorizationInterceptor(app.getActuatorUsername(), app.getActuatorPassword()));
