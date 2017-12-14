@@ -6,8 +6,10 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewDisplay;
+import com.vaadin.server.CustomizedSystemMessages;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.BorderStyle;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.annotation.SpringViewDisplay;
@@ -65,6 +67,14 @@ public class PersephoneUI extends UI implements ViewDisplay {
 
         // Error handler
 		UI.getCurrent().setErrorHandler(new UIErrorHandler());
+
+		// Disable session expired notification, the page will be reloaded on any action
+		VaadinService.getCurrent().setSystemMessagesProvider(
+				systemMessagesInfo -> {
+					CustomizedSystemMessages msgs = new CustomizedSystemMessages();
+					msgs.setSessionExpiredNotificationEnabled(false);
+					return msgs;
+				});
 	}
 
 	@Override
