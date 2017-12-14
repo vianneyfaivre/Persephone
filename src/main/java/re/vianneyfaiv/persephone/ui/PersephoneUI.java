@@ -93,7 +93,7 @@ public class PersephoneUI extends UI implements ViewDisplay {
 		footer.addComponent(new Link("Created by Vianney FAIVRE", new ExternalResource("https://vianneyfaiv.re"), "_blank", 0, 0, BorderStyle.DEFAULT));
 		footer.addComponent(new Link("GitHub", new ExternalResource("https://github.com/vianneyfaivre/Persephone"), "_blank", 0, 0, BorderStyle.DEFAULT));
 
-		footer.setHeight(15, Unit.PIXELS);
+		footer.setHeight(20, Unit.PIXELS);
 		footer.setStyleName("persephone-footer");
 		return footer;
 	}
