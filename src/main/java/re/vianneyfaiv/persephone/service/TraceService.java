@@ -27,7 +27,7 @@ import re.vianneyfaiv.persephone.domain.app.Application;
 import re.vianneyfaiv.persephone.domain.env.ActuatorVersion;
 import re.vianneyfaiv.persephone.domain.trace.Trace;
 import re.vianneyfaiv.persephone.domain.trace.TraceInfoHeaders;
-import re.vianneyfaiv.persephone.exception.ApplicationRuntimeException;
+import re.vianneyfaiv.persephone.domain.trace.Traces;
 import re.vianneyfaiv.persephone.exception.RestTemplateErrorHandler;
 
 /**
@@ -43,10 +43,6 @@ public class TraceService {
 
 	public List<Trace> getTraces(Application app) {
 
-		if(app.getActuatorVersion() == ActuatorVersion.V2) {
-			throw new ApplicationRuntimeException(app, "There is no /trace endpoint in Actuator v2");
-		}
-
 		String url = app.endpoints().trace();
 
 		try {
@@ -59,13 +55,17 @@ public class TraceService {
 			LOGGER.debug("GET {}", url);
 			String response = restTemplates.get(app).getForObject(url, String.class);
 
-			Trace[] traces = objectMapper.readValue(response, Trace[].class);
-
-			if(traces.length != 0) {
-				return Arrays.asList(traces);
+			if(app.getActuatorVersion() == ActuatorVersion.V2) {
+				return objectMapper.readValue(response, Traces.class).getTraces();
 			} else {
-				return new ArrayList<>();
+				Trace[] traces = objectMapper.readValue(response, Trace[].class);
+				if(traces.length != 0) {
+					return Arrays.asList(traces);
+				} else {
+					return new ArrayList<>();
+				}
 			}
+
 		} catch(RestClientException e) {
 			throw RestTemplateErrorHandler.handle(app, url, e);
 		} catch (IOException e) {
