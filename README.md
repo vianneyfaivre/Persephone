@@ -20,16 +20,6 @@ For each monitored application:
 * View / update loggers configuration
 * List the last 100 HTTP requests
 
-## Coming soon :soon:
-
-Next big features to come:
-
-* Analyze application metrics and show "possible" issues 
-* Spring Actuator v2 support (coming with Spring Boot 2)
-* Read more info from /health
-
-Stay tuned!
-
 ## Bugs :bug:, Feedback :microphone:
 
 Create an issue in [Github Issues :octocat: ](https://github.com/vianneyfaivre/Persephone/issues)
