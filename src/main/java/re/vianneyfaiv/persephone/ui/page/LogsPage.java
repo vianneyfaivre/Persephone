@@ -151,19 +151,26 @@ public class LogsPage extends VerticalLayout implements View {
 			loggingFileUnavailable = String.format("- Property 'logging.file' is set to '%s'", loggingFile);
 		}
 
-		String noLogsText = new StringBuilder()
+		StringBuilder noLogsText = new StringBuilder()
 								.append(String.format("Endpoint %s is not available because:", app.endpoints().logfile()))
 								.append("\n")
 								.append(loggingPathUnavailable)
 								.append("\n")
 								.append(loggingFileUnavailable)
-								.append("\n")
-								.append("(at least one of those properties have to be properly set)")
 								.append("\n\n")
-								.append(String.format("Generated value for LOG_FILE property: %s", env.get("LOG_FILE")))
-								.toString();
+								.append("At least one of those properties have to be properly set.")
+								.append("\n\n")
+								.append("Also, the default log file name is 'spring.log', "
+										+ "if yours is not whatever.log you have to set logging.file to 'whatever.log'.")
+								;
 
-		return new Label(noLogsText, ContentMode.PREFORMATTED);
+		if(!StringUtils.isEmpty(env.get("LOG_FILE"))) {
+			noLogsText
+				.append("\n\n")
+				.append(String.format("Generated value for LOG_FILE property: %s", env.get("LOG_FILE")));
+		}
+
+		return new Label(noLogsText.toString(), ContentMode.PREFORMATTED);
 	}
 
 	private String getLogsFilePath(Environment env) {
