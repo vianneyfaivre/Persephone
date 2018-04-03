@@ -69,12 +69,16 @@ public class ApplicationOverviewPanel extends VerticalLayout implements View {
 
 		// Buttons
 		Button metricsButton = new Button("Metrics", e -> getUI().getNavigator().navigateTo(PersephoneViews.METRICS+"/"+app.getId()));
-		metricsButton.setEnabled(metricsOpt.isPresent());
 		Button propertiesButton = new Button("Properties", e -> getUI().getNavigator().navigateTo(PersephoneViews.PROPERTIES+"/"+app.getId()));
 		Button logsButton = new Button("Show Logs", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGS+"/"+app.getId()));
 		Button loggersButton = new Button("Loggers Config", e -> getUI().getNavigator().navigateTo(PersephoneViews.LOGGERS+"/"+app.getId()));
 		Button traceButton = new Button("Last HTTP Requests", e -> getUI().getNavigator().navigateTo(PersephoneViews.TRACE+"/"+app.getId()));
 		Button actuatorButton = new Button("Actuator Endpoints", e -> getUI().getNavigator().navigateTo(PersephoneViews.ENDPOINTS+"/"+app.getId()));
+
+		if(!metricsOpt.isPresent()) {
+			metricsButton.setEnabled(false);
+			metricsButton.setDescription("Metrics endpoint is not available in Spring Boot 2 anymore");
+		}
 
 		this.addComponent(titleLayout(titleLabel, pidLabel, appLink));
 		this.addComponent(infoLayout(infos.toArray(new Component[] {})));
