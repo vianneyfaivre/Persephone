@@ -2,6 +2,7 @@ package re.vianneyfaiv.persephone.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.server.ErrorHandler;
 import com.vaadin.server.Page;
@@ -66,12 +67,15 @@ public class UIErrorHandler implements ErrorHandler {
 	}
 
 	private void displayErrorNotif(String msg, Throwable t) {
-		LOGGER.error(String.format("Error handler: %s", msg), t);
-		new Notification(
-				msg,
-			    t.getMessage(),
-			    Notification.Type.ERROR_MESSAGE,
-			    false)
-			.show(Page.getCurrent());
-	}
+		   LOGGER.error(String.format("Error handler: %s", msg), t);
+
+		   if(!StringUtils.isEmpty(t.getMessage())) {
+		           new Notification(
+		                   msg,
+		                   t.getMessage(),
+		                   Notification.Type.ERROR_MESSAGE,
+		                   false)
+		                   .show(Page.getCurrent());
+		       }
+		}
 }
