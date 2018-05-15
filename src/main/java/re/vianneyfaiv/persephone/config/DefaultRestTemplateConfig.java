@@ -65,7 +65,7 @@ public class DefaultRestTemplateConfig {
 
 	@Bean
 	public RestTemplate headRestTemplate(ClientHttpRequestFactory rf) {
-		return this.restTemplate(rf, Arrays.asList(MediaType.ALL));
+		return this.defaultRestTemplate(rf);
 	}
 
 	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory, List<MediaType> types) {
