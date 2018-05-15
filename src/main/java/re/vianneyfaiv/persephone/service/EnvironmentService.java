@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,11 +57,19 @@ public class EnvironmentService {
 			return ActuatorVersion.parse(headers.getContentType());
 		} catch (RestClientException ex) {
 
-			if(ex instanceof HttpClientErrorException) {
-				HttpClientErrorException clientEx = ((HttpClientErrorException)ex);
+			if (ex instanceof HttpClientErrorException) {
+				HttpClientErrorException clientEx = ((HttpClientErrorException) ex);
 
-				// Spring Boot 1.3 does not allow HEAD method, so let's assume the app is up
-				if(clientEx.getStatusCode() == HttpStatus.METHOD_NOT_ALLOWED) {
+				// Spring Boot 1.3 does not allow HEAD method, so let's assume
+				// the version is V1
+				if (clientEx.getStatusCode() == HttpStatus.METHOD_NOT_ALLOWED) {
+					return ActuatorVersion.V1;
+				}
+			} else if (ex instanceof HttpServerErrorException) {
+
+				// If the HEAD request is not supported, a HTTP 500 could be thrown
+				// so let's assume the version is V1
+				if (((HttpServerErrorException) ex).getStatusCode().is5xxServerError()) {
 					return ActuatorVersion.V1;
 				}
 			}
