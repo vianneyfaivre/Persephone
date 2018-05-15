@@ -7,47 +7,47 @@ import java.time.Duration;
  */
 public class Metrics {
 
-	private int mem;
-	private int memAllocated;
-	private int memFree;
-	private long uptime;
-	private int httpSessionsActive;
+   private long mem;
+   private long memAllocated;
+   private long memFree;
+   private long uptime;
+   private int httpSessionsActive;
 
-	public Metrics(int mem, int memFree, long uptime, int httpSessionsActive) {
-		this.mem = mem;
-		this.memFree = memFree;
-		this.memAllocated = this.mem - this.memFree;
-		this.uptime = uptime;
-		this.httpSessionsActive = httpSessionsActive;
-	}
+   public Metrics(long mem, long memFree, long uptime, int httpSessionsActive) {
+      this.mem = mem;
+      this.memFree = memFree;
+      this.memAllocated = this.mem - this.memFree;
+      this.uptime = uptime;
+      this.httpSessionsActive = httpSessionsActive;
+   }
 
-	public int getMemFreePercentage() {
-		return (100 * this.memFree) / this.mem;
-	}
+   public long getMemFreePercentage() {
+      return (100 * this.memFree) / this.mem;
+   }
 
-	public Duration getUptime() {
-		return Duration.ofMillis(this.uptime);
-	}
+   public Duration getUptime() {
+      return Duration.ofMillis(this.uptime);
+   }
 
-	public int getMem() {
-		return this.mem;
-	}
+   public long getMem() {
+      return this.mem;
+   }
 
-	public int getMemAllocated() {
-		return this.memAllocated;
-	}
+   public long getMemAllocated() {
+      return this.memAllocated;
+   }
 
-	public int getMemFree() {
-		return this.memFree;
-	}
+   public long getMemFree() {
+      return this.memFree;
+   }
 
-	public int getHttpSessionsActive() {
-		return this.httpSessionsActive;
-	}
+   public int getHttpSessionsActive() {
+      return this.httpSessionsActive;
+   }
 
-	@Override
-	public String toString() {
-		return "Metrics [mem=" + this.mem + ", memFree=" + this.memFree + ", uptime="
-				+ this.uptime + ", httpSessionsActive=" + this.httpSessionsActive + "]";
-	}
+   @Override
+   public String toString() {
+      return "Metrics [mem=" + this.mem + ", memFree=" + this.memFree + ", uptime="
+            + this.uptime + ", httpSessionsActive=" + this.httpSessionsActive + "]";
+   }
 }

@@ -59,8 +59,8 @@ public class MetricsService {
 		Optional<Map<String, Number>> allMetrics = this.getAllMetrics(app);
 
 		if(allMetrics.isPresent()) {
-			int mem = allMetrics.get().getOrDefault("mem", -1).intValue();
-			int memFree = allMetrics.get().getOrDefault("mem.free", -1).intValue();
+			long mem = allMetrics.get().getOrDefault("mem", -1).longValue();
+	        long memFree = allMetrics.get().getOrDefault("mem.free", -1).longValue();
 			long uptime = allMetrics.get().getOrDefault("uptime", -1).longValue();
 			int httpSessionsActive = allMetrics.get().getOrDefault("httpsessions.active", -1).intValue();
 			return Optional.of(new Metrics(mem, memFree, uptime, httpSessionsActive));
@@ -181,16 +181,16 @@ public class MetricsService {
 			return Optional.empty();
 		}
 
-//		Heap information in KB (heap, heap.committed, heap.init, heap.used)
-		int heap = metrics.getOrDefault("heap", -1).intValue();
-		int heapCommitted = metrics.getOrDefault("heap.committed", -1).intValue();
-		int heapInit = metrics.getOrDefault("heap.init", -1).intValue();
-		int heapUsed = metrics.getOrDefault("heap.used", -1).intValue();
+//	     Heap information in KB (heap, heap.committed, heap.init, heap.used)
+        long heap = metrics.getOrDefault("heap", -1).longValue();
+        long heapCommitted = metrics.getOrDefault("heap.committed", -1).longValue();
+        long heapInit = metrics.getOrDefault("heap.init", -1).longValue();
+        long heapUsed = metrics.getOrDefault("heap.used", -1).longValue();
 
-//		The total system memory in KB (mem)
-		int mem = metrics.getOrDefault("mem", -1).intValue();
-//		The amount of free memory in KB (mem.free)
-		int memFree = metrics.getOrDefault("mem.free", -1).intValue();
+//    The total system memory in KB (mem)
+        long mem = metrics.getOrDefault("mem", -1).longValue();
+//    The amount of free memory in KB (mem.free)
+        long memFree = metrics.getOrDefault("mem.free", -1).longValue();
 
 //		The number of processors (processors)
 		int processors = metrics.getOrDefault("processors", -1).intValue();
