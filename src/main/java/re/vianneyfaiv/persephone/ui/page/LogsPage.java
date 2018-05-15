@@ -161,7 +161,7 @@ public class LogsPage extends VerticalLayout implements View {
 								.append("At least one of those properties have to be properly set.")
 								.append("\n\n")
 								.append("Also, the default log file name is 'spring.log', "
-										+ "if yours is not whatever.log you have to set logging.file to 'whatever.log'.")
+										+ "if yours is 'whatever.log' you have to set the property 'logging.file' to 'whatever.log'.")
 								;
 
 		if(!StringUtils.isEmpty(env.get("LOG_FILE"))) {
