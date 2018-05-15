@@ -49,6 +49,6 @@ public class EndpointsPage extends VerticalLayout implements View {
 
 		// Add endpoints links
 		app.endpoints().asList().stream()
-		   .forEach(endpointUrl -> this.addComponent(new Link(endpointUrl+".json", new ExternalResource(endpointUrl+".json"), "_blank", 0, 0, BorderStyle.DEFAULT)));
+		   .forEach(endpointUrl -> this.addComponent(new Link(endpointUrl, new ExternalResource(endpointUrl), "_blank", 0, 0, BorderStyle.DEFAULT)));
 	}
 }
