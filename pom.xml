@@ -5,7 +5,7 @@
 
 	<groupId>re.vianneyfaiv</groupId>
 	<artifactId>persephone</artifactId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 	<packaging>jar</packaging>
 
 	<name>persephone</name>
