@@ -29,6 +29,11 @@ public class Formatters {
 	}
 
 	public static String readableFileSize(long bytesSize) {
+
+		if(bytesSize <= 0) {
+			return "0B";
+		}
+
 	    final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
 	    int digitGroups = (int) (Math.log10(bytesSize)/Math.log10(1000));
 	    return new DecimalFormat("#,##0").format(bytesSize/Math.pow(1000, digitGroups)) + " " + units[digitGroups];
