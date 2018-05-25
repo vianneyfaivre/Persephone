@@ -1,7 +1,7 @@
 package re.vianneyfaiv.persephone.config;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,10 @@ public class RestTemplateFactory {
 		applicationsService
 			.findAll().stream()
 			.filter(app -> app.getAuthScheme() == AuthScheme.BASIC && app.isAuthValid())
-			.forEach(createRestTemplateBasicAuth(registry));
+			.forEach(app -> {
+				createRestTemplateBasicAuth(app, getRestTemplateBeanName(app), registry, Arrays.asList(defaultRestTemplateConfig.getDefaultAcceptHeader(), MediaType.ALL));
+				createRestTemplateBasicAuth(app, getRestTemplateBeanNameForHead(app), registry, Arrays.asList(MediaType.ALL));
+			});
 	}
 
 	/**
@@ -84,25 +87,45 @@ public class RestTemplateFactory {
 	}
 
 	/**
+	 * @return a custom RestTemplate or a default instance to be used for HTTP HEAD requests
+	 */
+	public RestTemplate getForHead(Application app) {
+
+		String beanName = this.getRestTemplateBeanNameForHead(app);
+
+		if(app.getAuthScheme() == AuthScheme.BASIC) {
+			if(applicationContext.containsBean(beanName)) {
+				LOGGER.trace("Found RestTemplate with BASIC auth (HEAD) for application with id {}", app.getId());
+				return applicationContext.getBean(beanName, RestTemplate.class);
+			} else {
+				LOGGER.warn("Application with id {} has BASIC auth enabled but the RestTemplate bean (HEAD) has not been registered", app.getId());
+			}
+		}
+
+		return defaultRestTemplate;
+	}
+
+	/**
 	 * register specific RestTemplate in Spring Application Context if needed
 	 */
-	private Consumer<Application> createRestTemplateBasicAuth(ConfigurableListableBeanFactory registry) {
-		return app -> {
+	private void createRestTemplateBasicAuth(Application app, String beanPrefix, ConfigurableListableBeanFactory registry, List<MediaType> headers) {
+		// Create rest template instance
+		RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory, headers);
 
-			// Create rest template instance
-			RestTemplate restTemplateBasicAuth = defaultRestTemplateConfig.restTemplate(requestFactory, Arrays.asList(defaultRestTemplateConfig.getDefaultAcceptHeader(), MediaType.ALL));
+		// Configure it with BASIC auth
+		restTemplateBasicAuth.getInterceptors().add(new BasicAuthorizationInterceptor(app.getActuatorUsername(), app.getActuatorPassword()));
 
-			// Configure it with BASIC auth
-			restTemplateBasicAuth.getInterceptors().add(new BasicAuthorizationInterceptor(app.getActuatorUsername(), app.getActuatorPassword()));
+		LOGGER.info("Registered RestTemplate (bean name: {}) with BASIC auth for application with id {}", beanPrefix, app.getId());
 
-			LOGGER.info("Registered RestTemplate with BASIC auth for application with id {}", app.getId());
-
-			// Add bean in Spring application context
-			registry.registerSingleton(getRestTemplateBeanName(app), restTemplateBasicAuth);
-		};
+		// Add bean in Spring application context
+		registry.registerSingleton(beanPrefix, restTemplateBasicAuth);
 	}
 
 	private String getRestTemplateBeanName(Application app) {
 		return "restTemplateApplication" + app.getId();
+	}
+
+	private String getRestTemplateBeanNameForHead(Application app) {
+		return "restTemplateApplicationHEAD" + app.getId();
 	}
 }
