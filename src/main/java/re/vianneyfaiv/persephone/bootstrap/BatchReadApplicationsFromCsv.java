@@ -103,7 +103,7 @@ public class BatchReadApplicationsFromCsv {
 
 							applicationService.setApplications(applicationsTmp);
 
-							LOGGER.debug("Applications have been loaded. Now checking if they are up");
+							LOGGER.info("{} applications have been loaded", applicationsTmp.size());
 
 							// Create RestTemplate with BASIC auth (if enabled)
 							restTemplateFactory.init();
