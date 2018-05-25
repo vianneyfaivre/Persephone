@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,28 +49,32 @@ public class EnvironmentService {
 		try {
 			LOGGER.debug("HEAD {}", url);
 
-			HttpHeaders headers = restTemplates.get(app).headForHeaders(new URI(url));
+			RestTemplate restTemplate = new RestTemplate(restTemplates.getForHead(app).getRequestFactory());
+
+			HttpHeaders headers = restTemplate.headForHeaders(new URI(url));
 
 			return ActuatorVersion.parse(headers.getContentType());
-		} catch (RestClientException ex) {
+		} catch (HttpClientErrorException clientEx) {
 
-			if (ex instanceof HttpClientErrorException) {
-				HttpClientErrorException clientEx = ((HttpClientErrorException) ex);
-
-				// Spring Boot 1.3 does not allow HEAD method, so let's assume
-				// the version is V1
-				if (clientEx.getStatusCode() == HttpStatus.METHOD_NOT_ALLOWED) {
-					return ActuatorVersion.V1;
-				}
-			} else if (ex instanceof HttpServerErrorException) {
-
-				// If the HEAD request is not supported, a HTTP 500 could be thrown
-				// so let's assume the version is V1
-				if (((HttpServerErrorException) ex).getStatusCode().is5xxServerError()) {
-					return ActuatorVersion.V1;
-				}
+			// Spring Boot 1.3 does not allow HEAD method, so let's assume
+			// the version is V1
+			if (clientEx.getStatusCode() == HttpStatus.METHOD_NOT_ALLOWED) {
+				return ActuatorVersion.V1;
+			} else {
+				throw RestTemplateErrorHandler.handle(app, url, clientEx);
 			}
 
+		} catch (HttpServerErrorException serverEx) {
+
+			// If the HEAD request is not supported, a HTTP 500 could be thrown
+			// so let's assume the version is V1
+			if (serverEx.getStatusCode().is5xxServerError()) {
+				return ActuatorVersion.V1;
+			} else {
+				throw RestTemplateErrorHandler.handle(app, url, serverEx);
+			}
+
+		} catch(RestClientException ex) {
 			throw RestTemplateErrorHandler.handle(app, url, ex);
 		} catch (URISyntaxException e) {
 			throw RestTemplateErrorHandler.handle(app, e);
