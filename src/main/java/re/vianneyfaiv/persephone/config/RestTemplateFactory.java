@@ -47,6 +47,9 @@ public class RestTemplateFactory {
 	@Autowired
 	private RestTemplate defaultRestTemplate;
 
+	@Autowired
+	private RestTemplate defaultRestTemplateForHead;
+
 	// Persephone service
 
 	@Autowired
@@ -63,7 +66,7 @@ public class RestTemplateFactory {
 			.filter(app -> app.getAuthScheme() == AuthScheme.BASIC && app.isAuthValid())
 			.forEach(app -> {
 				createRestTemplateBasicAuth(app, getRestTemplateBeanName(app), registry, Arrays.asList(defaultRestTemplateConfig.getDefaultAcceptHeader(), MediaType.ALL));
-				createRestTemplateBasicAuth(app, getRestTemplateBeanNameForHead(app), registry, Arrays.asList(MediaType.ALL));
+				createRestTemplateBasicAuth(app, getRestTemplateBeanNameForHead(app), registry, Arrays.asList());
 			});
 	}
 
@@ -102,7 +105,7 @@ public class RestTemplateFactory {
 			}
 		}
 
-		return defaultRestTemplate;
+		return defaultRestTemplateForHead;
 	}
 
 	/**

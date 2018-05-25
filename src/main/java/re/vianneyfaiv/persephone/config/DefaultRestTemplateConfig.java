@@ -63,14 +63,21 @@ public class DefaultRestTemplateConfig {
 		return this.restTemplate(rf, Arrays.asList(getDefaultAcceptHeader(), MediaType.ALL));
 	}
 
+	@Bean
+	public RestTemplate defaultRestTemplateForHead(ClientHttpRequestFactory rf) {
+		return this.restTemplate(rf, Arrays.asList());
+	}
+
 	public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory, List<MediaType> types) {
 		RestTemplate rt = new RestTemplate(requestFactory);
 
 		// Override default error handler to consider HTTP 3xx 4xx and 5xx as errors
 		rt.setErrorHandler(restErrorHandler);
 
-		// Default HTTP 'Accept' header value will be application/json
-		rt.getInterceptors().add(new AcceptRequestInterceptor(types));
+		if(!types.isEmpty()) {
+			// Default HTTP 'Accept' header value will be application/json
+			rt.getInterceptors().add(new AcceptRequestInterceptor(types));
+		}
 
 		return rt;
 	}

@@ -49,7 +49,7 @@ public class EnvironmentService {
 		try {
 			LOGGER.debug("HEAD {}", url);
 
-			RestTemplate restTemplate = new RestTemplate(restTemplates.getForHead(app).getRequestFactory());
+			RestTemplate restTemplate = restTemplates.getForHead(app);
 
 			HttpHeaders headers = restTemplate.headForHeaders(new URI(url));
 
